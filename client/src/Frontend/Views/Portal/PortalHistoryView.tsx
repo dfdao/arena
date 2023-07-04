@@ -1,36 +1,20 @@
-import { getConfigName } from '@darkforest_eth/procedural';
-import { address } from '@darkforest_eth/serde';
-import {
-  BadgeType,
-  EthAddress,
-  GrandPrixHistory,
-  GrandPrixMetadata,
-  SeasonScore,
-} from '@darkforest_eth/types';
-import { IconType } from '@darkforest_eth/ui';
-import { isAddress } from 'ethers/lib/utils';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
+import { BadgeType, EthAddress, GrandPrixHistory } from '@darkforest_eth/types';
+import React, { useMemo, useState } from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   calcBadgeTypeScore,
   loadPlayerSeasonHistoryView,
 } from '../../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { BadgeDetailsRow } from '../../Components/Badges';
-import Button from '../../Components/Button';
-import { Icon } from '../../Components/Icons';
-import { Sub } from '../../Components/Text';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
 import {
-  useAccount,
   useEthConnection,
   useSeasonData,
   useSeasonPlayers,
   useTwitters,
 } from '../../Utils/AppHooks';
-import { SEASON_GRAND_PRIXS } from '../../Utils/constants';
 import { formatDuration } from '../../Utils/TimeUtils';
-import { TiledTable } from '../TiledTable';
 import { PortalHistoryRoundCard } from './Components/PortalHistoryRoundCard';
 import { Label } from './PortalHomeView';
 import { isPastOrCurrentRound } from './PortalUtils';
@@ -55,9 +39,12 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
 
   const seasonHistories = loadPlayerSeasonHistoryView(account, configPlayers, SEASON_GRAND_PRIXS);
 
-  const rounds = seasonHistories[current].grandPrixs.filter((gp) =>
-    isPastOrCurrentRound(gp.configHash, SEASON_GRAND_PRIXS)
-  );
+  const rounds =
+    seasonHistories.length == 0
+      ? []
+      : seasonHistories[current].grandPrixs.filter((gp) =>
+          isPastOrCurrentRound(gp.configHash, SEASON_GRAND_PRIXS)
+        );
 
   const grandPrixBadges = rounds.map((round) => round.badges).flat(); //mockBadges;
 
