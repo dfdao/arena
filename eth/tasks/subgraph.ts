@@ -299,7 +299,12 @@ const compose: DFContainerCreateOptions[] = [
       Binds: ['thegraph_data:/data/postgresql:rw'],
       PortBindings: { '5432/tcp': [{ HostPort: '5432' }] },
     },
-    Env: ['POSTGRES_USER=graph-node', 'POSTGRES_PASSWORD=let-me-in', 'POSTGRES_DB=graph-node'],
+    Env: [
+      'POSTGRES_USER=graph-node',
+      'POSTGRES_PASSWORD=let-me-in',
+      'POSTGRES_DB=graph-node',
+      'POSTGRES_INITDB_ARGS=-E UTF8 --locale=C',
+    ],
     NetworkingConfig: {
       EndpointsConfig: {
         thegraph_default: {
