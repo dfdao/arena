@@ -19,15 +19,15 @@ import {
 } from '@darkforest_eth/types';
 import { UniquePlayerBadges } from '@darkforest_eth/types/src/grand_prix';
 import {
+  BADGE_BONUSES,
+  DUMMY,
+  EGP,
+  FIRST_CONFIG_FINAL_VALID_START,
+  FIRST_CONFIG_HASH_GP1,
   // SEASON_GRAND_PRIXS,
   HOUR_IN_SECONDS,
-  EGP,
-  DUMMY,
-  BADGE_BONUSES,
-  SECOND_CONFIG_HASH_GP1,
-  FIRST_CONFIG_HASH_GP1,
-  FIRST_CONFIG_FINAL_VALID_START,
   NERONZZ_WEEK_1,
+  SECOND_CONFIG_HASH_GP1,
 } from '../../../Frontend/Utils/constants';
 import {
   createDummySeasonData,
@@ -67,7 +67,7 @@ export async function loadWallbreakers(
     return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
   });
   const res = await Promise.all(wallbreakerQuery);
-  if (res && res.length == 0) return [];
+  if (!res || res.length == 0) return [];
   const wallBreakersRaw = res
     .filter((x) => x.data.arenas.length > 0)
     .map((x) => {
