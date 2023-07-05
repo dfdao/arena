@@ -1,16 +1,10 @@
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { address } from '@darkforest_eth/serde';
 import { IconType } from '@darkforest_eth/ui';
-import React, { CSSProperties, useMemo, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import styled, { createGlobalStyle, CSSObject } from 'styled-components';
-import { isRoundOngoing } from '../../Backend/Utils/Utils';
-import { Btn } from '../Components/Btn';
-import { EmSpacer, Link, Spacer } from '../Components/CoreUI';
-import { EmailCTA, EmailCTAMode } from '../Components/Email';
+import styled from 'styled-components';
+import { Link } from '../Components/CoreUI';
 import { Icon } from '../Components/Icons';
-import { Modal } from '../Components/Modal';
-import { Red, White, Text, HideSmall } from '../Components/Text';
+import { HideSmall } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { LobbyButton } from './Lobby/LobbyMapEditor';
 
@@ -182,7 +176,7 @@ export const BackgroundImage = styled.img`
   width: 100vw;
   height: 100vh;
   display: fixed;
-  background-image: url(/public/img/screenshots/deathstar.png);
+  background-image: url(/img/screenshots/deathstar.png);
   background-size: cover;
   filter: blur(5px) brightness(0.9);
   background-position: 50%, 50%;

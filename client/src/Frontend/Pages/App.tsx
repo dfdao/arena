@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { Theme } from '../Components/Theme';
 import { LandingPageBackground } from '../Renderers/LandingPageCanvas';
@@ -10,7 +10,6 @@ import { GifMaker } from './GifMaker';
 import LandingPage from './LandingPage';
 import { ShareArtifact } from './ShareArtifact';
 import { SharePlanet } from './SharePlanet';
-import { TestArtifactImages } from './TestArtifactImages';
 import { TxConfirmPopup } from './TxConfirmPopup';
 import UnsubscribePage from './UnsubscribePage';
 import { ValhallaPage } from './ValhallaPage';
@@ -35,7 +34,6 @@ function App() {
             />
             <Route path='/unsubscribe' component={UnsubscribePage} />
             <Route path='/valhalla' component={ValhallaPage} />
-            {!isProd && <Route path='/images' component={TestArtifactImages} />}
             {!isProd && <Route path='/gifs' component={GifMaker} />}
             {!isProd && <Route path='/bg' component={LandingPageBackground} />}
             <Route path='*' component={EntryPage} />
