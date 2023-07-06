@@ -7,8 +7,8 @@ import { RoundItem, TableCell } from './RoundList';
 export const AdminRow: React.FC<{ admin: string }> = ({ admin }) => {
   const { address, isConnected } = useAccount();
   const { config: deleteAdminConfig } = usePrepareContractWrite({
-    addressOrName: registry,
-    contractInterface: abi,
+    address: registry as `0x${string}`,
+    abi,
     functionName: 'setAdmin',
     args: [admin, false],
   });

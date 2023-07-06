@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useContractRead } from 'wagmi';
 import { abi } from '@dfdao/registry/abi/Registry.json';
 import { registry } from '@dfdao/registry/deployment.json';
+import { Registry } from '@dfdao/registry/types/Registry';
 import { constants, ethers, utils } from 'ethers';
 import { RoundRow } from './RoundRow';
 import { RoundResponse } from '../types';
@@ -13,13 +14,14 @@ export const RoundList: React.FC = () => {
     isError,
     isLoading,
   } = useContractRead({
-    addressOrName: registry,
-    contractInterface: abi,
+    address: registry as `0x${string}`,
+    abi,
     functionName: 'getAllGrandPrix',
     watch: true,
   });
 
   if (!roundData || isLoading) return <div>Loading...</div>;
+  // @ts-expect-error round data type
   if (roundData.filter((r) => r.parentAddress !== constants.AddressZero).length === 0)
     return (
       <div style={{ fontFamily: 'Menlo, monospace', textTransform: 'uppercase' }}>
@@ -40,6 +42,7 @@ export const RoundList: React.FC = () => {
       </thead>
       <tbody>
         {roundData
+          // @ts-expect-error round data type
           .filter((r) => r.parentAddress !== ethers.constants.AddressZero)
           .sort(
             (a: RoundResponse, b: RoundResponse) => a.startTime.toNumber() - b.startTime.toNumber()

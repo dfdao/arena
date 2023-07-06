@@ -11,20 +11,22 @@ export const RoundRow: React.FC<{ round: RoundResponse }> = ({ round }) => {
   const { isConnected } = useAccount();
 
   const { config } = usePrepareContractWrite({
-    addressOrName: registry,
-    contractInterface: abi,
+    address: registry as `0x${string}`,
+    abi,
     functionName: 'deleteRound',
     args: [round.configHash],
   });
+
+  console.log(`round`, round);
 
   const { write: deleteRound } = useContractWrite(config);
 
   return (
     <RoundItem key={round.configHash}>
       <TableCell>{getConfigName(round.configHash)}</TableCell>
-      <TableCell>{formatStartTime(round.startTime.toNumber())}</TableCell>
-      <TableCell>{formatStartTime(round.endTime.toNumber())}</TableCell>
-      <TableCell>{round.seasonId.toNumber()}</TableCell>
+      <TableCell>{formatStartTime(Number(round.startTime))}</TableCell>
+      <TableCell>{formatStartTime(Number(round.endTime))}</TableCell>
+      <TableCell>{Number(round.seasonId)}</TableCell>
       <TableCell>
         <button
           className='btn'

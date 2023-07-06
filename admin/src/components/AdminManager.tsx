@@ -18,12 +18,13 @@ export const AdminManager: React.FC<{ nftContract: boolean }> = ({ nftContract }
     isError,
     isLoading,
   } = useContractRead({
-    addressOrName: nftContract ? nft : registry,
-    contractInterface: nftContract ? NFTAbi : RegistryAbi,
+    address: (nftContract ? nft : registry) as `0x${string}`,
+    abi: nftContract ? NFTAbi : RegistryAbi,
     functionName: 'getAllAdmins',
     watch: true,
   });
   if (!adminData || isLoading) return <div>Loading...</div>;
+  // @ts-expect-error round data type
   if (adminData.length === 0) return <div>No admins found.</div>;
   if (isError) return <div>Couldn't load admins.</div>;
 
@@ -43,7 +44,9 @@ export const AdminManager: React.FC<{ nftContract: boolean }> = ({ nftContract }
       </thead>
       <tbody>
         {adminData
+          // @ts-expect-error round data type
           .filter((a) => a !== ethers.constants.AddressZero)
+          // @ts-expect-error round data type
           .map((admin) => (
             <AdminRow key={admin} admin={admin} />
           ))}

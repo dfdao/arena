@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber } from 'ethers';
 
 export interface RoundInterface {
   startTime: number;
@@ -10,8 +10,8 @@ export interface RoundInterface {
 
 export interface RoundResponse {
   configHash: string;
-  startTime: BigNumber;
-  endTime: BigNumber;
+  startTime: BigInt;
+  endTime: BigInt;
   parentAddress: string;
   seasonId: BigNumber;
 }

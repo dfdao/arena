@@ -18,16 +18,16 @@ export const getConfigsFromGraph = async (configHash: string) => {
 
   if (GRAPHQL_URL) {
     return undefined;
-    // const client = createClient({
-    //   url: GRAPHQL_URL,
-    // });
-    // return await client.query(configQuery).toPromise();
+    //   const client = createClient({
+    //     url: GRAPHQL_URL,
+    //   });
+    //   return await client.query(configQuery).toPromise();
   }
 };
 
 export async function configHashGraphQuery(configHash: string) {
   const x = await getConfigsFromGraph(configHash);
   if (!x) return 'noGraphQL';
-  if (!x.data) return 'configHashNotFound';
-  if (x.data?.arenas.length === 0) return 'configHashNotFound';
+  // if (!x.data) return 'configHashNotFound';
+  // if (x.data?.arenas.length === 0) return 'configHashNotFound';
 }

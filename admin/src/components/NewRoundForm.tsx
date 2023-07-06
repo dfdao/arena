@@ -26,13 +26,13 @@ export const DateTimeField = ({ ...props }: any) => {
 
 export const NewRoundForm: React.FC = () => {
   console.log(`registry address`, registry);
+  const [formValues, setFormValues] = useState();
   const [submissionError, setSubmissionError] = useState<string | undefined>(undefined);
   const { isConnected } = useAccount();
 
   const { write: addRound } = useContractWrite({
-    mode: 'recklesslyUnprepared',
-    addressOrName: registry,
-    contractInterface: abi,
+    address: registry as `0x${string}`,
+    abi,
     functionName: 'addGrandPrix',
     onError: (error) => {
       setSubmissionError(error.message);
@@ -44,7 +44,7 @@ export const NewRoundForm: React.FC = () => {
       initialValues={DEFAULT_SCORING_CONFIG}
       onSubmit={async (values: RoundInterface) => {
         addRound({
-          recklesslySetUnpreparedArgs: [
+          args: [
             values.startTime,
             values.endTime,
             values.configHash,

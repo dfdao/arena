@@ -15,9 +15,11 @@ export const AddAdmin: React.FC<{
 
   const [newAdminAddress, setNewAdminAddress] = useState<string>('');
 
+  const contractAddress = (nftContract ? nft : registry) as `0x${string}`;
+
   const { config } = usePrepareContractWrite({
-    addressOrName: nftContract ? nft : registry,
-    contractInterface: nftContract ? NFTAbi : RegistryAbi,
+    address: contractAddress,
+    abi: nftContract ? NFTAbi : RegistryAbi,
     functionName: 'setAdmin',
     args: [newAdminAddress, true],
   });
@@ -27,6 +29,7 @@ export const AddAdmin: React.FC<{
     onError: (error) => onError(`adminWrite ${error.message}`),
   });
 
+  console.log({ isConnected }, { addAdminWrite });
   return (
     <InputWithButtonContainer>
       <StyledInput

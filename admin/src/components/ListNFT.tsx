@@ -12,7 +12,7 @@ export const ListNFT: React.FC = () => {
     isError,
     isLoading,
   } = useContractRead({
-    addressOrName: nft,
+    address: nft,
     contractInterface: abi,
     functionName: 'currentTokenId',
     watch: true,
@@ -23,7 +23,7 @@ export const ListNFT: React.FC = () => {
 
   const args = Array.from({ length: count }, (_, i) => i + 1);
   const { data: uris } = useContractRead({
-    addressOrName: nft,
+    address: nft,
     contractInterface: abi,
     functionName: 'bulkTokenURI',
     // watch: true,
@@ -31,7 +31,7 @@ export const ListNFT: React.FC = () => {
   });
 
   const { data: owners } = useContractRead({
-    addressOrName: nft,
+    address: nft,
     contractInterface: abi,
     functionName: 'bulkOwner',
     watch: true,

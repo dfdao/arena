@@ -3,23 +3,28 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import '@rainbow-me/rainbowkit/styles.css';
-
-import { darkTheme, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { chain, Chain, configureChains, createClient, WagmiConfig } from 'wagmi';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { Chain, configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { chainId } from '@dfdao/registry/deployment.json';
+import { publicProvider } from 'wagmi/providers/public';
 
-const localHost: Chain = {
+export const localHost: Chain = {
   id: 31337,
-  name: 'Anvil',
+  name: 'Hardhat',
   network: 'Local Node',
   rpcUrls: {
-    default: 'http://localhost:8545',
+    default: { http: ['http://localhost:8545'] },
+    public: { http: ['http://localhost:8545'] },
   },
   testnet: true,
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
 };
 
-const optimisticGnosis: Chain = {
+export const optimisticGnosis: Chain = {
   id: 300,
   name: 'Optimism on Gnosis',
   network: 'Optimism on Gnosis Chain',
@@ -29,7 +34,8 @@ const optimisticGnosis: Chain = {
     symbol: 'xDAI',
   },
   rpcUrls: {
-    default: 'https://optimism.gnosischain.com',
+    default: { http: ['https://optimism.gnosischain.com'] },
+    public: { http: ['https://optimism.gnosischain.com'] },
   },
   blockExplorers: {
     default: {
@@ -41,40 +47,24 @@ const optimisticGnosis: Chain = {
 };
 
 const chainFromId = chainId == '31337' ? [localHost] : [optimisticGnosis];
-const { chains, provider } = configureChains(chainFromId, [
-  jsonRpcProvider({
-    rpc: (chain) => ({
-      http:
-        chain.id === localHost.id ? localHost.rpcUrls.default : optimisticGnosis.rpcUrls.default,
-    }),
-  }),
-  jsonRpcProvider({
-    rpc: (chain) => ({
-      http: `http://localhost:8545`,
-    }),
-  }),
-]);
+const { chains, publicClient } = configureChains([localHost, optimisticGnosis], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: 'dfdao Dynasty',
   chains,
+  projectId: '23b53186cb9966aaf6e22b1f472154c1',
 });
 
-const wagmiClient = createClient({
+const appConfig = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
 });
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider
-        chains={chains}
-        theme={darkTheme({
-          borderRadius: 'small',
-        })}
-      >
+    <WagmiConfig config={appConfig}>
+      <RainbowKitProvider chains={chains}>
         <App />
       </RainbowKitProvider>
     </WagmiConfig>
