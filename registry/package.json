@@ -35,9 +35,10 @@
     "deploy-local": "wait-on tcp:8545 forge script script/Registry.s.sol:DeployRegistry --rpc-url http://localhost:8545  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast",
     "export:abi": "forge build && cp out/Registry.sol/Registry.json abi/Registry.json && cp out/NFT.sol/NFT.json abi/NFT.json",
     "deploy:dev": "dotenv  -e .env.local -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:client",
-    "deploy:hardhat": "dotenv  -e .env.hardhat -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:client",
+    "deploy:hardhat": "dotenv  -e .env.hardhat -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:root",
     "deploy:prod": "dotenv -e .env.production -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:client",
     "start:node": "anvil -m 'change typical hire slam amateur loan grid fix drama electric seed label'",
+    "copy:root": "cp deployment.json ../node_modules/@dfdao/registry && cp -r abi ../node_modules/@dfdao/registry && cp -r types ../node_modules/@dfdao/registry",
     "copy:client": "cp deployment.json ../client/node_modules/@dfdao/dynasty && cp -r abi ../client/node_modules/@dfdao/dynasty && cp -r types ../client/node_modules/@dfdao/dynasty"
   },
   "dependencies": {
