@@ -1,16 +1,10 @@
-import { ArtifactFileColor, artifactFileName, isSpaceShip } from '@darkforest_eth/gamelogic';
+import { ArtifactFileColor } from '@darkforest_eth/gamelogic';
+import { spriteFromArtifact } from '@darkforest_eth/renderer/dist/TextureManager';
 import { Artifact } from '@darkforest_eth/types';
 import React from 'react';
 import styled, { css } from 'styled-components';
 import dfstyles from '../Styles/dfstyles';
-
-export const ARTIFACT_URL = 'https://d2wspbczt15cqu.cloudfront.net/v0.6.0-artifacts/';
-// const ARTIFACT_URL = '/public/img/artifacts/videos/';
-
-function getArtifactUrl(thumb: boolean, artifact: Artifact, color: ArtifactFileColor): string {
-  const fileName = artifactFileName(true, thumb, artifact, color);
-  return ARTIFACT_URL + fileName;
-}
+import Sprite from './Sprite';
 
 export function ArtifactImage({
   artifact,
@@ -23,18 +17,20 @@ export function ArtifactImage({
   thumb?: boolean;
   bgColor?: ArtifactFileColor;
 }) {
-  const url = getArtifactUrl(thumb || false, artifact, bgColor || ArtifactFileColor.BLUE);
-  const image = isSpaceShip(artifact.artifactType) ? (
-    <img width={size} height={size} src={url} />
-  ) : (
-    <video width={size} height={size} loop autoPlay key={artifact.id}>
-      <source src={url} type={'video/webm'} />
-    </video>
-  );
-
+  const index = spriteFromArtifact(artifact);
+  const startAt = Math.round(index.x1 * 16) + Math.round(index.y1 * 16 * 16);
+  console.log(`start at: ${index.x1 * 16}, ${index.y1 * 16}, ${startAt}`);
   return (
     <Container width={size} height={size}>
-      {image}
+      <Sprite
+        spriteSheetUrl={`/sprites/artifactthumbs.png`}
+        spriteWidth={16}
+        spriteHeight={16}
+        spriteX={index.x1 * 16}
+        spriteY={index.y1 * 16}
+        width={size}
+        height={size}
+      />
     </Container>
   );
 }

@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TwitterLink } from '../Components/Labels/Labels';
-import { Smaller, Text } from '../Components/Text';
 
 export function LandingPageRoundArt() {
   return (
     <Container>
       <ImgContainer>
-        <LandingPageRoundArtImg src={'/public/round_art/grandprix.png'} />
+        <LandingPageRoundArtImg src={'/round_art/grandprix.png'} />
       </ImgContainer>
     </Container>
   );

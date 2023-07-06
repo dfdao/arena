@@ -70,7 +70,7 @@
     "format": "prettier --write .",
     "start": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
-    "clean": "del-cli dist node_modules declarations public/contracts tsconfig.ref.tsbuildinfo",
+    "clean": "del-cli dist node_modules declarations contracts tsconfig.ref.tsbuildinfo",
     "docs": "typedoc && yarn format",
     "deploy": "netlify build && netlify deploy",
     "deploy:prod": "netlify build && netlify deploy --prod"
