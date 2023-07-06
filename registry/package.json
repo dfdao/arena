@@ -39,7 +39,8 @@
     "deploy:prod": "dotenv -e .env.production -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:client",
     "start:node": "anvil -m 'change typical hire slam amateur loan grid fix drama electric seed label'",
     "copy:root": "cp deployment.json ../node_modules/@dfdao/registry && cp -r abi ../node_modules/@dfdao/registry && cp -r types ../node_modules/@dfdao/registry",
-    "copy:client": "cp deployment.json ../client/node_modules/@dfdao/dynasty && cp -r abi ../client/node_modules/@dfdao/dynasty && cp -r types ../client/node_modules/@dfdao/dynasty"
+    "copy:client": "cp deployment.json ../client/node_modules/@dfdao/dynasty && cp -r abi ../client/node_modules/@dfdao/dynasty && cp -r types ../client/node_modules/@dfdao/dynasty",
+    "build": "exit 0"
   },
   "dependencies": {
     "cross-fetch": "^3.1.5",

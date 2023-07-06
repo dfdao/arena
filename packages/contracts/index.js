@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 /**
  * This package contains deployed contract addresses, ABIs, and Typechain types
  * for the Dark Forest game.
@@ -31,17 +31,8 @@
  *
  * @packageDocumentation
  */
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.LIB_ARTIFACT_UTILS_ADDRESS =
-  exports.LIB_PLANET_ADDRESS =
-  exports.LIB_GAME_UTILS_ADDRESS =
-  exports.VERIFIER_ADDRESS =
-  exports.INIT_ADDRESS =
-  exports.CONTRACT_ADDRESS =
-  exports.START_BLOCK =
-  exports.NETWORK_ID =
-  exports.NETWORK =
-    void 0;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LIB_ARTIFACT_UTILS_ADDRESS = exports.LIB_PLANET_ADDRESS = exports.LIB_GAME_UTILS_ADDRESS = exports.VERIFIER_ADDRESS = exports.INIT_ADDRESS = exports.CONTRACT_ADDRESS = exports.START_BLOCK = exports.NETWORK_ID = exports.NETWORK = void 0;
 /**
  * The name of the network where these contracts are deployed.
  */

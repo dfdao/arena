@@ -25,6 +25,7 @@
     "circuits",
     "faucet",
     "registry",
+    "admin",
     "client"
   ],
   "scripts": {

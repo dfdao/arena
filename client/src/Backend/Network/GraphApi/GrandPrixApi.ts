@@ -21,7 +21,7 @@ import RegistryAbi from '@dfdao/registry/abi/Registry.json';
 // Contract addresses
 import deploymentUrl from '@dfdao/registry/deployment.json';
 import { Contract, ethers, providers, Wallet } from 'ethers';
-import { Registry } from '@dfdao/dynasty/types';
+import { Registry } from '@dfdao/registry/types';
 
 /**
  * Purpose:
