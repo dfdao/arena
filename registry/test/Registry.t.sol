@@ -19,7 +19,7 @@ contract RegistryTest is Test {
         uint256 seasonId;
     }
 
-    event GrandPrixAdded(uint256 indexed id, bytes32 indexed configHash);
+    event GrandPrixAdded(bytes32 indexed configHash);
 
     function setUp() public {
         vm.startPrank(deployer);
@@ -54,7 +54,6 @@ contract RegistryTest is Test {
         vm.prank(deployer);
         vm.expectEmit(true, true, false, false);
         emit GrandPrixAdded(
-            0,
             bytes32(
                 0x3f494381e86ad92969d331be13aebadb2a7f942a011253b2fa413c5143fa396b
             )
