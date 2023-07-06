@@ -1,5 +1,4 @@
 // organize-imports-ignore
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import type {
   ContractMethodName,

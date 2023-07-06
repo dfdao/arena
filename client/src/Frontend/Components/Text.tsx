@@ -1,4 +1,3 @@
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import { isLocatable } from '@darkforest_eth/gamelogic';
 import { artifactName, getPlanetName } from '@darkforest_eth/procedural';
 import {
@@ -16,6 +15,7 @@ import dfstyles from '../Styles/dfstyles';
 import { useUIManager } from '../Utils/AppHooks';
 import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
 import { Link } from './CoreUI';
+import { getNetwork } from '../../Backend/Network/Blockchain';
 
 export function BlinkCursor() {
   const [visible, setVisible] = useState<boolean>(false);
@@ -86,7 +86,7 @@ export function TxLink({ tx }: { tx: Transaction }) {
     return (
       <>
         <u>
-          <Link onClick={() => window.open(`${BLOCK_EXPLORER_URL}/${tx.hash}`)}>
+          <Link onClick={() => window.open(`${getNetwork().blockExplorer}/${tx.hash}`)}>
             {tx.hash.substring(0, 7)}
           </Link>
         </u>
