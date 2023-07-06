@@ -5,7 +5,7 @@ import { RoundItem, TableCell } from './RoundList';
 import { abi } from '@dfdao/registry/abi/Registry.json';
 import { registry } from '@dfdao/registry/deployment.json';
 import { RoundResponse } from '../types';
-import { getConfigName } from '@dfdao/procedural';
+import { getConfigName } from '@darkforest_eth/procedural';
 
 export const RoundRow: React.FC<{ round: RoundResponse }> = ({ round }) => {
   const { isConnected } = useAccount();
