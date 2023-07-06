@@ -20,5 +20,8 @@ export default defineConfig({
 
   build: {
     target: ['esnext'], // 👈 build.target
+    commonjsOptions: {
+      include: [/packages/, /node_modules/],
+    },
   },
 });

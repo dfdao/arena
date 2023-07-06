@@ -4,7 +4,7 @@ import mime from 'mime';
 import path from 'path';
 import { NFTStorage } from 'nft.storage';
 import { MintInterface } from '../types';
-import { getConfigName } from '@dfdao/procedural';
+import { getConfigName } from '@darkforest_eth/procedural';
 
 const API_KEY = import.meta.env.VITE_NFT_STORAGE_KEY;
 
