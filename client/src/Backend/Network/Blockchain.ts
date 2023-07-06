@@ -1,6 +1,6 @@
 // These are loaded as URL paths by a webpack loader
 import { NETWORK } from '@darkforest_eth/contracts';
-import { hardhat } from '@darkforest_eth/constants';
+import { hardhat, Network, networks } from '@darkforest_eth/constants';
 import diamondContractAbiUrl from '@darkforest_eth/contracts/abis/DarkForest.json';
 import faucetContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaFaucet.json';
 import initContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaInitialize.json';
@@ -46,13 +46,14 @@ export async function loadInitContract<T extends Contract>(
   return createContract<T>(address, abi, provider, signer);
 }
 
+const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
+
 export function getEthConnection(): Promise<EthConnection> {
-  const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
-  const defaultUrl = process.env.DEFAULT_RPC as string;
+  const network = getNetwork();
 
   let url: string;
   if (isProdNetwork) {
-    url = localStorage.getItem('XDAI_RPC_ENDPOINT_v5') || defaultUrl;
+    url = localStorage.getItem('XDAI_RPC_ENDPOINT_v5') || network.httpRpc;
   } else {
     url = hardhat.httpRpc;
   }
@@ -63,8 +64,15 @@ export function getEthConnection(): Promise<EthConnection> {
   console.log(`client build: ${process.env.NODE_ENV}`);
   console.log(`webserver url: ${process.env.DF_WEBSERVER_URL}`);
   console.log(`faucet url: ${process.env.FAUCET_URL}`);
-
   console.log(`dfdao url: ${process.env.DFDAO_WEBSERVER_URL} `);
   console.log(`graph url: ${process.env.GRAPH_URL}`);
   return createEthConnection(url);
+}
+
+export function getNetwork(): Network {
+  if (isProdNetwork) {
+    return networks.find((n) => n.name === NETWORK) || hardhat;
+  } else {
+    return hardhat;
+  }
 }

@@ -144,12 +144,6 @@ export const DEFAULT_GAS_PRICES: GasPrices = {
 export const MAX_AUTO_GAS_PRICE_GWEI = 15 as const;
 
 /**
- * The URL to the block explorer for the chain being used. Prepended to transaction links, etc
- */
-// Careful, don't add a slash to the end of this.
-export const BLOCK_EXPLORER_URL = 'https://blockscout.com/xdai/optimism/tx' as const;
-
-/**
  * The amount of time between gas price refreshes when fetching prices from the oracle.
  */
 export const GAS_PRICES_INTERVAL_MS = 60_000 as const;
@@ -196,18 +190,5 @@ export const HAT_SIZES = [
   'haaaat',
   'HAAAAT',
 ];
-
-export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;
-
-export const KOVAN_OPTIMISM_CHAIN_ID = 69 as const;
-
-export const GNOSIS_CHAIN_ID = 100 as const;
-export const SPECULAR_CHAIN_ID = 93481 as const;
-export const LOCAL_OPTIMISM_CHAIN_ID = 17 as const;
-
-/**
- * This should be updated every round.
- */
-export const THEGRAPH_API_URL = 'https://graph-optimism.gnosischain.com/subgraphs/name/arena/test';
 
 export * from './networks';

@@ -2,7 +2,7 @@ import {
   EMPTY_LOCATION_ID,
   GNOSIS_OPTIMISM_CHAIN_ID,
   KOVAN_OPTIMISM_CHAIN_ID,
-  SPECULAR_CHAIN_ID,
+  specular,
 } from '@darkforest_eth/constants';
 import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import {
@@ -1018,7 +1018,7 @@ export class ContractsAPI extends EventEmitter {
 
     if (chainId === GNOSIS_OPTIMISM_CHAIN_ID) overrides.gasPrice = '1';
     if (chainId === KOVAN_OPTIMISM_CHAIN_ID) overrides.gasPrice = '100000';
-    if (chainId === SPECULAR_CHAIN_ID) overrides.gasPrice = '1000000000';
+    if (chainId === specular.chainId) overrides.gasPrice = '1000000000';
     const queuedTx = await this.txExecutor.queueTransaction(txIntent, overrides);
 
     this.emit(ContractsAPIEvent.TxQueued, queuedTx);
