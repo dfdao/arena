@@ -17,9 +17,9 @@ import {
 } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
-import RegistryAbi from '@dfdao/dynasty/abi/Registry.json';
+import RegistryAbi from '@dfdao/registry/abi/Registry.json';
 // Contract addresses
-import deploymentUrl from '@dfdao/dynasty/deployment.json';
+import deploymentUrl from '@dfdao/registry/deployment.json';
 import { Contract, ethers, providers, Wallet } from 'ethers';
 import { Registry } from '@dfdao/dynasty/types';
 

@@ -24,6 +24,7 @@
     "packages/renderer",
     "circuits",
     "faucet",
+    "registry",
     "client"
   ],
   "scripts": {
