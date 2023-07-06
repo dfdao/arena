@@ -64,7 +64,7 @@ export const NewRoundForm: React.FC = () => {
           } else {
             const error = await configHashGraphQuery(values.configHash);
             if (error) {
-              errors['configHashGraphQL'] = "Config hash doesn't exist on-chain.";
+              // errors['configHashGraphQL'] = "Config hash doesn't exist on-chain.";
             }
           }
         } else {

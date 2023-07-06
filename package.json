@@ -45,7 +45,7 @@
     "start:client": "yarn workspace client start",
     "start:faucet": "yarn workspace faucet start",
     "start:node": "yarn workspace eth hardhat:node",
-    "start:arena": "run-s wait:node deploy:contracts:subgraph start:client",
+    "start:arena": "run-s wait:node deploy:contracts start:client",
     "start:subgraph": "run-s wait:node deploy:contracts:subgraph start:client",
     "start:game": "run-s wait:node deploy:contracts add:planets start:client",
     "add:planets": "yarn workspace eth hardhat:dev game:createPlanets",
