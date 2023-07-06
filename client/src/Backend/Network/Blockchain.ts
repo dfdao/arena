@@ -1,5 +1,6 @@
 // These are loaded as URL paths by a webpack loader
 import { NETWORK } from '@darkforest_eth/contracts';
+import { hardhat } from '@darkforest_eth/constants';
 import diamondContractAbiUrl from '@darkforest_eth/contracts/abis/DarkForest.json';
 import faucetContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaFaucet.json';
 import initContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaInitialize.json';
@@ -53,7 +54,7 @@ export function getEthConnection(): Promise<EthConnection> {
   if (isProdNetwork) {
     url = localStorage.getItem('XDAI_RPC_ENDPOINT_v5') || defaultUrl;
   } else {
-    url = 'http://localhost:8545';
+    url = hardhat.httpRpc;
   }
 
   console.log(`GAME METADATA:`);

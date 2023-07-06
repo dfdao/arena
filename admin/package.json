@@ -11,6 +11,7 @@
     "test": "exit 0"
   },
   "dependencies": {
+    "@darkforest_eth/constants": "6.7.29",
     "@rainbow-me/rainbowkit": "^1.0.4",
     "@types/mime": "^3.0.1",
     "decoders": "^2.0.1",

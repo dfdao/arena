@@ -209,3 +209,5 @@ export const LOCAL_OPTIMISM_CHAIN_ID = 17 as const;
  * This should be updated every round.
  */
 export const THEGRAPH_API_URL = 'https://graph-optimism.gnosischain.com/subgraphs/name/arena/test';
+
+export * from './networks';

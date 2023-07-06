@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { FAUCET_ADDRESS, NETWORK } from '@darkforest_eth/contracts';
+import { hardhat } from '@darkforest_eth/constants';
 import FAUCET_ABI from './DFArenaFaucet.js';
 
 import 'dotenv/config';
@@ -11,11 +12,10 @@ import cors from 'cors';
 
 const GNOSIS = 'https://rpc.xdaichain.com/';
 const GNOSIS_OPTIMISM = 'https://optimism.gnosischain.com';
-const HARDHAT = 'http://localhost:8545';
 
 const provider =
   NETWORK == 'localhost'
-    ? new ethers.providers.JsonRpcProvider(HARDHAT)
+    ? new ethers.providers.JsonRpcProvider(hardhat.httpRpc)
     : new ethers.providers.JsonRpcProvider(GNOSIS_OPTIMISM);
 
 const pKey = NETWORK == 'localhost' ? process.env.DEV_PRIVATE_KEY : process.env.PROD_PRIVATE_KEY;
@@ -56,7 +56,7 @@ app.use(cors());
 const port = 3000;
 
 app.get('/', async (req, res) => {
-  res.send('Welcome to dfdao\'s faucet!');
+  res.send("Welcome to dfdao's faucet!");
 });
 
 app.get('/drip/:address', async (req, res) => {
@@ -75,10 +75,9 @@ app.get('/drip/:address', async (req, res) => {
     res.status(200).send();
   } catch (error) {
     console.log('sendDrip error', error);
-    if(error.message) {
+    if (error.message) {
       res.status(500).send(JSON.stringify(error.message));
-    }
-    else {
+    } else {
       res.status(500).send(JSON.stringify(error));
     }
   }
