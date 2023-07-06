@@ -27,9 +27,8 @@ export const NewNFT: React.FC = () => {
     isSuccess: mintSuccess,
     write: mintTo,
   } = useContractWrite({
-    mode: 'recklesslyUnprepared',
-    addressOrName: nft,
-    contractInterface: abi,
+    address: nft as `0x${string}`,
+    abi,
     functionName: 'mintTo',
     onError: (error) => {
       setSubmissionError(error.message);
@@ -50,9 +49,7 @@ export const NewNFT: React.FC = () => {
         // Also need to update metadata
         const uri = await storeNFTMeta(image, values);
         setUploading(false);
-        mintTo({
-          recklesslySetUnpreparedArgs: [values.playerAddress, uri],
-        });
+        mintTo({ args: [values.playerAddress, uri] });
         setUri(uri);
       }}
       validate={async (values) => {

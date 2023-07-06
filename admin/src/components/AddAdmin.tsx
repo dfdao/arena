@@ -29,7 +29,6 @@ export const AddAdmin: React.FC<{
     onError: (error) => onError(`adminWrite ${error.message}`),
   });
 
-  console.log({ isConnected }, { addAdminWrite });
   return (
     <InputWithButtonContainer>
       <StyledInput

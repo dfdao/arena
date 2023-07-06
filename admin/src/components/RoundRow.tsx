@@ -17,8 +17,6 @@ export const RoundRow: React.FC<{ round: RoundResponse }> = ({ round }) => {
     args: [round.configHash],
   });
 
-  console.log(`round`, round);
-
   const { write: deleteRound } = useContractWrite(config);
 
   return (

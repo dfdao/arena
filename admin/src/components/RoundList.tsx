@@ -44,9 +44,7 @@ export const RoundList: React.FC = () => {
         {roundData
           // @ts-expect-error round data type
           .filter((r) => r.parentAddress !== ethers.constants.AddressZero)
-          .sort(
-            (a: RoundResponse, b: RoundResponse) => a.startTime.toNumber() - b.startTime.toNumber()
-          )
+          .sort((a: RoundResponse, b: RoundResponse) => Number(a.startTime) - Number(b.startTime))
           .map((round: RoundResponse, i: number) => (
             <RoundRow round={round} key={i} />
           ))}

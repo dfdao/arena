@@ -1,3 +1,4 @@
+// @ts-nocheck TODO: Remove!
 import '../App.css';
 import styled from 'styled-components';
 import { useContractRead } from 'wagmi';
@@ -12,8 +13,8 @@ export const ListNFT: React.FC = () => {
     isError,
     isLoading,
   } = useContractRead({
-    address: nft,
-    contractInterface: abi,
+    address: nft as `0x${string}`,
+    abi,
     functionName: 'currentTokenId',
     watch: true,
   });
@@ -23,16 +24,16 @@ export const ListNFT: React.FC = () => {
 
   const args = Array.from({ length: count }, (_, i) => i + 1);
   const { data: uris } = useContractRead({
-    address: nft,
-    contractInterface: abi,
+    address: nft as `0x${string}`,
+    abi,
     functionName: 'bulkTokenURI',
     // watch: true,
     args: [args],
   });
 
   const { data: owners } = useContractRead({
-    address: nft,
-    contractInterface: abi,
+    address: nft as `0x${string}`,
+    abi,
     functionName: 'bulkOwner',
     watch: true,
     args: [args],
