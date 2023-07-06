@@ -11,12 +11,12 @@ declare module '@darkforest_eth/contracts/abis/*.json' {
   export default path;
 }
 
-declare module '@dfdao/dynasty/abi/*.json' {
+declare module '@dfdao/registry/abi/*.json' {
   const path: string;
   export default path;
 }
 
-declare module '@dfdao/dynasty/deployment.json' {
+declare module '@dfdao/registry/deployment.json' {
   const path: string;
   export default path;
 }
