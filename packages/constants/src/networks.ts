@@ -11,6 +11,7 @@ export interface Network {
   blockExplorer?: string;
   graphUrl?: string;
   faucetUrl?: string;
+  faucetDrip?: number;
 }
 export const specular: Network = {
   name: Chains.Specular,
@@ -19,6 +20,7 @@ export const specular: Network = {
   httpRpc: 'https://devnet.specular.network',
   blockExplorer: 'https://explorer.specular.network',
   graphUrl: 'https://graph.devnet.specular.network',
+  faucetDrip: 0.005,
 };
 
 export const hardhat: Network = {
@@ -26,6 +28,7 @@ export const hardhat: Network = {
   chainId: 31337,
   httpRpc: 'http://localhost:8545',
   faucetUrl: 'http://localhost:3000',
+  faucetDrip: 0.005,
 };
 
 export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;

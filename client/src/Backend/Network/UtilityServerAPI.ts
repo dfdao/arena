@@ -199,7 +199,7 @@ export async function sendDrip(connection: EthConnection, address: EthAddress) {
     const nextAccessTimeSeconds = (await faucet.getNextAccessTime(address)).toNumber();
     const nowSeconds = Date.now() / 999;
 
-    if (currBalance > 0.005 || nowSeconds < nextAccessTimeSeconds) {
+    if (currBalance > (getNetwork().faucetDrip || 0.005) || nowSeconds < nextAccessTimeSeconds) {
       return;
     }
     const success = await requestFaucet(address);
@@ -218,10 +218,6 @@ export const requestFaucet = async (address: EthAddress): Promise<boolean> => {
   }
 
   console.log(`sending faucet request for`, address);
-  // TODO: Provide own env variable for this feature
-  // if (process.env.NODE_ENV === 'production') {
-  //   return false;
-  // }
 
   try {
     const res = await fetch(`${getNetwork().faucetUrl}/drip/${address}`, {});
