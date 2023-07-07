@@ -8,8 +8,6 @@ import express from 'express';
 
 import cors from 'cors';
 
-// const FAUCET_ADDRESS = '0x58E0C68ec2f0B770F9000b3e26e5D760591c58Ad';
-
 const GNOSIS = 'https://rpc.xdaichain.com/';
 const GNOSIS_OPTIMISM = 'https://optimism.gnosischain.com';
 

@@ -10,6 +10,7 @@ export interface Network {
   httpRpc: string;
   blockExplorer?: string;
   graphUrl?: string;
+  faucetUrl?: string;
 }
 export const specular: Network = {
   name: Chains.Specular,
@@ -24,6 +25,7 @@ export const hardhat: Network = {
   name: Chains.Hardhat,
   chainId: 31337,
   httpRpc: 'http://localhost:8545',
+  faucetUrl: 'http://localhost:3000',
 };
 
 export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;

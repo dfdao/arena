@@ -252,6 +252,7 @@ class EntryPageTerminal {
   }
 
   private async drip(account: Account, tutorialStep: boolean = true) {
+    console.log(`sending drip... to`, account);
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
       if (currBalance < 0.005) {
