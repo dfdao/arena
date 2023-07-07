@@ -1,4 +1,3 @@
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import _, { chunk } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -18,6 +17,7 @@ import {
   mirrorY,
 } from './LobbiesUtils';
 import { InvalidConfigError, LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
+import { getNetwork } from '../../../Backend/Network/Blockchain';
 
 const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
 export function PlanetListPane({
@@ -192,12 +192,18 @@ export function PlanetListPane({
         {hoveringPlanet && (
           <HoverWrapper>
             {planet.createTx && (
-              <Link to={`${BLOCK_EXPLORER_URL}/${planet.createTx}`} style={{ margin: 'auto' }}>
+              <Link
+                to={`${getNetwork().blockExplorer}/${planet.createTx}`}
+                style={{ margin: 'auto' }}
+              >
                 <u>Create Tx</u>
               </Link>
             )}
             {planet.revealTx && (
-              <Link to={`${BLOCK_EXPLORER_URL}/${planet.revealTx}`} style={{ margin: 'auto' }}>
+              <Link
+                to={`${getNetwork().blockExplorer}/${planet.revealTx}`}
+                style={{ margin: 'auto' }}
+              >
                 <u>Reveal Tx</u>
               </Link>
             )}

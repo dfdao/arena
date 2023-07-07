@@ -1,5 +1,3 @@
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
-import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -7,7 +5,6 @@ import styled from 'styled-components';
 import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
 import { CopyableInput } from '../../Components/CopyableInput';
 import { Link, Spacer } from '../../Components/CoreUI';
-import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Row } from '../../Components/Row';
 import { Sidebar } from '../../Components/Sidebar';
@@ -16,6 +13,7 @@ import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import { PlanetListPane } from '../../Panes/Lobby/PlanetListPane';
 import { LobbyConfigAction, LobbyConfigState } from '../../Panes/Lobby/Reducer';
 import { useTwitters } from '../../Utils/AppHooks';
+import { getNetwork } from '../../../Backend/Network/Blockchain';
 
 export function LobbyConfirmPage({
   arenaCreationManager,
@@ -42,7 +40,7 @@ export function LobbyConfirmPage({
   creating: boolean;
   validateAndCreateLobby: () => void;
 }) {
-  const blockscoutURL = `${BLOCK_EXPLORER_URL}/${lobbyTx}`;
+  const blockscoutURL = `${getNetwork().blockExplorer}/${lobbyTx}`;
   const url = `${window.location.origin}/play/${arenaCreationManager.getArenaAddress()}`;
   const configHash = arenaCreationManager.getArenaConfigHash();
   const { twitters } = useTwitters();

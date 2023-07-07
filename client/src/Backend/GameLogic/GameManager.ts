@@ -1,9 +1,4 @@
-import {
-  BLOCK_EXPLORER_URL,
-  CONTRACT_PRECISION,
-  EMPTY_ADDRESS,
-  MIN_PLANET_LEVEL,
-} from '@darkforest_eth/constants';
+import { CONTRACT_PRECISION, EMPTY_ADDRESS, MIN_PLANET_LEVEL } from '@darkforest_eth/constants';
 import type { DarkForest } from '@darkforest_eth/contracts/typechain';
 import { monomitter, Monomitter, Subscription } from '@darkforest_eth/events';
 import {
@@ -150,6 +145,7 @@ import { CaptureZoneGenerator, CaptureZonesGeneratedEvent } from './CaptureZoneG
 import { ContractsAPI, makeContractsAPI } from './ContractsAPI';
 import { GameObjects } from './GameObjects';
 import { InitialGameStateDownloader } from './InitialGameStateDownloader';
+import { getNetwork } from '../Network/Blockchain';
 
 export enum GameManagerEvent {
   PlanetUpdate = 'PlanetUpdate',
@@ -1062,7 +1058,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${BLOCK_EXPLORER_URL}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );
@@ -1074,7 +1070,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${BLOCK_EXPLORER_URL}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );
@@ -1086,7 +1082,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${BLOCK_EXPLORER_URL}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );
@@ -1100,7 +1096,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${BLOCK_EXPLORER_URL}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );

@@ -7,14 +7,15 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { Chain, configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { chainId } from '@dfdao/registry/deployment.json';
 import { publicProvider } from 'wagmi/providers/public';
+import { hardhat } from '@darkforest_eth/constants';
 
 export const localHost: Chain = {
   id: 31337,
   name: 'Hardhat',
   network: 'Local Node',
   rpcUrls: {
-    default: { http: ['http://localhost:8545'] },
-    public: { http: ['http://localhost:8545'] },
+    default: { http: [hardhat.httpRpc] },
+    public: { http: [hardhat.httpRpc] },
   },
   testnet: true,
   nativeCurrency: {

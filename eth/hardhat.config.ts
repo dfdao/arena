@@ -19,6 +19,7 @@ import * as diamondUtils from './utils/diamond';
 import * as path from 'path';
 import * as settings from './settings';
 import { decodeContracts, decodeInitializers, decodeAdminPlanets } from '@darkforest_eth/settings';
+import { hardhat } from '@darkforest_eth/constants';
 import './tasks/arena-deploy';
 import './tasks/arena-upgrade';
 import './tasks/artifact';
@@ -158,7 +159,7 @@ const config: HardhatUserConfig = {
     ...(DEPLOYER_MNEMONIC ? { xdai } : undefined),
     ...(DEPLOYER_MNEMONIC ? { mainnet } : undefined),
     localhost: {
-      url: 'http://localhost:8545/',
+      url: hardhat.httpRpc,
       accounts: {
         // Same mnemonic used in the .env.example
         mnemonic: 'change typical hire slam amateur loan grid fix drama electric seed label',

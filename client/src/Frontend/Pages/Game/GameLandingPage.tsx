@@ -1,4 +1,3 @@
-import { BLOCK_EXPLORER_URL } from '@darkforest_eth/constants';
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { DarkForest, DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
 import { EthConnection, neverResolves, weiToEth } from '@darkforest_eth/network';
@@ -11,7 +10,11 @@ import GameManager, { GameManagerEvent } from '../../../Backend/GameLogic/GameMa
 import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
 import TutorialManager, { TutorialState } from '../../../Backend/GameLogic/TutorialManager';
 import { logOut } from '../../../Backend/Network/AccountManager';
-import { loadDiamondContract, loadFaucetContract } from '../../../Backend/Network/Blockchain';
+import {
+  getNetwork,
+  loadDiamondContract,
+  loadFaucetContract,
+} from '../../../Backend/Network/Blockchain';
 import {
   callRegisterAndWaitForConfirmation,
   EmailResponse,
@@ -377,7 +380,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           terminal.current?.printLink(
             '(View Transaction)',
             () => {
-              window.open(`${BLOCK_EXPLORER_URL}/${registerConfirmationResponse.txHash}`);
+              window.open(`${getNetwork().blockExplorer}/${registerConfirmationResponse.txHash}`);
             },
             TerminalTextStyle.Blue
           );
@@ -405,7 +408,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           terminal.current?.printLink(
             '(View Transaction)',
             () => {
-              window.open(`${BLOCK_EXPLORER_URL}/${ukReceipt.hash}`);
+              window.open(`${getNetwork().blockExplorer}/${ukReceipt.hash}`);
             },
             TerminalTextStyle.Blue
           );
