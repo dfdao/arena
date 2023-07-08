@@ -1,24 +1,27 @@
 import { ethers } from 'ethers';
 import { FAUCET_ADDRESS, NETWORK } from '@darkforest_eth/contracts';
-import { hardhat } from '@darkforest_eth/constants';
+import { Network, hardhat, networks } from '@darkforest_eth/constants';
 import FAUCET_ABI from './DFArenaFaucet.js';
-
 import 'dotenv/config';
 import express from 'express';
-
 import cors from 'cors';
 
-const GNOSIS = 'https://rpc.xdaichain.com/';
-const GNOSIS_OPTIMISM = 'https://optimism.gnosischain.com';
+const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
 
-const provider =
-  NETWORK == 'localhost'
-    ? new ethers.providers.JsonRpcProvider(hardhat.httpRpc)
-    : new ethers.providers.JsonRpcProvider(GNOSIS_OPTIMISM);
+const getNetwork = (): Network => {
+  if (isProdNetwork) {
+    return networks.find((n) => n.name === NETWORK) || hardhat;
+  } else {
+    return hardhat;
+  }
+};
 
-const pKey = NETWORK == 'localhost' ? process.env.DEV_PRIVATE_KEY : process.env.PROD_PRIVATE_KEY;
+const pKey =
+  NETWORK.toString() == 'localhost' ? process.env.DEV_PRIVATE_KEY : process.env.PROD_PRIVATE_KEY;
 
 if (!pKey) throw new Error('Private key not found');
+
+const provider = new ethers.providers.JsonRpcProvider(getNetwork().httpRpc);
 
 const wallet = new ethers.Wallet(pKey, provider);
 
@@ -32,7 +35,7 @@ const logStats = async function () {
   console.log(`faucet balance`, ethers.utils.formatEther(balance));
   console.log(`faucet drip`, ethers.utils.formatEther(await faucet.getDripAmount()));
 };
-const sendDrip = async function (addresss) {
+const sendDrip = async function (addresss: string) {
   const balance = await faucet.getBalance();
   console.log();
   if (balance.lte(1)) {
@@ -73,7 +76,9 @@ app.get('/drip/:address', async (req, res) => {
     res.status(200).send();
   } catch (error) {
     console.log('sendDrip error', error);
+    // @ts-expect-error message
     if (error.message) {
+      // @ts-expect-error message
       res.status(500).send(JSON.stringify(error.message));
     } else {
       res.status(500).send(JSON.stringify(error));
