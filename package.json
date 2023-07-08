@@ -23,7 +23,7 @@
     "packages/procedural",
     "packages/renderer",
     "circuits",
-    "faucet",
+    "server",
     "registry",
     "admin",
     "client"

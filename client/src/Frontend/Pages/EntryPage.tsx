@@ -13,7 +13,7 @@ import {
   getActive,
   logOut,
 } from '../../Backend/Network/AccountManager';
-import { getEthConnection } from '../../Backend/Network/Blockchain';
+import { getEthConnection, getNetwork } from '../../Backend/Network/Blockchain';
 import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import { loadAllPlayerData } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { getAllTwitters, sendDrip } from '../../Backend/Network/UtilityServerAPI';
@@ -252,9 +252,10 @@ class EntryPageTerminal {
   }
 
   private async drip(account: Account, tutorialStep: boolean = true) {
+    console.log(`sending drip... to`, account);
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
-      if (currBalance < 0.005) {
+      if (currBalance < (getNetwork().faucetDrip || 0.005)) {
         this.terminal.println(`Loading...`);
         await sendDrip(this.ethConnection, account.address);
         const newBalance = weiToEth(await this.ethConnection.loadBalance(account.address));

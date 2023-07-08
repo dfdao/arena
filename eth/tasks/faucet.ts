@@ -2,7 +2,7 @@ import { BigNumber, utils } from 'ethers';
 import { formatEther, parseEther } from 'ethers/lib/utils';
 import { subtask, task, types } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { writeToContractsPackage } from '../utils/deploy';
+import { runScript, writeToContractsPackage } from '../utils/deploy';
 
 function weiToEth(wei: BigNumber): number {
   return parseFloat(utils.formatEther(wei));
@@ -48,12 +48,14 @@ async function deployFaucet(args: { value: number }, hre: HardhatRuntimeEnvironm
      */
     export const FAUCET_ADDRESS = '${faucet.address}';
   `;
-  const append = true;
-  writeToContractsPackage(hre, tsContents, append);
+
+  writeToContractsPackage(hre, tsContents, `faucet`);
   console.log('appended Faucet address to contracts');
 
   const faucetContract = await hre.ethers.getContractAt('DFArenaFaucet', faucet.address);
   console.log('owner', await faucetContract.getOwner());
+
+  await runScript('yarn workspace @darkforest_eth/contracts build');
 }
 
 task('faucet:changeDrip', 'change the faucet amount players')

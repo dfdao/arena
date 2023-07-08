@@ -63,7 +63,7 @@ export function getEthConnection(): Promise<EthConnection> {
   console.log(`is production network: ${isProdNetwork}`);
   console.log(`client build: ${process.env.NODE_ENV}`);
   console.log(`webserver url: ${process.env.DF_WEBSERVER_URL}`);
-  console.log(`faucet url: ${process.env.FAUCET_URL}`);
+  console.log(`faucet url: ${network.faucetUrl}`);
   console.log(`dfdao url: ${process.env.DFDAO_WEBSERVER_URL} `);
   console.log(`graph url: ${process.env.GRAPH_URL}`);
   return createEthConnection(url);
