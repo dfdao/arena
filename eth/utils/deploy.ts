@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import { HardhatRuntimeEnvironment, Libraries } from 'hardhat/types';
 import * as path from 'path';
 import * as prettier from 'prettier';
-import ts from 'typescript';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import { tscompile } from '../utils/tscompile';
 
 export async function deployDiamond(
@@ -37,46 +38,36 @@ export async function deployContract(
   return contract;
 }
 
+// Promisify the exec function
+const execPromise = promisify(exec);
+
+export async function runScript(command: string) {
+  console.log(`running script`, command);
+  try {
+    // Execute the command
+    const { stdout, stderr } = await execPromise(command);
+    if (stdout) console.log(`stdout: ${stdout}`);
+    if (stderr) console.log(`stdout: ${stderr}`);
+  } catch (error) {
+    // @ts-expect-error
+    console.error(`Error: ${error.message}`);
+  }
+}
 export function writeToContractsPackage(
   hre: HardhatRuntimeEnvironment,
   tsContents: string,
-  append = false
+  filePath: string
 ) {
   const { jsContents, dtsContents } = tscompile(tsContents);
 
-  const contractsFileTS = path.join(hre.packageDirs['@darkforest_eth/contracts'], 'index.ts');
-  const contractsFileJS = path.join(hre.packageDirs['@darkforest_eth/contracts'], 'index.js');
-  const contractsFileDTS = path.join(hre.packageDirs['@darkforest_eth/contracts'], 'index.d.ts');
+  const contractsFileTS = path.join(hre.packageDirs['@darkforest_eth/contracts'], `${filePath}.ts`);
 
   const options = prettier.resolveConfig.sync(contractsFileTS);
 
-  if (append) {
-    fs.appendFileSync(
-      contractsFileTS,
-      prettier.format(tsContents, { ...options, parser: 'babel-ts' })
-    );
-    fs.appendFileSync(
-      contractsFileJS,
-      prettier.format(jsContents, { ...options, parser: 'babel-ts' })
-    );
-    fs.appendFileSync(
-      contractsFileDTS,
-      prettier.format(dtsContents, { ...options, parser: 'babel-ts' })
-    );
-  } else {
-    fs.writeFileSync(
-      contractsFileTS,
-      prettier.format(tsContents, { ...options, parser: 'babel-ts' })
-    );
-    fs.writeFileSync(
-      contractsFileJS,
-      prettier.format(jsContents, { ...options, parser: 'babel-ts' })
-    );
-    fs.writeFileSync(
-      contractsFileDTS,
-      prettier.format(dtsContents, { ...options, parser: 'babel-ts' })
-    );
-  }
+  fs.writeFileSync(
+    contractsFileTS,
+    prettier.format(tsContents, { ...options, parser: 'babel-ts' })
+  );
 }
 
 export async function saveDeploy(
@@ -163,7 +154,8 @@ export async function saveDeploy(
     export const LIB_ARTIFACT_UTILS_ADDRESS = '${args.libraries.LibArtifactUtils}';
     `;
 
-  writeToContractsPackage(hre, tsContents);
+  writeToContractsPackage(hre, tsContents, 'contracts');
+  await runScript('yarn workspace @darkforest_eth/contracts build');
 }
 
 export async function createLobby(

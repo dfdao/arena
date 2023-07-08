@@ -1,0 +1,1 @@
+{"version":3,"file":"faucet.js","sourceRoot":"","sources":["faucet.ts"],"names":[],"mappings":";;;AAAA;;GAEG;AACU,QAAA,cAAc,GAAG,4CAA4C,CAAC","sourcesContent":["/**\n * The address for the Faucet contract. Useful for lobbies.\n */\nexport const FAUCET_ADDRESS = '0xFe50B844B45b995AaB5286bDaf9AdE258C5Fc476';\n"]}
