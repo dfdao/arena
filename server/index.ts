@@ -57,7 +57,7 @@ app.use(cors());
 const port = 3000;
 
 app.get('/', async (req, res) => {
-  res.send("Welcome to dfdao's faucet!");
+  res.send("Welcome to dfdao's server!");
 });
 
 app.get('/drip/:address', async (req, res) => {
@@ -87,7 +87,12 @@ app.get('/drip/:address', async (req, res) => {
   return;
 });
 
+app.get('/verify/:address', async (req, res) => {
+  let address = req.params.address;
+  res.send(`verifying ${address}`);
+});
+
 app.listen(port, async () => {
-  console.log(`dfdao faucet listening on port ${port}`);
+  console.log(`dfdao server listening on port ${port}`);
   await logStats();
 });
