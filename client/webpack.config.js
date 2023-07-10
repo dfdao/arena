@@ -47,6 +47,9 @@ module.exports = {
     // Adding an alias for the `@darkforest_eth` packages, whether in a monorepo or packages
     alias: {
       '@darkforest_eth': findScopeDirectory(),
+      '@Components': path.resolve(__dirname, 'src/Frontend/Components'),
+      '@Utils': path.resolve(__dirname, 'src/Frontend/Utils'),
+      '@Backend': path.resolve(__dirname, 'src/Backend'),
     },
   },
 

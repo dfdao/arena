@@ -19,7 +19,12 @@
     "moduleResolution": "Node",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@Components/*": ["./src/Frontend/Components/*"],
+      "@Utils/*": ["./src/Frontend/Utils/*"],
+      "@Backend/*": ["./src/Backend/*"]
+    }
   },
   "typedocOptions": {
     "entryPointStrategy": "expand",
