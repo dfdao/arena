@@ -7,7 +7,7 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { Chain, configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { chainId } from '@dfdao/registry/deployment.json';
 import { publicProvider } from 'wagmi/providers/public';
-import { hardhat } from '@darkforest_eth/constants';
+import { hardhat, specular } from '@darkforest_eth/constants';
 
 export const localHost: Chain = {
   id: 31337,
@@ -16,6 +16,22 @@ export const localHost: Chain = {
   rpcUrls: {
     default: { http: [hardhat.httpRpc] },
     public: { http: [hardhat.httpRpc] },
+  },
+  testnet: true,
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+};
+
+export const specularNetwork: Chain = {
+  id: specular.chainId,
+  name: 'Specular',
+  network: 'Specular',
+  rpcUrls: {
+    default: { http: [specular.httpRpc] },
+    public: { http: [specular.httpRpc] },
   },
   testnet: true,
   nativeCurrency: {
@@ -47,8 +63,11 @@ export const optimisticGnosis: Chain = {
   testnet: false,
 };
 
-const chainFromId = chainId == '31337' ? [localHost] : [optimisticGnosis];
-const { chains, publicClient } = configureChains([localHost, optimisticGnosis], [publicProvider()]);
+const chainFromId = [localHost, optimisticGnosis, specularNetwork].find((c) => c.id === chainId);
+console.log(`connecting to`, chainFromId);
+if (!chainFromId) throw new Error(`no chain found for id ${chainId}`);
+
+const { chains, publicClient } = configureChains([chainFromId], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: 'dfdao Dynasty',

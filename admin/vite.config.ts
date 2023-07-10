@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
+    include: ['@darkforest_eth/procedural', '@darkforest_eth/constants'],
     // 👈 optimizedeps
     esbuildOptions: {
       target: 'esnext',

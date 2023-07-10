@@ -43,7 +43,7 @@ function App() {
     <Container>
       <Nav>
         <Logo>Dynasty Admin</Logo>
-        <ConnectButton />
+        <ConnectButton chainStatus={'name'} />
       </Nav>
       <Button onClick={() => setMint(!mint)}>{mint ? 'Create Round' : 'Mint NFT'}</Button>
       {mint ? <MintNFT /> : <NewGrandPrix />}
