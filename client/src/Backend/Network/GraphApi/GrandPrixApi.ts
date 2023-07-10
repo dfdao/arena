@@ -124,6 +124,7 @@ export async function loadRegistry(ethConnection: EthConnection): Promise<GrandP
     loadRegistryContract
   );
   const allGrandPrix = await registry.getAllGrandPrix();
+  console.log(`allGrandPrix`, allGrandPrix);
   const metadata: GrandPrixMetadata[] = [];
   allGrandPrix.map((gp) => {
     if (gp.parentAddress != ethers.constants.AddressZero) {
