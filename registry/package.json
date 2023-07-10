@@ -36,7 +36,7 @@
     "export:abi": "forge build && cp out/Registry.sol/Registry.json abi/Registry.json && cp out/NFT.sol/NFT.json abi/NFT.json",
     "deploy:dev": "dotenv  -e .env.local -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:client",
     "deploy:hardhat": "dotenv  -e .env.hardhat -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:root",
-    "deploy:prod": "dotenv -e .env.production -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:client",
+    "deploy:prod": "dotenv -e .env.production -- zx deploy.mjs && yarn bindings && yarn export:abi && yarn copy:root",
     "start:node": "anvil -m 'change typical hire slam amateur loan grid fix drama electric seed label'",
     "copy:root": "cp deployment.json ../node_modules/@dfdao/registry && cp -r abi ../node_modules/@dfdao/registry && cp -r types ../node_modules/@dfdao/registry",
     "copy:client": "cp deployment.json ../client/node_modules/@dfdao/dynasty && cp -r abi ../client/node_modules/@dfdao/dynasty && cp -r types ../client/node_modules/@dfdao/dynasty",

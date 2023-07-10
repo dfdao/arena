@@ -3,4 +3,5 @@ out/
 node_modules/
 broadcast/
 .env
+.env.production
 yarn-error.log
