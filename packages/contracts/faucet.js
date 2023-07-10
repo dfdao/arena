@@ -4,5 +4,5 @@ exports.FAUCET_ADDRESS = void 0;
 /**
  * The address for the Faucet contract. Useful for lobbies.
  */
-exports.FAUCET_ADDRESS = '0xFe50B844B45b995AaB5286bDaf9AdE258C5Fc476';
+exports.FAUCET_ADDRESS = '0xc3C76Bf2D49dED499584D1Ab2aDf81B2Ed3fdDCE';
 //# sourceMappingURL=faucet.js.map
