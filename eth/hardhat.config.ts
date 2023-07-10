@@ -19,7 +19,7 @@ import * as diamondUtils from './utils/diamond';
 import * as path from 'path';
 import * as settings from './settings';
 import { decodeContracts, decodeInitializers, decodeAdminPlanets } from '@darkforest_eth/settings';
-import { hardhat } from '@darkforest_eth/constants';
+import { hardhat, specular as specularNetwork } from '@darkforest_eth/constants';
 import './tasks/arena-deploy';
 import './tasks/arena-upgrade';
 import './tasks/artifact';
@@ -138,7 +138,7 @@ const gnosis_optimism = {
 };
 
 const specular = {
-  url: 'https://devnet.specular.network',
+  url: specularNetwork.httpRpc,
   accounts: {
     mnemonic: DEPLOYER_MNEMONIC,
   },

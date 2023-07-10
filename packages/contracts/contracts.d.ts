@@ -33,37 +33,37 @@
 /**
  * The name of the network where these contracts are deployed.
  */
-export declare const NETWORK = "localhost";
+export declare const NETWORK = "specular";
 /**
  * The id of the network where these contracts are deployed.
  */
-export declare const NETWORK_ID = 31337;
+export declare const NETWORK_ID = 93481;
 /**
  * The block in which the DarkForest contract was initialized.
  */
-export declare const START_BLOCK = 0;
+export declare const START_BLOCK = 34788;
 /**
  * The address for the DarkForest contract.
  */
-export declare const CONTRACT_ADDRESS = "0xAeC15AaFB61BC111c909244f6967954FE47B2f1e";
+export declare const CONTRACT_ADDRESS = "0xe772AAc93C69Ce1ef087963aEF0747B41EdB2258";
 /**
  * The address for the initalizer contract. Useful for lobbies.
  */
-export declare const INIT_ADDRESS = "0x5c2EFa60d8c8c05f94e7C0cC0d4B17638d6727d2";
+export declare const INIT_ADDRESS = "0xB9651f89230310240571478fC2bec08a371Fe709";
 /**
  * The address for the Verifier library. Useful for lobbies.
  */
-export declare const VERIFIER_ADDRESS = "0x1aE9623899dDc2bB42217eF985a3d98E6E7623C1";
+export declare const VERIFIER_ADDRESS = "0x206490d1F72e9c2CF5Fe8149E41e3Aa845232db1";
 /**
  * The address for the LibGameUtils library. Useful for lobbies.
  */
-export declare const LIB_GAME_UTILS_ADDRESS = "0x6c452936A27F5Afc41bCC9Dd49a5bdedBdfA9b7A";
+export declare const LIB_GAME_UTILS_ADDRESS = "0x3172676A1cfdAd5aE886076a73D10d140A97F650";
 /**
  * The address for the LibPlanet library. Useful for lobbies.
  */
-export declare const LIB_PLANET_ADDRESS = "0xc2EEd1AdAAe36B640f64c06FeF8Cd32F7473afAA";
+export declare const LIB_PLANET_ADDRESS = "0xCdb3B2675B4f44373f1476f4B0596ff3047C87F5";
 /**
  * The address for the LibArtifacts library. Useful for lobbies.
  */
-export declare const LIB_ARTIFACT_UTILS_ADDRESS = "0x500cf53555c09948f4345594F9523E7B444cD67E";
+export declare const LIB_ARTIFACT_UTILS_ADDRESS = "0x2b3a421BaF59113Ed14268b9522232E3FcB0F442";
 //# sourceMappingURL=contracts.d.ts.map

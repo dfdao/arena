@@ -18,6 +18,7 @@ subgraph/build/*
 subgraph/generated/*
 subgraph/subgraph.yaml
 subgraph/packages/*
+abis/
 
 tsconfig.ref.tsbuildinfo
 
