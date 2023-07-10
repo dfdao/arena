@@ -12,7 +12,7 @@
     "@darkforest_eth/snarks": "6.7.29",
     "@darkforest_eth/types": "6.7.29",
     "@darkforest_eth/whitelist": "6.7.29",
-    "@graphprotocol/graph-cli": "0.30.3",
+    "@graphprotocol/graph-cli": "^0.50.0",
     "@graphprotocol/graph-ts": "0.27.0",
     "@iarna/toml": "^2.2.5",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
