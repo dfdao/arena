@@ -34,7 +34,7 @@ const main = async () => {
     deployments[name.toLowerCase()] = registryAddress;
   }
 
-  deployments['chainId'] = process.env.CHAIN_ID;
+  deployments['chainId'] = getNetwork().chainId;
 
   console.log(deployments);
 
