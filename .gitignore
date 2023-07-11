@@ -8,3 +8,5 @@ node_modules/
 **/nohup.out
 
 **/.env
+
+.DS_Store
