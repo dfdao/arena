@@ -28,7 +28,7 @@ const wallet = new ethers.Wallet(pKey, provider);
 const faucet = new ethers.Contract(FAUCET_ADDRESS, FAUCET_ABI, wallet);
 
 const logStats = async function () {
-  console.log(`Netowrk`, getNetwork().name);
+  console.log(`Network`, getNetwork().name);
   console.log('server booting up at', new Date().toUTCString());
   console.log('faucet address', FAUCET_ADDRESS);
   console.log(`faucet owner`, await faucet.getOwner());
