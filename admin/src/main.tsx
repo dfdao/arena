@@ -9,6 +9,8 @@ import { chainId } from '@dfdao/registry/deployment.json';
 import { publicProvider } from 'wagmi/providers/public';
 import { hardhat, specular } from '@darkforest_eth/constants';
 
+window.global ||= window;
+
 export const localHost: Chain = {
   id: 31337,
   name: 'Hardhat',
