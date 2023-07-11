@@ -13,6 +13,7 @@ import { TwitterVerifier } from './Components/TwitterVerifier';
 import { PortalModal } from './Components/PortalModal';
 import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
+import { getNetwork } from '@Backend/Network/Blockchain';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -53,7 +54,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
         >
           <SmallButton
             onClick={() => {
-              window.open(`https://blockscout.com/xdai/optimism/address/${address}`, '_blank');
+              window.open(`${getNetwork().blockExplorer}/address/${address}`, '_blank');
             }}
           >
             <Gnosis width='24px' height='24px' />
