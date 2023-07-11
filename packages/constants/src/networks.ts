@@ -20,7 +20,7 @@ export const specular: Network = {
   wsRpc: 'wss://devnet.specular.network/ws',
   httpRpc: 'https://devnet.specular.network',
   blockExplorer: 'https://explorer.specular.network',
-  graphUrl: 'https://graph.devnet.specular.network',
+  graphUrl: 'https://graph.devnet.specular.network/subgraphs/name/arena_5',
   faucetDrip: 0.005,
   graphNetwork: 'speculardev',
 };
