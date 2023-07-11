@@ -269,7 +269,7 @@ class EntryPageTerminal {
       else await this.setAccount(account, false);
     } catch (e) {
       console.log(e);
-      this.terminal?.println('Registation failed. Try again with an account that has XDAI tokens.');
+      this.terminal?.println('Creation failed. Try again with an account that has XDAI tokens.');
       await new Promise((r) => setTimeout(r, 2000));
       this.terminal?.newline();
 

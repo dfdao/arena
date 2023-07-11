@@ -22,6 +22,7 @@ export const specular: Network = {
   blockExplorer: 'https://explorer.specular.network',
   graphUrl: 'https://graph.devnet.specular.network/subgraphs/name/arena_5',
   faucetDrip: 0.005,
+  faucetUrl: 'https://server.dfdao.org',
   graphNetwork: 'speculardev',
 };
 
