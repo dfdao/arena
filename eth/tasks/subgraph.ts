@@ -1,8 +1,10 @@
+import { Network, hardhat, networks } from '@darkforest_eth/constants';
 import Docker, { Container, ContainerCreateOptions, HealthConfig } from 'dockerode';
 import * as fs from 'fs/promises';
 import { subtask, task, types } from 'hardhat/config';
 import { HardhatPluginError } from 'hardhat/plugins';
 import type { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
+import { NETWORK } from '@darkforest_eth/contracts';
 import * as path from 'path';
 import * as util from 'util';
 
@@ -34,6 +36,13 @@ type DFContainerCreateOptions = ContainerCreateOptions & {
   // todo this needs to be upstreamed
   Healthcheck?: HealthConfig;
 };
+export function getNetwork(isProd: boolean): Network {
+  if (isProd) {
+    return networks.find((n) => n.name === NETWORK) || hardhat;
+  } else {
+    return hardhat;
+  }
+}
 
 task(TASK_SUBGRAPH_CODEGEN, 'generate subgraph files before graph deploy').setAction(
   subgraphCodegen
@@ -59,6 +68,7 @@ async function subgraphCodegen(_args: HardhatArguments, hre: HardhatRuntimeEnvir
   const yaml = (await fs.readFile(path.join(subgraphPath, 'subgraph.template.yaml')))
     .toString()
     .replace(/{{{CONTRACT_ADDRESS}}}/g, CONTRACT_ADDRESS)
+    .replace(/{{{NETWORK_NAME}}}/g, getNetwork(!isDev).graphNetwork)
     .replace(/#{{{START_BLOCK}}}/g, startBlock) // Gnosis Optimism '1333305, 1333216'
     .replace(/{{{DARKFOREST_ABI_PATH}}}/g, path.join(abisPath, 'DarkForest_stripped.json'))
     .replace(

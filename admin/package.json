@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:prod": "vite --mode production",
+    "deploy:prod": "netlify deploy --build --prod",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "exit 0"

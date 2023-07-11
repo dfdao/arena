@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: DarkForest
-    network: optimism
+    network: '{{{NETWORK_NAME}}}'
     source:
       address: '{{{CONTRACT_ADDRESS}}}'
       abi: DarkForest
@@ -28,7 +28,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: DarkForest
-    network: optimism
+    network: '{{{NETWORK_NAME}}}'
     source:
       abi: DarkForest
     mapping:
