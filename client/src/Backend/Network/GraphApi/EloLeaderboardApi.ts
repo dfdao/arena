@@ -1,6 +1,7 @@
 import { EthAddress, GraphConfigPlayer } from '@darkforest_eth/types';
 import { competitiveConfig } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
+import { getNetwork } from '../Blockchain';
 
 export async function loadPlayerElo(
   config: string,
@@ -16,7 +17,7 @@ export async function loadPlayerElo(
     }
 }
 `;
-  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
+  const rawData = await getGraphQLData(QUERY, getNetwork().graphUrl || 'localhost:8000');
   return rawData;
 }
 
@@ -36,7 +37,7 @@ export async function loadEloLeaderboard(
     }
     `;
 
-  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
+  const rawData = await getGraphQLData(QUERY, getNetwork().graphUrl || 'localhost:8000');
 
   if (rawData.error) {
     throw new Error(rawData.error);

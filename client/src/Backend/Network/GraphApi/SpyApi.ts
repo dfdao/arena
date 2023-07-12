@@ -6,6 +6,7 @@ import {
 } from '@darkforest_eth/types';
 import { getGraphQLData } from '../GraphApi';
 import { validGrandPrixMatch } from './SeasonLeaderboardApi';
+import { getNetwork } from '../Blockchain';
 
 export const loadLiveMatches = async (
   seasonData: GrandPrixMetadata[],
@@ -39,7 +40,7 @@ export const loadLiveMatches = async (
       }
     }`;
 
-  const response = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
+  const response = await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000');
   if ('errors' in response) {
     throw new Error(`error when fetching data, ${JSON.stringify(response)}`);
   }

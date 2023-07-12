@@ -14,6 +14,7 @@ import { PortalModal } from './Components/PortalModal';
 import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 import { getNetwork } from '@Backend/Network/Blockchain';
+import { Link } from '@Components/CoreUI';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -23,6 +24,17 @@ interface AccountModalProps {
 }
 
 const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, setOpen }) => {
+  const eth = useEthConnection();
+  const [copyDiscord, setCopyDiscord] = useState<{ signature: string; sender: EthAddress }>();
+
+  const verifyDiscord = async () => {
+    if (address) {
+      const tweetText = await eth.signMessage('');
+      console.log(`tweet text`, { signature: tweetText, sender: address });
+      setCopyDiscord({ signature: tweetText, sender: address });
+    }
+  };
+
   if (!address) return <></>;
 
   return (
@@ -61,7 +73,22 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
             Explorer
           </SmallButton>
         </div>
-        <TwitterVerifier twitter={twitter} />
+        {/* https://discord.gg/7DMzRb9a3K */}
+        <SmallButton onClick={verifyDiscord}> Connect Discord </SmallButton>
+        {copyDiscord ? (
+          <Copyable textToCopy={JSON.stringify(copyDiscord)} onCopyError={() => {}}>
+            <span>
+              Click the copy icon and paste the text in the{' '}
+              <Link to={'https://discord.com/channels/850187588148396052/909812397680767006'}>
+                verify channel
+              </Link>{' '}
+              in <Link to={`https://discord.gg/7DMzRb9a3K`}>dfdao's discord.</Link>
+              <br />
+              Then refresh!
+            </span>
+          </Copyable>
+        ) : null}
+        {/* <TwitterVerifier twitter={twitter} /> */}
       </AccountContent>
       <Footer>
         <Button onClick={logOut}>
@@ -107,7 +134,7 @@ export function Account() {
             height={theme.spacing.lg}
             color={addressToColor(address)}
           />
-          Account
+          {twitter || truncateAddress(address)}
           <ChevronDown />
         </AvatarSection>
       </AccountButton>

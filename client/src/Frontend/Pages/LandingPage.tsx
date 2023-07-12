@@ -123,7 +123,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  box-shadow 0px 0px 15px gray;
+  box-shadow: 0px 0px 15px gray;
   justify-content: center;
   backdrop-filter: brightness(0.1) blur(5px);
   align-items: center;

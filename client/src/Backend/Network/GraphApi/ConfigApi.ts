@@ -5,6 +5,7 @@ import { LobbyPlanet } from '../../../Frontend/Panes/Lobby/LobbiesUtils';
 import { LobbyInitializers } from '../../../Frontend/Panes/Lobby/Reducer';
 import { CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
+import { getNetwork } from '../Blockchain';
 
 function toNum(num: BigNumber): number {
   return BigNumber.from(num).toNumber();
@@ -28,7 +29,7 @@ query {
       }
 }
 `;
-  const rawData = await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000');
+  const rawData = await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000');
   // @ts-expect-error
   const hasPlanets = rawData.data.arenas.filter((a) => a.planets.length > 0);
   if (hasPlanets.length == 0) return undefined;
@@ -53,7 +54,7 @@ export async function loadConfigFromAddress(address: EthAddress): Promise<{
 `;
   try {
     const rawData: GraphArena = (
-      await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')
+      await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000')
     ).data.arena;
     if (!rawData) throw new Error('arena has no data');
     const configData = convertGraphConfig(rawData);
