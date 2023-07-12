@@ -2,16 +2,16 @@ import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
-import { utils, Wallet } from 'ethers';
+import { Wallet, utils } from 'ethers';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import {
   Account,
-  getAccounts,
   addAccount,
-  setActive,
+  getAccounts,
   getActive,
   logOut,
+  setActive,
 } from '../../Backend/Network/AccountManager';
 import { getEthConnection, getNetwork } from '../../Backend/Network/Blockchain';
 import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
@@ -23,15 +23,11 @@ import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
 import {
   EthConnectionProvider,
-  TwitterProvider,
   SeasonDataProvider,
   SeasonPlayerProvider,
-  useConfigFromHash,
-  TwitterContextType,
+  TwitterProvider,
 } from '../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
-import { tutorialConfig } from '../Utils/constants';
-import { createDefinedContext } from '../Utils/createDefinedContext';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
@@ -294,7 +290,6 @@ export function EntryPage() {
 
   const [seasonData, setSeasonData] = useState<GrandPrixMetadata[] | undefined>();
 
-  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig);
   /* get all twitters on page load */
 
   useEffect(() => {
@@ -366,7 +361,7 @@ export function EntryPage() {
           terminalRef,
           async (account: Account, tutorial: boolean) => {
             if (tutorial) {
-              history.push(`/play/${tutorialLobbyAddress}?create=true`);
+              history.push(`/play/tutorial`);
             }
             await connection.setAccount(account.privateKey);
 

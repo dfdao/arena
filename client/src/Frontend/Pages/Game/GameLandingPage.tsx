@@ -1,25 +1,23 @@
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { DarkForest, DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
-import { EthConnection, neverResolves, weiToEth } from '@darkforest_eth/network';
-import { address } from '@darkforest_eth/serde';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { neverResolves } from '@darkforest_eth/network';
+import { address, isAddress } from '@darkforest_eth/serde';
+import { EthAddress } from '@darkforest_eth/types';
 import { bigIntFromKey } from '@darkforest_eth/whitelist';
+import _ from 'lodash';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
 import { makeContractsAPI } from '../../../Backend/GameLogic/ContractsAPI';
 import GameManager, { GameManagerEvent } from '../../../Backend/GameLogic/GameManager';
 import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
-import TutorialManager, { TutorialState } from '../../../Backend/GameLogic/TutorialManager';
 import { logOut } from '../../../Backend/Network/AccountManager';
+import { getNetwork, loadDiamondContract } from '../../../Backend/Network/Blockchain';
+import { loadConfigFromAddress } from '../../../Backend/Network/GraphApi/ConfigApi';
 import {
-  getNetwork,
-  loadDiamondContract,
-  loadFaucetContract,
-} from '../../../Backend/Network/Blockchain';
-import {
-  callRegisterAndWaitForConfirmation,
   EmailResponse,
   RegisterConfirmationResponse,
-  requestFaucet,
+  callRegisterAndWaitForConfirmation,
   submitInterestedEmail,
   submitPlayerEmail,
 } from '../../../Backend/Network/UtilityServerAPI';
@@ -32,18 +30,14 @@ import {
   TerminalWrapper,
   Wrapper,
 } from '../../Components/GameLandingPageComponents';
+import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { TopLevelDivProvider, UIManagerProvider, useEthConnection } from '../../Utils/AppHooks';
-import { tutorialConfig } from '../../Utils/constants';
+import { stockConfig } from '../../Utils/StockConfigs';
 import { TerminalTextStyle } from '../../Utils/TerminalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
+import { tutorialConfig } from '../../Utils/constants';
 import { GameWindowLayout } from '../../Views/GameWindowLayout';
 import { Terminal, TerminalHandle } from '../../Views/Terminal';
-import { stockConfig } from '../../Utils/StockConfigs';
-import { EthAddress } from '@darkforest_eth/types';
-import { loadConfigFromAddress } from '../../../Backend/Network/GraphApi/ConfigApi';
-import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
-import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
-import _ from 'lodash';
 
 const enum TerminalPromptStep {
   ARENA_CREATED,
@@ -68,6 +62,7 @@ const enum TerminalPromptStep {
 }
 
 export function GameLandingPage({ match, location }: RouteComponentProps<{ contract: string }>) {
+  const contractParam = match.params.contract;
   const history = useHistory();
   const terminalHandle = useRef<TerminalHandle>();
   const gameUIManagerRef = useRef<GameUIManager | undefined>();
@@ -78,26 +73,24 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const [initRenderState, setInitRenderState] = useState(InitRenderState.NONE);
   const ethConnection = useEthConnection();
   const [contractAddress, setContractAddress] = useState<EthAddress | undefined>(
-    match.params.contract ? address(match.params.contract) : undefined
+    isAddress(contractParam) ? address(match.params.contract) : undefined
   );
+  const tutorial = contractParam == 'tutorial';
   const [configHash, setConfigHash] = useState<string>('');
   const [step, setStep] = useState(TerminalPromptStep.ACCOUNT_SET);
   const [config, setConfig] = useState<LobbyInitializers>(stockConfig.competitive);
   const [creationManager, setCreationManager] = useState<ArenaCreationManager>();
   const params = new URLSearchParams(location.search);
   const useZkWhitelist = params.has('zkWhitelist');
-  const selectedAddress = params.get('account');
   const createInstance = params.has('create');
   const [fromCreate, setFromCreate] = useState(false);
-  const isLobby = contractAddress !== address(CONTRACT_ADDRESS);
-  const CHUNK_SIZE = 5;
   const defaultAddress = address(CONTRACT_ADDRESS);
 
   const isProd = process.env.NODE_ENV === 'production';
 
   const advanceStateFromAccountSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      if (!createInstance) {
+      if (!createInstance && !tutorial) {
         setStep(TerminalPromptStep.CONTRACT_SET);
       } else {
         const playerAddress = ethConnection.getAddress();
@@ -738,7 +731,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       let res = '';
       try {
         // indrect eval call: http://perfectionkills.com/global-eval-what-are-the-options/
-        res = (1, eval)(input);
+        res = (_, eval)(input);
         if (res !== undefined) {
           terminal.current?.println(res.toString(), TerminalTextStyle.Text);
         }
@@ -797,6 +790,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   );
 
   async function fetchConfig(): Promise<LobbyInitializers> {
+    if (tutorial) return stockConfig.tutorial;
     if (!contractAddress) throw new Error('No contract address!');
     try {
       const newConfig = await loadConfigFromAddress(contractAddress);
