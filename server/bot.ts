@@ -26,7 +26,11 @@ client.on(Events.MessageCreate, async (message) => {
   if (message.channelId !== targetChannelId) return;
   if (message.content === '/verify') {
     console.log(`verifiying ${message.author.username}`);
-
+    // 1. Extract address
+    // 2. If valid, load mapping
+    // 3. Set mapping discords[address] = username
+    // 4. Write mapping to file
+    // 5. Respond with success
     console.log(message);
     message.channel.send(`verifying ${message.author.username}`);
   }
@@ -41,4 +45,10 @@ export const discords = async (req: Request, res: Response) => {
   );
   console.log(`discords`, discords);
   res.json(discords);
+};
+
+export const disconnectAddress = async (req: Request, res: Response) => {
+  // 1. Extract address
+  // 2. If address exists, remove it from the mapping.
+  // 3. Set mapping ...
 };
