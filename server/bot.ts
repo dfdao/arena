@@ -1,10 +1,18 @@
+import { EthAddress } from '@darkforest_eth/types';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import 'dotenv/config';
+import { utils } from 'ethers';
 import { Request, Response } from 'express';
 import fs, { promises } from 'fs';
 
 const targetChannelId = '909812397680767006';
 const DISCORDS_PATH = './discords.json';
+
+export function verifySignature(sig: string, sender: string, message: string): boolean {
+  const recovered = utils.verifyMessage(message, sig);
+  console.log(`recovered`, recovered);
+  return recovered.toLowerCase().trim() === sender.toLowerCase().trim();
+}
 
 export const client = new Client({
   intents: [
@@ -24,15 +32,28 @@ client.on(Events.ClientReady, () => {
 
 client.on(Events.MessageCreate, async (message) => {
   if (message.channelId !== targetChannelId) return;
-  if (message.content === '/verify') {
-    console.log(`verifiying ${message.author.username}`);
-    // 1. Extract address
-    // 2. If valid, load mapping
-    // 3. Set mapping discords[address] = username
-    // 4. Write mapping to file
-    // 5. Respond with success
-    console.log(message);
-    message.channel.send(`verifying ${message.author.username}`);
+  if (!message.author.bot) {
+    let verified = false;
+
+    try {
+      console.log(`verifiying ${message.author.username}`);
+      const content = JSON.parse(message.content) as { sender: EthAddress; signature: string };
+      if (content.signature && content.sender) {
+        verified = verifySignature(content.signature, content.sender, '');
+        if (verified) {
+          const discords: { [key: string]: string } = JSON.parse(
+            await promises.readFile(DISCORDS_PATH, 'utf-8')
+          );
+          discords[content.sender] = message.author.username;
+          await promises.writeFile(DISCORDS_PATH, JSON.stringify(discords));
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    message.channel.send(
+      `verifying ${message.author.username}: ${verified ? 'Success' : 'Failure'}`
+    );
   }
 });
 
