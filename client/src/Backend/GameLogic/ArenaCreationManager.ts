@@ -1,15 +1,15 @@
 import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
-import { INIT_ADDRESS } from '@darkforest_eth/contracts';
-import { DarkForest, DFArenaInitialize } from '@darkforest_eth/contracts/typechain';
+import { CONTRACT_ADDRESS, INIT_ADDRESS } from '@darkforest_eth/contracts';
+import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
 import { fakeHash, mimcHash, modPBigInt, perlin } from '@darkforest_eth/hashing';
 import { EthConnection } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import {
-  buildContractCallArgs,
-  fakeProof,
   RevealSnarkContractCallArgs,
   RevealSnarkInput,
   SnarkJSProofAndSignals,
+  buildContractCallArgs,
+  fakeProof,
 } from '@darkforest_eth/snarks';
 import revealCircuitPath from '@darkforest_eth/snarks/reveal.wasm';
 import revealZkeyPath from '@darkforest_eth/snarks/reveal.zkey';
