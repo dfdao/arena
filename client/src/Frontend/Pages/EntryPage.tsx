@@ -16,7 +16,7 @@ import {
 import { getEthConnection, getNetwork } from '../../Backend/Network/Blockchain';
 import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import { loadAllPlayerData } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { getAllTwitters, sendDrip } from '../../Backend/Network/UtilityServerAPI';
+import { getAllDiscords, getAllTwitters, sendDrip } from '../../Backend/Network/UtilityServerAPI';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
@@ -298,7 +298,7 @@ export function EntryPage() {
   /* get all twitters on page load */
 
   useEffect(() => {
-    getAllTwitters().then((t) => setTwitters(t));
+    getAllDiscords().then((t) => setTwitters(t));
   }, []);
 
   /* get all season data on page load*/

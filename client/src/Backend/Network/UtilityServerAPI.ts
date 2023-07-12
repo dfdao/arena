@@ -283,6 +283,17 @@ export const getAllTwitters = async (): Promise<AddressTwitterMap> => {
   }
 };
 
+export const getAllDiscords = async (): Promise<AddressTwitterMap> => {
+  try {
+    const twitterMap: AddressTwitterMap = await fetch(
+      `${process.env.DF_TWITTER_URL}/discords`
+    ).then((x) => x.json());
+    return twitterMap;
+  } catch (e) {
+    return {};
+  }
+};
+
 export const verifyTwitterHandle = async (
   verifyMessage: SignedMessage<{ twitter: string }>
 ): Promise<boolean> => {
