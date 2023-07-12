@@ -2,16 +2,16 @@ import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
-import { utils, Wallet } from 'ethers';
+import { Wallet, utils } from 'ethers';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import {
   Account,
-  getAccounts,
   addAccount,
-  setActive,
+  getAccounts,
   getActive,
   logOut,
+  setActive,
 } from '../../Backend/Network/AccountManager';
 import { getEthConnection, getNetwork } from '../../Backend/Network/Blockchain';
 import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
@@ -23,11 +23,9 @@ import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
 import {
   EthConnectionProvider,
-  TwitterProvider,
   SeasonDataProvider,
   SeasonPlayerProvider,
-  useConfigFromHash,
-  TwitterContextType,
+  TwitterProvider,
 } from '../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
@@ -358,27 +356,12 @@ export function EntryPage() {
   const controllerHandler = useCallback(
     (terminalRef) => {
       if (!controller && connection) {
-        const createTutorial = async () => {
-          const tutorialConfig = stockConfig.tutorial;
-          const planets = stockConfig.tutorial.ADMIN_PLANETS;
-          try {
-            const arenaCreationManager = await ArenaCreationManager.create(connection);
-            const { lobby } = await arenaCreationManager.createAndInitArena(tutorialConfig);
-            await arenaCreationManager.bulkCreateLobbyPlanets({ config: tutorialConfig, planets });
-            return lobby;
-          } catch (e) {
-            console.error('Unable to create tutorial.', e);
-            await this.createTutorial();
-          }
-        };
         const newController = new EntryPageTerminal(
           connection,
           terminalRef,
           async (account: Account, tutorial: boolean) => {
             if (tutorial) {
-              const tutorialLobbyAddress = await createTutorial();
-              setLoadingStatus('creating');
-              history.push(`/play/${tutorialLobbyAddress}`);
+              history.push(`/play/tutorial`);
             }
             await connection.setAccount(account.privateKey);
 

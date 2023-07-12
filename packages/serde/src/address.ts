@@ -11,7 +11,8 @@ import { ethers } from 'ethers';
  * @param str An address-like `string`
  */
 
-export function isAddress(str: string): boolean {
+export function isAddress(str: string | undefined): boolean {
+  if (!str) return false;
   return ethers.utils.isAddress(str);
 }
 export function address(str: string): EthAddress {
