@@ -30,8 +30,6 @@ import {
   TwitterContextType,
 } from '../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
-import { tutorialConfig } from '../Utils/constants';
-import { createDefinedContext } from '../Utils/createDefinedContext';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
@@ -294,7 +292,6 @@ export function EntryPage() {
 
   const [seasonData, setSeasonData] = useState<GrandPrixMetadata[] | undefined>();
 
-  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig);
   /* get all twitters on page load */
 
   useEffect(() => {
@@ -361,12 +358,27 @@ export function EntryPage() {
   const controllerHandler = useCallback(
     (terminalRef) => {
       if (!controller && connection) {
+        const createTutorial = async () => {
+          const tutorialConfig = stockConfig.tutorial;
+          const planets = stockConfig.tutorial.ADMIN_PLANETS;
+          try {
+            const arenaCreationManager = await ArenaCreationManager.create(connection);
+            const { lobby } = await arenaCreationManager.createAndInitArena(tutorialConfig);
+            await arenaCreationManager.bulkCreateLobbyPlanets({ config: tutorialConfig, planets });
+            return lobby;
+          } catch (e) {
+            console.error('Unable to create tutorial.', e);
+            await this.createTutorial();
+          }
+        };
         const newController = new EntryPageTerminal(
           connection,
           terminalRef,
           async (account: Account, tutorial: boolean) => {
             if (tutorial) {
-              history.push(`/play/${tutorialLobbyAddress}?create=true`);
+              const tutorialLobbyAddress = await createTutorial();
+              setLoadingStatus('creating');
+              history.push(`/play/${tutorialLobbyAddress}`);
             }
             await connection.setAccount(account.privateKey);
 

@@ -461,9 +461,10 @@ export class ArenaCreationManager {
 
   static async create(
     connection: EthConnection,
-    contractAddress: EthAddress
+    contractAddress?: EthAddress
   ): Promise<ArenaCreationManager> {
     try {
+      if (!contractAddress) contractAddress = address(CONTRACT_ADDRESS);
       const contract = await makeContractsAPI({ connection, contractAddress });
       const manager = new ArenaCreationManager(contractAddress, contract, connection);
       return manager;
