@@ -1,5 +1,6 @@
 import { EthAddress, MapInfo } from '@darkforest_eth/types';
 import { getGraphQLData } from '../GraphApi';
+import { getNetwork } from '../Blockchain';
 
 export async function loadRecentMaps(
   nMaps?: number,
@@ -23,5 +24,5 @@ export async function loadRecentMaps(
 	}
 	`;
 
-  return (await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')).data?.arenas;
+  return (await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000')).data?.arenas;
 }

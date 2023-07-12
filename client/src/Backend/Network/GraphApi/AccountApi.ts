@@ -1,6 +1,7 @@
 import { EthAddress, RawAccount } from '@darkforest_eth/types';
 import { CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
+import { getNetwork } from '../Blockchain';
 
 export async function loadAccountData(address: EthAddress): Promise<RawAccount | undefined> {
   const query = `
@@ -20,5 +21,5 @@ query {
   }
 }
 `;
-  return (await getGraphQLData(query, process.env.GRAPH_URL || 'localhost:8000')).data.player;
+  return (await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000')).data.player;
 }

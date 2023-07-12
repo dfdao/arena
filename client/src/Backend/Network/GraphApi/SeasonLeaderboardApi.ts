@@ -36,6 +36,7 @@ import {
 import { AddressTwitterMap } from '../../../_types/darkforest/api/UtilityServerAPITypes';
 import { getGraphQLData } from '../GraphApi';
 import { graphBadgeToGrandPrixBadge } from './BadgeApi';
+import { getNetwork } from '../Blockchain';
 
 export async function loadWallbreakers(
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
@@ -64,7 +65,7 @@ export async function loadWallbreakers(
       }
     }
     `;
-    return getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
+    return getGraphQLData(QUERY, getNetwork().graphUrl || 'localhost:8000');
   });
   const res = await Promise.all(wallbreakerQuery);
   if (!res || res.length == 0) return [];
@@ -139,7 +140,7 @@ query
     }
   }
 `;
-  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
+  const rawData = await getGraphQLData(QUERY, getNetwork().graphUrl || 'localhost:8000');
   if (rawData.error) {
     throw new Error(rawData.error);
   }
