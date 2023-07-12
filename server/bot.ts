@@ -1,9 +1,12 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import 'dotenv/config';
+import { Request, Response } from 'express';
+import fs, { promises } from 'fs';
 
 const targetChannelId = '909812397680767006';
+const DISCORDS_PATH = './discords.json';
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -23,9 +26,19 @@ client.on(Events.MessageCreate, async (message) => {
   if (message.channelId !== targetChannelId) return;
   if (message.content === '/verify') {
     console.log(`verifiying ${message.author.username}`);
+
     console.log(message);
     message.channel.send(`verifying ${message.author.username}`);
   }
 });
 
-client.login(process.env.BOT_TOKEN);
+export const discords = async (req: Request, res: Response) => {
+  if (!fs.existsSync(DISCORDS_PATH)) {
+    await promises.writeFile(DISCORDS_PATH, JSON.stringify({}));
+  }
+  const discords: { [key: string]: string } = JSON.parse(
+    await promises.readFile(DISCORDS_PATH, 'utf-8')
+  );
+  console.log(`discords`, discords);
+  res.json(discords);
+};

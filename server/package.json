@@ -9,6 +9,7 @@
     "dev": "yarn tsc --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "yarn build && node dist/index.js",
+    "start:dev": "node dist/index.js",
     "clean": "exit 0"
   },
   "author": "",
