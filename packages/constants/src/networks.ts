@@ -10,7 +10,7 @@ export interface Network {
   httpRpc: string;
   blockExplorer?: string;
   graphUrl?: string;
-  faucetUrl?: string;
+  serverUrl?: string;
   faucetDrip?: number;
   graphNetwork: string;
 }
@@ -22,7 +22,7 @@ export const specular: Network = {
   blockExplorer: 'https://explorer.specular.network',
   graphUrl: 'https://graph.devnet.specular.network/subgraphs/name/arena_5',
   faucetDrip: 0.005,
-  faucetUrl: 'https://server.dfdao.org',
+  serverUrl: 'https://server.dfdao.org',
   graphNetwork: 'speculardev',
 };
 
@@ -30,9 +30,10 @@ export const hardhat: Network = {
   name: Chains.Hardhat,
   chainId: 31337,
   httpRpc: 'http://localhost:8545',
-  faucetUrl: 'http://localhost:3000',
+  serverUrl: 'http://localhost:3000',
   faucetDrip: 0.005,
   graphNetwork: 'optimism',
+  graphUrl: 'http://localhost:8000/subgraphs/name/df',
 };
 
 export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;

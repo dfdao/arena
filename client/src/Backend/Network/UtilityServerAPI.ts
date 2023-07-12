@@ -213,14 +213,14 @@ export async function sendDrip(connection: EthConnection, address: EthAddress) {
 }
 
 export const requestFaucet = async (address: EthAddress): Promise<boolean> => {
-  if (!getNetwork().faucetUrl) {
+  if (!getNetwork().serverUrl) {
     return false;
   }
 
   console.log(`sending faucet request for`, address);
 
   try {
-    const res = await fetch(`${getNetwork().faucetUrl}/drip/${address}`, {});
+    const res = await fetch(`${getNetwork().serverUrl}/drip/${address}`, {});
     if (!res.ok) {
       const json = await res.json();
       console.log(json);
@@ -285,9 +285,9 @@ export const getAllTwitters = async (): Promise<AddressTwitterMap> => {
 
 export const getAllDiscords = async (): Promise<AddressTwitterMap> => {
   try {
-    const twitterMap: AddressTwitterMap = await fetch(
-      `${process.env.DF_TWITTER_URL}/discords`
-    ).then((x) => x.json());
+    const twitterMap: AddressTwitterMap = await fetch(`${getNetwork().serverUrl}/discords`).then(
+      (x) => x.json()
+    );
     return twitterMap;
   } catch (e) {
     return {};
