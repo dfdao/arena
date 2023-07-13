@@ -19,11 +19,10 @@ export function ArtifactImage({
 }) {
   const index = spriteFromArtifact(artifact);
   const startAt = Math.round(index.x1 * 16) + Math.round(index.y1 * 16 * 16);
-  console.log(`start at: ${index.x1 * 16}, ${index.y1 * 16}, ${startAt}`);
   return (
     <Container width={size} height={size}>
       <Sprite
-        spriteSheetUrl={`/sprites/artifactthumbs.png`}
+        spriteSheetUrl={`/public/sprites/artifactthumbs.png`}
         spriteWidth={16}
         spriteHeight={16}
         spriteX={index.x1 * 16}
