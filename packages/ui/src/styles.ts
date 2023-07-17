@@ -162,7 +162,7 @@ export const snips = {
   pane: ``,
   // It is unclear where this should go in this file
   destroyedBackground: {
-    backgroundImage: 'url("/img/destroyedbg.png")',
+    backgroundImage: 'url("/public/img/destroyedbg.png")',
     backgroundSize: '150px',
     backgroundPosition: 'right bottom',
     backgroundRepeat: 'no-repeat',

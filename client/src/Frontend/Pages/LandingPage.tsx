@@ -176,7 +176,7 @@ export const BackgroundImage = styled.img`
   width: 100vw;
   height: 100vh;
   display: fixed;
-  background-image: url(/img/screenshots/deathstar.png);
+  background-image: url(/public/img/screenshots/deathstar.png);
   background-size: cover;
   filter: blur(5px) brightness(0.9);
   background-position: 50%, 50%;

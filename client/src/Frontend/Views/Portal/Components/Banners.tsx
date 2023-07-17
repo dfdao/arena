@@ -85,14 +85,14 @@ const BannerTitle = styled.span`
 `;
 
 const OfficialGameBackground = styled.div`
-  background: url('/img/deathstar.png');
+  background: url('/public/img/deathstar.png');
   flex-grow: 1;
   border-radius: 20px;
   filter: brightness(0.8) blur(2px);
 `;
 
 const TutorialBackground = styled.div`
-  background: url('/img/tutorial-banner.png');
+  background: url('/public/img/tutorial-banner.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: auto 100%;
