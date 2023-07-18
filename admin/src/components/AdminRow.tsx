@@ -11,6 +11,7 @@ export const AdminRow: React.FC<{ admin: string }> = ({ admin }) => {
     abi,
     functionName: 'setAdmin',
     args: [admin, false],
+    enabled: admin === address,
   });
   const { write: deleteAdmin } = useContractWrite(deleteAdminConfig);
   return (

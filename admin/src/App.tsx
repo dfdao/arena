@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { NewNFT } from './components/NewNftForm';
 import { ListNFT } from './components/ListNFT';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Faucet } from './components/Faucet';
 
 function NewGrandPrix() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Logo>Dynasty Admin</Logo>
         <ConnectButton chainStatus={'name'} />
       </Nav>
+      <Faucet />
       <Button onClick={() => setMint(!mint)}>{mint ? 'Create Round' : 'Mint NFT'}</Button>
       {mint ? <MintNFT /> : <NewGrandPrix />}
     </Container>
