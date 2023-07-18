@@ -5,7 +5,7 @@ export function LandingPageRoundArt() {
   return (
     <Container>
       <ImgContainer>
-        <LandingPageRoundArtImg src={'/round_art/grandprix.png'} />
+        <LandingPageRoundArtImg src={'/public/round_art/grandprix.png'} />
       </ImgContainer>
     </Container>
   );
