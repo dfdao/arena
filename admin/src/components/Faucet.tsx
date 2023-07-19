@@ -8,11 +8,11 @@ import { networks } from '@darkforest_eth/constants';
 import { TextInput } from './NewRoundForm';
 import { formatEther } from 'viem';
 
-export const Faucet: React.FC = () => {
+export const Faucet = () => {
   const { isConnected, address } = useAccount();
 
   const network = networks.find((n) => n.name == NETWORK);
-  if (!network) return;
+  if (!network) return <></>;
 
   const { data: dripAmount } = useContractRead({
     address: FAUCET_ADDRESS,
