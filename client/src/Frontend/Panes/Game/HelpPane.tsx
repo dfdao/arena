@@ -27,7 +27,6 @@ export function HelpPane({ visible, onClose }: { visible: boolean; onClose: () =
   return (
     <ModalPane id={ModalName.Help} title='Help' visible={visible} onClose={onClose}>
       <HelpContent>
-        Welcome to the help pane! Hopefully you can find answers to your questions here.
         <Section>
           <SectionHeader>Overview</SectionHeader>
           Dark Forest is a vast universe, obfuscated by zero-knowledge cryptography.
