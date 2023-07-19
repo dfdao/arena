@@ -15,11 +15,11 @@ export const enum LandingPageZIndex {
 }
 
 const links = {
-  twitter: 'http://twitter.com/darkforest_eth',
+  twitter: 'http://twitter.com/d_fdao',
   email: 'mailto:zeroxhank@gmail.com',
-  blog: 'https://blog.zkga.me/',
-  discord: 'https://discord.gg/WzYuegCh',
-  github: 'https://github.com/darkforest-eth',
+  blog: 'https://medium.com/dfdao/latest',
+  discord: 'https://discord.gg/7DMzRb9a3K',
+  github: 'https://github.com/dfdao/arena',
   wiki: 'https://dfwiki.net/wiki/Main_Page',
   plugins: 'https://plugins.zkga.me/',
 };
