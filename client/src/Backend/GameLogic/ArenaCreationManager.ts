@@ -29,7 +29,6 @@ import { keccak256, toUtf8Bytes } from 'ethers/lib/utils';
 import _ from 'lodash';
 import { InitPlanet, LobbyPlanet } from '../../Frontend/Panes/Lobby/LobbiesUtils';
 import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
-import { OPTIMISM_GAS_LIMIT } from '../../Frontend/Utils/constants';
 import { getNetwork, loadDiamondContract, loadInitContract } from '../Network/Blockchain';
 import { ContractsAPI, makeContractsAPI } from './ContractsAPI';
 

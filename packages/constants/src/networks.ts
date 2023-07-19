@@ -25,7 +25,7 @@ export const specular: Network = {
   faucetDrip: 0.005,
   serverUrl: 'https://server.dfdao.org',
   graphNetwork: 'speculardev',
-  gasLimit: 75_000_000,
+  gasLimit: 15_000_000,
 };
 
 export const hardhat: Network = {
