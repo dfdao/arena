@@ -1,21 +1,19 @@
-import { Leaderboard } from '@darkforest_eth/types';
+import { address } from '@darkforest_eth/serde';
+import { GraphConfigPlayer, Leaderboard } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { GraphConfigPlayer } from '@darkforest_eth/types';
-import { getRank, Rank } from '../../../Backend/Utils/Rank';
+import { Rank, getRank } from '../../../Backend/Utils/Rank';
 import { Gnosis, Star, Twitter } from '../../Components/Icons';
 import { Red, Subber } from '../../Components/Text';
-import { TextPreview } from '../../Components/TextPreview';
 import dfstyles from '../../Styles/dfstyles';
 import { useArenaLeaderboard, useEloLeaderboard, useTwitters } from '../../Utils/AppHooks';
-import { roundEndTimestamp, roundStartTimestamp } from '../../Utils/constants';
 import { formatDuration } from '../../Utils/TimeUtils';
+import { roundEndTimestamp, roundStartTimestamp } from '../../Utils/constants';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
+import { scoreToTime, truncateAddress } from '../Portal/PortalUtils';
 import { SortableTable } from '../SortableTable';
 import { Table } from '../Table';
-import { scoreToTime, truncateAddress } from '../Portal/PortalUtils';
-import { address } from '@darkforest_eth/serde';
 
 const errorMessage = 'Error Loading Leaderboard';
 
@@ -91,7 +89,6 @@ export function compPlayerToEntry(
     <Link
       to={`/portal/history/${playerAddress}`}
       style={{ color: color, textDecoration: 'underline', fontWeight: 'bolder' }}
-      target='_blank'
     >
       {playerTwitter ? (
         `@${playerTwitter}`

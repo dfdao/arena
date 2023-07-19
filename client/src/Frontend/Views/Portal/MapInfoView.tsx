@@ -1,20 +1,20 @@
 import { getConfigName } from '@darkforest_eth/procedural';
 import { EthAddress } from '@darkforest_eth/types';
 import _ from 'lodash';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { MythicLabelText } from '../../Components/Labels/MythicLabel';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Minimap } from '../../Components/Minimap';
 import { TextPreview } from '../../Components/TextPreview';
-import { generateMinimapConfig, MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { MinimapConfig, generateMinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { useConfigFromHash } from '../../Utils/AppHooks';
 import { competitiveConfig } from '../../Utils/constants';
 
-import { MapDetails } from './MapDetails';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
+import { MapDetails } from './MapDetails';
 
 const NONE = 'No map found';
 function MapOverview({
@@ -80,14 +80,10 @@ function MapOverview({
         />
       )}
       <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', width: '100%' }}>
-        <Link
-          style={{ minWidth: '250px' }}
-          target='_blank'
-          to={`/play/${lobbyAddress}?create=true`}
-        >
+        <Link style={{ minWidth: '250px' }} to={`/play/${lobbyAddress}?create=true`}>
           <LobbyButton primary>Play</LobbyButton>
         </Link>
-        <Link style={{ minWidth: '250px' }} target='_blank' to={`/arena/${lobbyAddress}/settings`}>
+        <Link style={{ minWidth: '250px' }} to={`/arena/${lobbyAddress}/settings`}>
           <LobbyButton>Remix Map</LobbyButton>
         </Link>
       </div>

@@ -10,12 +10,12 @@ import {
 } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { getNetwork } from '../../Backend/Network/Blockchain';
 import Viewport from '../Game/Viewport';
 import dfstyles from '../Styles/dfstyles';
 import { useUIManager } from '../Utils/AppHooks';
 import UIEmitter, { UIEmitterEvent } from '../Utils/UIEmitter';
 import { Link } from './CoreUI';
-import { getNetwork } from '../../Backend/Network/Blockchain';
 
 export function BlinkCursor() {
   const [visible, setVisible] = useState<boolean>(false);
@@ -86,7 +86,7 @@ export function TxLink({ tx }: { tx: Transaction }) {
     return (
       <>
         <u>
-          <Link onClick={() => window.open(`${getNetwork().blockExplorer}/${tx.hash}`)}>
+          <Link newTab to={`${getNetwork().blockExplorer}/${tx.hash}`}>
             {tx.hash.substring(0, 7)}
           </Link>
         </u>
@@ -128,7 +128,11 @@ export function ArtifactNameLink({ id }: { id: ArtifactId }) {
     UIEmitter.getInstance().emit(UIEmitterEvent.ShowArtifact, artifact);
   };
 
-  return <Link onClick={click}>{artifactName(artifact)}</Link>;
+  return (
+    <Link newTab onClick={click}>
+      {artifactName(artifact)}
+    </Link>
+  );
 }
 
 export function PlanetNameLink({ planet }: { planet: Planet }) {
@@ -140,7 +144,11 @@ export function CenterChunkLink({ chunk, children }: { chunk: Chunk; children: R
 }
 
 export function FAQ04Link({ children }: { children: React.ReactNode }) {
-  return <Link to={'https://blog.zkga.me/df-04-faq'}>{children} </Link>;
+  return (
+    <Link newTab to={'https://blog.zkga.me/df-04-faq'}>
+      {children}{' '}
+    </Link>
+  );
 }
 
 export const LongDash = () => (

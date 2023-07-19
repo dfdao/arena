@@ -1,7 +1,6 @@
 import {
   Artifact,
   ArtifactId,
-  BlocklistMap,
   ClaimedCoords,
   EthAddress,
   LocationId,
@@ -223,7 +222,10 @@ const tips = [
   'Beware of pirates! To capture a planet with pirates, simply send an attack large enough to overcome its current energy.',
   <>
     Navigate the Dark Forest with allies (and enemies) - join the{' '}
-    <Link to='https://discord.gg/C23An5qNGv'>Dark Forest Discord</Link>!
+    <Link newTab to='https://discord.gg/C23An5qNGv'>
+      Dark Forest Discord
+    </Link>
+    !
   </>,
   'There are many different artifact types, each with unique properties... try activating one on a planet!',
   'The top 63 players get NFT rewards at the end of each v0.6 round!',
@@ -241,7 +243,11 @@ const tips = [
   'You can import and export maps! Be careful importing maps from others, they may contain fabricated map data.',
   <>
     If mining the universe is slow on your computer, you can try the Remote Miner plugin. Find that
-    and other plugins on <Link to='https://plugins.zkga.me'>plugins.zkga.me</Link>.
+    and other plugins on{' '}
+    <Link newTab to='https://plugins.zkga.me'>
+      plugins.zkga.me
+    </Link>
+    .
   </>,
   "A planet can only have 6 artifacts on it at any given time. Sometimes more if you get lucky. It's the blockchain, after all.",
   'A foundry must be prospected before you can attempt to find an artifact, but make sure to click "Find" before 256 blocks or it will be lost forever.',
@@ -254,11 +260,17 @@ const tips = [
   'Dark Forest exists on the blockchain, so you can play with an entirely different client if you want.',
   <>
     Writing plugins? Check out some documentation{' '}
-    <Link to='https://github.com/darkforest-eth/client/blob/master/docs/classes/Backend_GameLogic_GameManager.default.md'>
+    <Link
+      newTab
+      to='https://github.com/darkforest-eth/client/blob/master/docs/classes/Backend_GameLogic_GameManager.default.md'
+    >
       here
     </Link>{' '}
     and{' '}
-    <Link to='https://github.com/darkforest-eth/client/blob/master/docs/classes/Backend_GameLogic_GameUIManager.default.md'>
+    <Link
+      newTab
+      to='https://github.com/darkforest-eth/client/blob/master/docs/classes/Backend_GameLogic_GameUIManager.default.md'
+    >
       here
     </Link>
     .

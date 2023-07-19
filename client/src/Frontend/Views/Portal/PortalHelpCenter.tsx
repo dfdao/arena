@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
 import { IconType } from '@darkforest_eth/ui';
+import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import styled from 'styled-components';
 
+import { Icon } from '../../Components/Icons';
 import { useDisableScroll } from '../../Utils/AppHooks';
+import { CloseButton } from './Account';
 import { PortalModal } from './Components/PortalModal';
 import { theme } from './styleUtils';
-import { CloseButton } from './Account';
-import { Icon } from '../../Components/Icons';
 
 const HelpContent = `
 Welcome to Dark Forest Arena Grand Prix! 
 
-Grand Prix: Seasons is a formal competition based on the Dark Forest speedruns we introduced in June. During a season, players compete to get the fastest cumulative time across a new race every week.
+Grand Prix is a Dark Forest solo race competition. Players compete to get the fastest time each week.
 
-Here is an overview of the Grand Prix Portal, which you can use to compete and view data about competitions.
+# Portal Overview
 
 ## Home Page
 Here you can jump into a new round, watch other live players, and view your ranking on the current round and the entire season.
@@ -51,7 +51,7 @@ export const PortalHelpCenter = () => {
               <span
                 style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '1.2rem' }}
               >
-                Help Center
+                Portal Help
               </span>
             </Header>
             <CloseButton
@@ -100,6 +100,11 @@ const Content = styled.div`
   text-align: left;
   color: ${theme.colors.fgMuted2};
   line-height: 1.5;
+  h1 {
+margin-bottom: ${theme.spacing.md};
+		font-size: 1.2rem;
+    text-transform: uppercase;
+  }
   h2 {
 		margin-bottom: ${theme.spacing.md}
 		font-size: 1.1rem;

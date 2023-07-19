@@ -182,14 +182,14 @@ export function Link(
   props: {
     to?: string;
     color?: string;
-    openInThisTab?: boolean;
+    newTab?: boolean;
     children: React.ReactNode;
   } & React.HtmlHTMLAttributes<HTMLAnchorElement>
 ) {
-  const { to, color, openInThisTab, children } = props;
+  const { to: href, newTab, children } = props;
 
   return (
-    <LinkImpl {...props} href={to} color={color} target={openInThisTab ? undefined : '_blank'}>
+    <LinkImpl {...props} href={href} target={newTab ? '_blank' : undefined}>
       {children}
     </LinkImpl>
   );

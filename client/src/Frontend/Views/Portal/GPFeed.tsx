@@ -3,16 +3,14 @@ import { CleanMatchEntry, EthAddress } from '@darkforest_eth/types';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Btn } from '../../Components/Btn';
+import styled from 'styled-components';
 import { useLiveMatches, useSeasonData, useTwitters } from '../../Utils/AppHooks';
-import { HOUR_IN_SECONDS, DEV_CONFIG_HASH_1, DUMMY } from '../../Utils/constants';
 import { formatStartTime } from '../../Utils/TimeUtils';
+import { DUMMY } from '../../Utils/constants';
 import { compPlayerToEntry } from '../Leaderboards/ArenaLeaderboard';
 import { PaddedRow } from './Components/PaddedRow';
-import styled from 'styled-components';
 import { scoreToTime, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
-import useSWR from 'swr';
 
 export interface MapDetailsProps {
   configHash: string | undefined;
@@ -82,7 +80,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
                         <span style={{ color: dfstyles.colors.dfgreen }}>finished</span> in{' '}
                         {scoreToTime(entry.duration)}
                       </span>
-                      <Link to={`/play/${entry.lobbyAddress}`} target='_blank'>
+                      <Link to={`/play/${entry.lobbyAddress}`}>
                         <Button>View</Button>
                       </Link>
                     </Content>
@@ -98,7 +96,7 @@ export const GPFeed: React.FC<MapDetailsProps> = ({ configHash }) => {
                         )}{' '}
                         <span style={{ color: dfstyles.colors.dfpurple }}>started</span> to race
                       </span>
-                      <Link to={`/play/${entry.lobbyAddress}`} target='_blank'>
+                      <Link to={`/play/${entry.lobbyAddress}`}>
                         <Button>View</Button>
                       </Link>
                     </Content>

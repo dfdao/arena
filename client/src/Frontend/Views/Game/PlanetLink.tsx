@@ -12,6 +12,7 @@ export function PlanetLink({ planet, children }: { planet: Planet; children: Rea
 
   return (
     <Link
+      newTab
       color={dfstyles.colors.text}
       onClick={() => {
         if (isLocatable(planet)) {

@@ -5,9 +5,8 @@ import { getRank, Rank } from '../../../Backend/Utils/Rank';
 import { Btn } from '../../Components/Btn';
 import { Link } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
-import { Bronze, Gold, Green, Red, Silver, White } from '../../Components/Text';
-import { useArenaLeaderboard, useEloLeaderboard, useUIManager } from '../../Utils/AppHooks';
-import { bronzeTime, goldTime, silverTime } from '../../Utils/constants';
+import { Bronze, Gold, Green, Silver, White } from '../../Components/Text';
+import { useArenaLeaderboard, useUIManager } from '../../Utils/AppHooks';
 import { formatDuration } from '../../Utils/TimeUtils';
 import { ModalPane } from '../../Views/Game/ModalPane';
 
@@ -70,11 +69,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
   arenaStats = (
     <div>
       <Row>
-        <Link
-          openInThisTab={true}
-          style={{ width: '100%' }}
-          to={`/play/${lobbyAddress}?create=true`}
-        >
+        <Link style={{ width: '100%' }} to={`/play/${lobbyAddress}?create=true`}>
           <Btn size='stretch'>Race again</Btn>
         </Link>
       </Row>
@@ -101,8 +96,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
         {arenaStats}
         <div style={{ textAlign: 'center' }}>
           Help us improve Grand Prix by{' '}
-          <Link openInThisTab={false} to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
-            {' '}
+          <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'} newTab>
             giving feedback on this survey
           </Link>
           {' 😊'}
@@ -123,7 +117,10 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
         {/* {arenaStats} */}
         <div style={{ textAlign: 'center' }}>
           <p>Help us improve Dark Forest Arena by </p>
-          <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}> giving feedback on this survey 😊</Link>
+          <Link newTab to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
+            {' '}
+            giving feedback on this survey 😊
+          </Link>
         </div>{' '}
       </div>
     );

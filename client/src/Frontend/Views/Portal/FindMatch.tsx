@@ -1,18 +1,17 @@
-import { EthAddress, LiveMatch, ExtendedMatchEntry, CleanMatchEntry } from '@darkforest_eth/types';
+import { getConfigName } from '@darkforest_eth/procedural';
+import { CleanMatchEntry, EthAddress, LiveMatch } from '@darkforest_eth/types';
+import _ from 'lodash';
 import React, { CSSProperties } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from '../../Components/Button';
+import { Row } from '../../Components/Row';
 import { Subber } from '../../Components/Text';
 import dfstyles from '../../Styles/dfstyles';
 import { useTwitters } from '../../Utils/AppHooks';
 import { formatStartTime } from '../../Utils/TimeUtils';
-import { compPlayerToEntry } from '../Leaderboards/ArenaLeaderboard';
 import { GenericErrorBoundary } from '../GenericErrorBoundary';
-import { getConfigName } from '@darkforest_eth/procedural';
-import { Btn } from '../../Components/Btn';
-import { Row } from '../../Components/Row';
-import _ from 'lodash';
-import Button from '../../Components/Button';
+import { compPlayerToEntry } from '../Leaderboards/ArenaLeaderboard';
 
 export interface FindMatchProps {
   game: LiveMatch | undefined;
@@ -70,7 +69,7 @@ export const MatchComponent: React.FC<MatchDetails> = ({
           )}
         </div>
         <div>Creation Time: {formatStartTime(startTime)}</div>
-        <Link to={`/play/${matchId}`} target='_blank'>
+        <Link to={`/play/${matchId}`}>
           {totalSpots == spotsTaken ? (
             <MatchButton>View</MatchButton>
           ) : (

@@ -77,7 +77,9 @@ export function HatPane({
         </div>
 
         <EmSpacer height={1} />
-        <Link to={'https://blog.zkga.me/df-04-faq'}>Get More xDai</Link>
+        <Link newTab to={'https://blog.zkga.me/df-04-faq'}>
+          Get More xDai
+        </Link>
         <EmSpacer height={0.5} />
 
         <Btn

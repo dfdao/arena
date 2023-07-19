@@ -28,7 +28,11 @@ function HelpContent() {
       <Spacer height={8} />
       <p>
         Dark Forest maintains a repository to which community members can submit their own plugins.
-        You can find it <Link to='https://plugins.zkga.me/'>here</Link>.
+        You can find it{' '}
+        <Link newTab to='https://plugins.zkga.me/'>
+          here
+        </Link>
+        .
       </p>
       <Spacer height={8} />
       <p>Try editing one of the default plugins to see how it works!</p>

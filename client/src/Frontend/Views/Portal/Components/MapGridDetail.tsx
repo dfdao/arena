@@ -1,17 +1,16 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { getConfigName } from '@darkforest_eth/procedural';
 import { EthAddress } from '@darkforest_eth/types';
-import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
+import dfstyles from '@darkforest_eth/ui/dist/styles';
 import { debounce } from 'lodash';
-import styled from 'styled-components';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import { Spacer } from '../../../Components/CoreUI';
 import { LoadingSpinner } from '../../../Components/LoadingSpinner';
 import { Minimap } from '../../../Components/Minimap';
-import { getConfigName } from '@darkforest_eth/procedural';
+import { MinimapConfig, generateMinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
+import { useConfigFromHash, useTwitters } from '../../../Utils/AppHooks';
 import { truncateAddress } from '../PortalUtils';
-import { Spacer } from '../../../Components/CoreUI';
-import { useConfigFromHash } from '../../../Utils/AppHooks';
-import dfstyles from '@darkforest_eth/ui/dist/styles';
-import { useTwitters } from '../../../Utils/AppHooks';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
@@ -69,11 +68,7 @@ export const MapGridDetail: React.FC<{
               {nGames} game{nGames > 1 && 's'}
             </span>
           )}
-          <Link
-            style={{ minWidth: '250px' }}
-            target='_blank'
-            to={`/play/${lobbyAddress}?create=true`}
-          ></Link>
+          <Link style={{ minWidth: '250px' }} to={`/play/${lobbyAddress}?create=true`}></Link>
         </>
       )}
     </DetailContainer>
