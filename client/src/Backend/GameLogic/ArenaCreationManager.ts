@@ -30,7 +30,7 @@ import _ from 'lodash';
 import { InitPlanet, LobbyPlanet } from '../../Frontend/Panes/Lobby/LobbiesUtils';
 import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
 import { OPTIMISM_GAS_LIMIT } from '../../Frontend/Utils/constants';
-import { loadDiamondContract, loadInitContract } from '../Network/Blockchain';
+import { getNetwork, loadDiamondContract, loadInitContract } from '../Network/Blockchain';
 import { ContractsAPI, makeContractsAPI } from './ContractsAPI';
 
 export type CreatePlanetData = {
@@ -106,7 +106,7 @@ export class ArenaCreationManager {
 
       const tx = await this.contract.submitTransaction(createTxIntent, {
         // The createLobby function costs somewhere around 12mil gas
-        gasLimit: OPTIMISM_GAS_LIMIT,
+        gasLimit: getNetwork().gasLimit,
       });
 
       const lobbyReceipt = await tx.confirmedPromise;
@@ -124,7 +124,7 @@ export class ArenaCreationManager {
 
       const startTx = await this.contract.submitTransaction(startTxIntent, {
         // The createLobby function costs somewhere around 12mil gas
-        gasLimit: OPTIMISM_GAS_LIMIT,
+        gasLimit: getNetwork().gasLimit,
       });
 
       const startRct = await startTx.confirmedPromise;
@@ -150,7 +150,7 @@ export class ArenaCreationManager {
     };
 
     const tx = await this.contract.submitTransaction(txIntent, {
-      gasLimit: '15000000',
+      gasLimit: getNetwork().gasLimit,
     });
 
     await tx.confirmedPromise;
@@ -221,7 +221,7 @@ export class ArenaCreationManager {
     };
 
     const tx = await this.contract.submitTransaction(txIntent, {
-      gasLimit: '15000000',
+      gasLimit: getNetwork().gasLimit,
     });
 
     const createRct = await tx.confirmedPromise;
@@ -250,7 +250,7 @@ export class ArenaCreationManager {
         args: args,
       };
       const tx = await this.contract.submitTransaction(txIntent, {
-        gasLimit: OPTIMISM_GAS_LIMIT,
+        gasLimit: getNetwork().gasLimit,
       });
       return tx.confirmedPromise;
     });
@@ -271,7 +271,7 @@ export class ArenaCreationManager {
     };
 
     const tx = await this.contract.submitTransaction(txIntent, {
-      gasLimit: '15000000',
+      gasLimit: getNetwork().gasLimit,
     });
 
     await tx.confirmedPromise;

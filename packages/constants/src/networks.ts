@@ -13,6 +13,7 @@ export interface Network {
   serverUrl?: string;
   faucetDrip?: number;
   graphNetwork: string;
+  gasLimit?: number;
 }
 export const specular: Network = {
   name: Chains.Specular,
@@ -24,6 +25,7 @@ export const specular: Network = {
   faucetDrip: 0.005,
   serverUrl: 'https://server.dfdao.org',
   graphNetwork: 'speculardev',
+  gasLimit: 75_000_000,
 };
 
 export const hardhat: Network = {
@@ -34,6 +36,7 @@ export const hardhat: Network = {
   faucetDrip: 0.005,
   graphNetwork: 'optimism',
   graphUrl: 'http://localhost:8000/subgraphs/name/df',
+  gasLimit: 15_000_000,
 };
 
 export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;

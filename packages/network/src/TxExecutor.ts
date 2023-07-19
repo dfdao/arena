@@ -14,6 +14,17 @@ import timeout from 'p-timeout';
 import { EthConnection } from './EthConnection';
 import { gweiToWei, waitForTransaction } from './Network';
 import { ConcurrentQueueConfiguration, ThrottledConcurrentQueue } from './ThrottledConcurrentQueue';
+import { Network, hardhat, networks } from '@darkforest_eth/constants';
+import { NETWORK } from '@darkforest_eth/contracts';
+
+export function getNetwork(): Network {
+  const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
+  if (isProdNetwork) {
+    return networks.find((n) => n.name === NETWORK) || hardhat;
+  } else {
+    return hardhat;
+  }
+}
 
 /**
  * Returns either a string that represents the gas price we should use by default for transactions,
