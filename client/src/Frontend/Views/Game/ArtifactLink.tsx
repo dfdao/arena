@@ -40,6 +40,7 @@ export function ArtifactLink({
 
   return (
     <Link
+      newTab
       color={dfstyles.colors.text}
       onClick={onClick}
       onMouseDown={() => {

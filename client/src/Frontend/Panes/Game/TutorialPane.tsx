@@ -7,11 +7,10 @@ import TutorialManager, {
 import { Btn } from '../../Components/Btn';
 import { Link } from '../../Components/CoreUI';
 import { Icon, IconType } from '../../Components/Icons';
-import { Bronze, Gold, Green, Red, Silver, White } from '../../Components/Text';
-import { TextPreview } from '../../Components/TextPreview';
+import { Gold, Green, Red, White } from '../../Components/Text';
 import { useUIManager } from '../../Utils/AppHooks';
-import { tutorialFoundryLocation } from '../../Utils/constants';
 import { useBooleanSetting } from '../../Utils/SettingsHooks';
+import { tutorialFoundryLocation } from '../../Utils/constants';
 import { StyledTutorialPane } from './StyledTutorialPane';
 
 function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }) {
@@ -286,11 +285,17 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         Congratulations on completing your first round of Dark Forest Arena!
         <br /> <br />
         For in-depth strategy guide,{' '}
-        <Link to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'>
+        <Link
+          newTab
+          to='https://medium.com/@classicjdf/classicjs-dark-forest-101-strategy-guide-part-1-energy-1b80923fee69'
+        >
           click here
         </Link>
         . For video tutorials,{' '}
-        <Link to='https://www.youtube.com/watch?v=3a4i9IyfmBI&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK'>
+        <Link
+          newTab
+          to='https://www.youtube.com/watch?v=3a4i9IyfmBI&list=PLn4H2Bj-iklclFZW_YpKCQaTnBVaECLDK'
+        >
           click here
         </Link>
         . More information will pop up in the <White>upper-right</White> as you discover more about

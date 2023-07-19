@@ -2,12 +2,12 @@ import { getConfigName } from '@darkforest_eth/procedural';
 import { GrandPrixHistory } from '@darkforest_eth/types';
 import { debounce } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { LoadingSpinner } from '../../../Components/LoadingSpinner';
 import { Minimap } from '../../../Components/Minimap';
 import { LobbyButton } from '../../../Pages/Lobby/LobbyMapEditor';
-import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
+import { MinimapConfig, generateMinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
 import { useConfigFromHash } from '../../../Utils/AppHooks';
 import { formatDuration } from '../../../Utils/TimeUtils';
 import { theme } from '../styleUtils';
@@ -87,11 +87,7 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
           <DetailLabel>Badges</DetailLabel>
           <DetailValue>{round.badges.length}</DetailValue>
         </DetailRow>
-        <Link
-          style={{ minWidth: '250px' }}
-          target='_blank'
-          to={`/play/${lobbyAddress}?create=true`}
-        >
+        <Link style={{ minWidth: '250px' }} to={`/play/${lobbyAddress}?create=true`}>
           <LobbyButton primary>Play</LobbyButton>
         </Link>
         <Link style={{ minWidth: '250px' }} to={`/portal/map/${round.configHash}`}>

@@ -1,16 +1,15 @@
+import { getConfigName } from '@darkforest_eth/procedural';
+import { EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
+import { debounce } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { formatDuration } from '../../Utils/TimeUtils';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import { Minimap } from '../../Components/Minimap';
-import { generateMinimapConfig, MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
-import { Link } from 'react-router-dom';
-import { debounce } from 'lodash';
-import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
-import { EthAddress, GrandPrixMetadata, RegistryResponse } from '@darkforest_eth/types';
-import { getConfigName } from '@darkforest_eth/procedural';
-import { PortalButton } from '../../Styles/dfstyles';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
+import { MinimapConfig, generateMinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
+import { formatDuration } from '../../Utils/TimeUtils';
 import { theme } from './styleUtils';
 
 type RoundStatus = 'not started' | 'started' | 'ended';
@@ -116,7 +115,7 @@ export const MapOverview: React.FC<{
           </div>
           <Title>{mapName ?? 'Grand Prix Round'}</Title>
           <MapActions>
-            <Link target='_blank' to={`/play/${lobbyAddress}?create=true`}>
+            <Link to={`/play/${lobbyAddress}?create=true`}>
               <LobbyButton disabled={status.toString() != 'started'} primary>
                 Play round
               </LobbyButton>

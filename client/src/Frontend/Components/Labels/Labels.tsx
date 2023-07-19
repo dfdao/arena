@@ -68,7 +68,7 @@ export function AccountLabel({
  */
 export function TwitterLink({ twitter, color }: { twitter: string; color?: string }) {
   return (
-    <Link color={color} to={`https://twitter.com/${twitter}`}>
+    <Link newTab color={color} to={`https://twitter.com/${twitter}`}>
       @{twitter}
     </Link>
   );

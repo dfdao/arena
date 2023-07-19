@@ -1,23 +1,15 @@
-import _, { chunk } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import {
-  CreatedPlanet,
   ArenaCreationManager,
+  CreatedPlanet,
 } from '../../../Backend/GameLogic/ArenaCreationManager';
+import { getNetwork } from '../../../Backend/Network/Blockchain';
 import { Link, Spacer } from '../../Components/CoreUI';
 import { Row } from '../../Components/Row';
 import { Sub } from '../../Components/Text';
-import {
-  CloseButton,
-  CloseButtonStyle,
-  LobbiesPaneProps,
-  LobbyPlanet,
-  mirrorX,
-  mirrorY,
-} from './LobbiesUtils';
-import { InvalidConfigError, LobbyConfigAction, LobbyConfigState, toInitializers } from './Reducer';
-import { getNetwork } from '../../../Backend/Network/Blockchain';
+import { CloseButton, CloseButtonStyle, LobbiesPaneProps, LobbyPlanet } from './LobbiesUtils';
+import { LobbyConfigAction, LobbyConfigState } from './Reducer';
 
 const PLANET_TYPE_NAMES = ['Planet', 'Asteroid Field', 'Foundry', 'Spacetime Rip', 'Quasar'];
 export function PlanetListPane({
@@ -193,6 +185,7 @@ export function PlanetListPane({
           <HoverWrapper>
             {planet.createTx && (
               <Link
+                newTab
                 to={`${getNetwork().blockExplorer}/${planet.createTx}`}
                 style={{ margin: 'auto' }}
               >
@@ -201,6 +194,7 @@ export function PlanetListPane({
             )}
             {planet.revealTx && (
               <Link
+                newTab
                 to={`${getNetwork().blockExplorer}/${planet.revealTx}`}
                 style={{ margin: 'auto' }}
               >

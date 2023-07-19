@@ -189,18 +189,6 @@ export default function UnsubscribePage() {
           </LinkContainer>
         </Footer>
       </div>
-
-      {/*
-      <div style={styles.linksRow}>
-        <Link to='/tutorial' size='lg' style={{ marginRight: '2rem' }}>
-          Tutorial
-        </Link>
-        <Link to='/' size='lg'>
-          About
-        </Link>
-          <BasicEmailInput isPlayer={false} />
-      </div>
-      */}
     </div>
   );
 }
