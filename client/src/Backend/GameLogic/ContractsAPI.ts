@@ -1018,7 +1018,7 @@ export class ContractsAPI extends EventEmitter {
 
     if (chainId === GNOSIS_OPTIMISM_CHAIN_ID) overrides.gasPrice = '1';
     if (chainId === KOVAN_OPTIMISM_CHAIN_ID) overrides.gasPrice = '100000';
-    if (chainId === specular.chainId) overrides.gasPrice = '1000000000';
+    if (chainId === specular.chainId) overrides.gasPrice = '1';
     const queuedTx = await this.txExecutor.queueTransaction(txIntent, overrides);
 
     this.emit(ContractsAPIEvent.TxQueued, queuedTx);

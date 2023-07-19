@@ -22,6 +22,7 @@ export const AddAdmin: React.FC<{
     abi: nftContract ? NFTAbi : RegistryAbi,
     functionName: 'setAdmin',
     args: [newAdminAddress, true],
+    enabled: !!newAdminAddress,
   });
 
   const { writeAsync: addAdminWrite } = useContractWrite({
