@@ -22,6 +22,7 @@ import RegistryAbi from '@dfdao/registry/abi/Registry.json';
 import deploymentUrl from '@dfdao/registry/deployment.json';
 import { Contract, ethers, providers, Wallet } from 'ethers';
 import { Registry } from '@dfdao/registry/types';
+import { getNetwork } from '../Blockchain';
 
 /**
  * Purpose:
@@ -53,7 +54,7 @@ query {
   }
 }
 `;
-  const rawData = await getGraphQLData(QUERY, process.env.GRAPH_URL || 'localhost:8000');
+  const rawData = await getGraphQLData(QUERY, getNetwork().graphUrl || 'localhost:8000');
   if (rawData.error) {
     throw new Error(rawData.error);
   }

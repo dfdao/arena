@@ -8,6 +8,7 @@ const { EnvironmentPlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const regeneratorRuntime = require('regenerator-runtime');
 
 // This code is used to lookup where the `@darkforest_eth` packages exist in the tree
 // whether they are in a monorepo or installed as packages
@@ -117,7 +118,6 @@ module.exports = {
     }),
     // The string values are fallbacks if the env variable is not set
     new EnvironmentPlugin({
-      NODE_ENV: 'development',
       DEFAULT_RPC: 'https://rpc-df.xdaichain.com/',
       // This must be null to indicate to webpack that this environment variable is optional
       DF_WEBSERVER_URL: null,
