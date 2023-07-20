@@ -127,7 +127,7 @@ class EntryPageTerminal {
       this.terminal?.print(`${account.address} `);
       this.terminal?.println(
         this.balancesEth[i].toFixed(4) + ' xDAI',
-        this.balancesEth[i] < 0.005 ? TerminalTextStyle.Red : TerminalTextStyle.Green
+        this.balancesEth[i] < 0.0005 ? TerminalTextStyle.Red : TerminalTextStyle.Green
       );
     });
 
