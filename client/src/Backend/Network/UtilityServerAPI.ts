@@ -199,7 +199,7 @@ export async function sendDrip(connection: EthConnection, address: EthAddress) {
     const nextAccessTimeSeconds = (await faucet.getNextAccessTime(address)).toNumber();
     const nowSeconds = Date.now() / 999;
 
-    if (currBalance > (getNetwork().faucetDrip || 0.0005) || nowSeconds < nextAccessTimeSeconds) {
+    if (currBalance > 0.0005 || nowSeconds < nextAccessTimeSeconds) {
       return;
     }
     const success = await requestFaucet(address);
