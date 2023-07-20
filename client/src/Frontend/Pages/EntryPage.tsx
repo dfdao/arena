@@ -127,7 +127,7 @@ class EntryPageTerminal {
       this.terminal?.print(`${account.address} `);
       this.terminal?.println(
         this.balancesEth[i].toFixed(2) + ' xDAI',
-        this.balancesEth[i] < 0.01 ? TerminalTextStyle.Red : TerminalTextStyle.Green
+        this.balancesEth[i] < 0.005 ? TerminalTextStyle.Red : TerminalTextStyle.Green
       );
     });
 
@@ -251,7 +251,7 @@ class EntryPageTerminal {
     console.log(`sending drip... to`, account);
     try {
       const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
-      if (currBalance < (getNetwork().faucetDrip || 0.005)) {
+      if (currBalance < (getNetwork().faucetDrip || 0.0005)) {
         this.terminal.println(`Loading...`);
         await sendDrip(this.ethConnection, account.address);
         const newBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
