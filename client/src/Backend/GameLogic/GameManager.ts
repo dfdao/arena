@@ -132,6 +132,7 @@ import { addMessage, deleteMessages, getMessagesOnPlanets } from '../Network/Mes
 import { loadNetworkHealth } from '../Network/NetworkHealthApi';
 import {
   disconnectTwitter,
+  getAllDiscords,
   getAllTwitters,
   verifyTwitterHandle,
 } from '../Network/UtilityServerAPI';
@@ -1731,7 +1732,7 @@ class GameManager extends EventEmitter {
   }
 
   private async refreshTwitters(): Promise<void> {
-    const addressTwitters = await getAllTwitters();
+    const addressTwitters = await getAllDiscords();
     this.setPlayerTwitters(addressTwitters);
   }
 

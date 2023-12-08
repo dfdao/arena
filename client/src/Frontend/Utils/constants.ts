@@ -42,7 +42,7 @@ const goldTime = 2500; // 20 minutes in seconds
 
 const OPTIMISM_GAS_LIMIT = 15000000;
 
-const MAX_ADMIN_PLANETS = 30;
+const MAX_ADMIN_PLANETS = 50;
 
 const CONFIG_CONSTANTS = `config{
   # CLAIM_PLANET_COOLDOWN,

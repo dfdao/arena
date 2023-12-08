@@ -81,7 +81,7 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
     <Container>
       <HeaderContainer>
         <div className='col'>
-          <Title>Season {current + 1}</Title>
+          <Title>Season {current + 2}</Title>
           <Subtitle>
             {rounds.length} {rounds.length == 1 ? 'round' : 'rounds'} in this season so far
           </Subtitle>
