@@ -47,7 +47,7 @@ export const gnosis: Network = {
   faucetDrip: 0.25,
   graphNetwork: 'gnosis',
   graphUrl: '',
-  gasLimit: 30_000_000,
+  gasLimit: 15_000_000, // It's actually 30_000_000 but we're setting it to 15_000_000 to be safe
 };
 
 export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;
@@ -58,4 +58,4 @@ export const GNOSIS_CHAIN_ID = 100 as const;
  * This should be updated every round.
  */
 export const THEGRAPH_API_URL = 'https://graph-optimism.gnosischain.com/subgraphs/name/arena/test';
-export const networks = [specular, hardhat];
+export const networks = [specular, hardhat, gnosis];

@@ -36,7 +36,7 @@ exports.LIB_ARTIFACT_UTILS_ADDRESS = exports.LIB_PLANET_ADDRESS = exports.LIB_GA
 /**
  * The name of the network where these contracts are deployed.
  */
-exports.NETWORK = 'gnosis_network';
+exports.NETWORK = 'gnosis';
 /**
  * The id of the network where these contracts are deployed.
  */

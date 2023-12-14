@@ -13,7 +13,7 @@ interface OpenConfirmationConfig {
   intent: TxIntent;
   overrides?: providers.TransactionRequest;
   from: EthAddress;
-  gasFeeGwei: EthersBN;
+  gasFeeWei: EthersBN;
 }
 
 export async function openConfirmationWindowForTransaction({
@@ -23,7 +23,7 @@ export async function openConfirmationWindowForTransaction({
   intent,
   overrides,
   from,
-  gasFeeGwei,
+  gasFeeWei,
 }: OpenConfirmationConfig): Promise<void> {
   const config = {
     contractAddress,
@@ -32,7 +32,7 @@ export async function openConfirmationWindowForTransaction({
   const autoApprove = getBooleanSetting(config, Setting.AutoApproveNonPurchaseTransactions);
 
   if (!autoApprove || isPurchase(overrides)) {
-    localStorage.setItem(`${from}-gasFeeGwei`, gasFeeGwei.toString());
+    localStorage.setItem(`${from}-gasFeeGwei`, gasFeeWei.toString());
     const account = connection.getAddress();
     if (!account) throw new Error('no account');
     const balanceEth = weiToEth(await connection.loadBalance(account));

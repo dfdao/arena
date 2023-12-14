@@ -34,7 +34,7 @@
 /**
  * The name of the network where these contracts are deployed.
  */
-export const NETWORK = 'gnosis_network';
+export const NETWORK = 'gnosis';
 /**
  * The id of the network where these contracts are deployed.
  */

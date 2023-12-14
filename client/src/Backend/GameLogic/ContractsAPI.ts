@@ -11,6 +11,7 @@ import {
   EthConnection,
   TxCollection,
   TxExecutor,
+  weiToGwei,
 } from '@darkforest_eth/network';
 import {
   address,
@@ -130,6 +131,7 @@ export class ContractsAPI extends EventEmitter {
         tx.intent.methodName === 'getSpaceShips') &&
       tx.intent.contract.address === this.contract.address
     ) {
+      // TODO: Note hard coded gas fee
       return '50';
     }
 
@@ -166,11 +168,12 @@ export class ContractsAPI extends EventEmitter {
 
     const chainId = (await this.ethConnection.getProvider().getNetwork()).chainId;
 
-    let defaultGas = '1000000000'; // GNOSIS_CHAIN_ID gas
-    if (chainId === GNOSIS_OPTIMISM_CHAIN_ID) defaultGas = '1';
-    if (chainId === KOVAN_OPTIMISM_CHAIN_ID) defaultGas = '100000';
+    let defaultGasPriceWei = '1000000000'; // GNOSIS_CHAIN_ID gas
+    if (chainId === GNOSIS_OPTIMISM_CHAIN_ID) defaultGasPriceWei = '1';
+    if (chainId === KOVAN_OPTIMISM_CHAIN_ID) defaultGasPriceWei = '100000';
 
-    const gasFeeGwei = EthersBN.from(overrides?.gasPrice || defaultGas);
+    const gasFeeWei = EthersBN.from(overrides?.gasPrice || defaultGasPriceWei);
+    console.log(`[CLIENT] gas fee gwei: ${weiToGwei(gasFeeWei)}`);
 
     await openConfirmationWindowForTransaction({
       contractAddress: this.contractAddress,
@@ -179,7 +182,7 @@ export class ContractsAPI extends EventEmitter {
       intent,
       overrides,
       from: address,
-      gasFeeGwei,
+      gasFeeWei,
     });
   }
 

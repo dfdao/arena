@@ -16,6 +16,7 @@ export async function getAutoGasPrices(): Promise<GasPrices> {
     });
 
     const prices = (await res.json()) as GasPrices;
+    console.log('gas prices', prices);
     cleanGasPrices(prices);
     return prices;
   } catch (e) {

@@ -12,7 +12,7 @@ import { providers } from 'ethers';
 import deferred from 'p-defer';
 import timeout from 'p-timeout';
 import { EthConnection } from './EthConnection';
-import { gweiToWei, waitForTransaction } from './Network';
+import { gweiToWei, waitForTransaction, weiToGwei } from './Network';
 import { ConcurrentQueueConfiguration, ThrottledConcurrentQueue } from './ThrottledConcurrentQueue';
 import { Network, hardhat, networks } from '@darkforest_eth/constants';
 import { NETWORK } from '@darkforest_eth/contracts';
@@ -265,7 +265,6 @@ export class TxExecutor {
 
     const autoGasPriceSetting = this.gasSettingProvider(tx);
     tx.autoGasPriceSetting = autoGasPriceSetting;
-
     if (tx.overrides?.gasPrice === undefined) {
       tx.overrides = tx.overrides ?? {};
       tx.overrides.gasPrice = gweiToWei(
@@ -275,6 +274,9 @@ export class TxExecutor {
         )
       );
     }
+
+    // @ts-expect-error big numberish
+    console.log(`[CLIENT] final gas price gwei: ${weiToGwei(tx.overrides.gasPrice)}]`);
 
     this.queue.add(() => {
       this.diagnosticsUpdater?.updateDiagnostics((d) => {
@@ -320,6 +322,7 @@ export class TxExecutor {
 
     const nonce = this.nonce;
     if (this.nonce !== undefined) this.nonce++;
+    console.log(`[CLIENT] nonce: ${nonce}`);
 
     return nonce;
   }
