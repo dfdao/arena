@@ -47,6 +47,7 @@ export const gnosis: Network = {
   faucetDrip: 0.25,
   graphNetwork: 'gnosis',
   graphUrl: '',
+  blockExplorer: 'https://gnosisscan.io',
   gasLimit: 15_000_000, // It's actually 30_000_000 but we're setting it to 15_000_000 to be safe
 };
 

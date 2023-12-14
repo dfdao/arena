@@ -86,7 +86,7 @@ export function TxLink({ tx }: { tx: Transaction }) {
     return (
       <>
         <u>
-          <Link onClick={() => window.open(`${getNetwork().blockExplorer}/${tx.hash}`)}>
+          <Link onClick={() => window.open(`${getNetwork().blockExplorer}/tx/${tx.hash}`)}>
             {tx.hash.substring(0, 7)}
           </Link>
         </u>

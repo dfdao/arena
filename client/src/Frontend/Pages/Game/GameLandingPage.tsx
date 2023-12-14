@@ -373,7 +373,9 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           terminal.current?.printLink(
             '(View Transaction)',
             () => {
-              window.open(`${getNetwork().blockExplorer}/${registerConfirmationResponse.txHash}`);
+              window.open(
+                `${getNetwork().blockExplorer}/tx/${registerConfirmationResponse.txHash}`
+              );
             },
             TerminalTextStyle.Blue
           );
@@ -401,7 +403,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           terminal.current?.printLink(
             '(View Transaction)',
             () => {
-              window.open(`${getNetwork().blockExplorer}/${ukReceipt.hash}`);
+              window.open(`${getNetwork().blockExplorer}/tx/${ukReceipt.hash}`);
             },
             TerminalTextStyle.Blue
           );

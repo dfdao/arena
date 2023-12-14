@@ -66,6 +66,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
         >
           <SmallButton
             onClick={() => {
+              // TODO: Fix broken link
               window.open(`${getNetwork().blockExplorer}/address/${address}`, '_blank');
             }}
           >

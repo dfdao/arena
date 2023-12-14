@@ -193,7 +193,7 @@ export function PlanetListPane({
           <HoverWrapper>
             {planet.createTx && (
               <Link
-                to={`${getNetwork().blockExplorer}/${planet.createTx}`}
+                to={`${getNetwork().blockExplorer}/tx/${planet.createTx}`}
                 style={{ margin: 'auto' }}
               >
                 <u>Create Tx</u>
@@ -201,7 +201,7 @@ export function PlanetListPane({
             )}
             {planet.revealTx && (
               <Link
-                to={`${getNetwork().blockExplorer}/${planet.revealTx}`}
+                to={`${getNetwork().blockExplorer}/tx/${planet.revealTx}`}
                 style={{ margin: 'auto' }}
               >
                 <u>Reveal Tx</u>
