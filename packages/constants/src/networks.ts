@@ -39,6 +39,17 @@ export const hardhat: Network = {
   gasLimit: 15_000_000,
 };
 
+export const gnosis: Network = {
+  name: Chains.Gnosis,
+  chainId: 100,
+  httpRpc: 'https://rpc.gnosis.gateway.fm',
+  serverUrl: '',
+  faucetDrip: 0.25,
+  graphNetwork: 'gnosis',
+  graphUrl: '',
+  gasLimit: 30_000_000,
+};
+
 export const GNOSIS_OPTIMISM_CHAIN_ID = 300 as const;
 export const KOVAN_OPTIMISM_CHAIN_ID = 69 as const;
 export const GNOSIS_CHAIN_ID = 100 as const;
