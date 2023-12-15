@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 contract DFArenaFaucet {
     uint256 public waitTime = 24 hours;
     address public _owner;
-    uint256 public amount = 0.05 ether;
+    uint256 public maxDrip = 0.05 ether;
 
     mapping(address => uint256) public nextAccessTime;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-    event AmountChanged(uint256 oldAmount, uint256 newAmount);
+    event DripChanged(uint256 oldDrip, uint256 newDrip);
     event WaitTimeChanged(uint256 oldTime, uint256 newTime);
 
     /**
@@ -37,11 +37,11 @@ contract DFArenaFaucet {
         emit OwnershipTransferred(oldOwner, newOwner);
     }
 
-    function changeDrip(uint256 newAmount) public onlyOwner {
-        require(newAmount != 0, "New drip is zero");
-        uint256 oldAmount = amount;
-        amount = newAmount;
-        emit AmountChanged(oldAmount, newAmount);
+    function changeDrip(uint256 newDrip) public onlyOwner {
+        require(newDrip != 0, "New drip is zero");
+        uint256 oldDrip = maxDrip;
+        maxDrip = newDrip;
+        emit DripChanged(oldDrip, maxDrip);
     }
 
     function changeWaitTime(uint256 waitTimeSeconds) public onlyOwner {
@@ -58,12 +58,13 @@ contract DFArenaFaucet {
         return (_address == _owner || nextAccessTime[_address] == 0 || block.timestamp >= nextAccessTime[_address]);
     }
 
-    function drip(address _address) public onlyOwner {
-        require(canWithdraw(_address), "you can't withdraw yet");
-        require(amount < address(this).balance, "faucet out of funds");
-        bool success = payable(_address).send(amount);
+    function drip(address _recipient, uint256 dripAmount) public onlyOwner {
+        require(canWithdraw(_recipient), "you can't withdraw yet");
+        require(dripAmount < address(this).balance, "faucet out of funds");
+        require(dripAmount <= maxDrip, "drip amount too high");
+        bool success = payable(_recipient).send(dripAmount);
         require(success, "eth transfer failed");
-        nextAccessTime[_address] = block.timestamp + waitTime;
+        nextAccessTime[_recipient] = block.timestamp + waitTime;
     }
 
     function withdraw(address _address) public onlyOwner {
@@ -85,8 +86,8 @@ contract DFArenaFaucet {
         return waitTime;
     }
 
-    function getDripAmount() public view returns (uint256) {
-        return amount;
+    function getMaxDripAmount() public view returns (uint256) {
+        return maxDrip;
     }
 
     function getNextAccessTime(address _recipient) public view returns (uint256) {
