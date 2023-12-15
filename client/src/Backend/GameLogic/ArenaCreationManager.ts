@@ -1,8 +1,8 @@
-import { EMPTY_ADDRESS } from '@darkforest_eth/constants';
+import { EMPTY_ADDRESS, MAX_AUTO_GAS_PRICE_GWEI } from '@darkforest_eth/constants';
 import { CONTRACT_ADDRESS, INIT_ADDRESS } from '@darkforest_eth/contracts';
 import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
 import { fakeHash, mimcHash, modPBigInt, perlin } from '@darkforest_eth/hashing';
-import { EthConnection } from '@darkforest_eth/network';
+import { EthConnection, gweiToWei } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import {
   RevealSnarkContractCallArgs,

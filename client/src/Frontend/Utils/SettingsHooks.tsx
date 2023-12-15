@@ -41,7 +41,7 @@ const defaultSettings: Record<Setting, string> = {
   [Setting.HighPerformanceRendering]: 'false',
   [Setting.MoveNotifications]: 'true',
   [Setting.HasAcceptedPluginRisk]: onlyInDevelopment(),
-  [Setting.GasFeeGwei]: AutoGasSetting.Average,
+  [Setting.GasFeeGwei]: AutoGasSetting.Fast,
   [Setting.TerminalVisible]: 'false',
   [Setting.ShowTutorial]: 'false',
   [Setting.ShowSpectatorInfo]: 'true',
