@@ -27,13 +27,17 @@ const wallet = new ethers.Wallet(pKey, provider);
 const faucet = new ethers.Contract(FAUCET_ADDRESS, FAUCET_ABI, wallet);
 
 export const logStats = async function () {
-  console.log(`Network`, getNetwork().name);
-  console.log('server booting up at', new Date().toUTCString());
-  console.log('faucet address', FAUCET_ADDRESS);
-  console.log(`faucet owner`, await faucet.getOwner());
-  const balance = await faucet.getBalance();
-  console.log(`faucet balance`, ethers.utils.formatEther(balance));
-  console.log(`faucet drip`, ethers.utils.formatEther(await faucet.getDripAmount()));
+  try {
+    console.log(`Network`, getNetwork().name);
+    console.log('server booting up at', new Date().toUTCString());
+    console.log('faucet address', FAUCET_ADDRESS);
+    console.log(`faucet owner`, await faucet.getOwner());
+    const balance = await faucet.getBalance();
+    console.log(`faucet balance`, ethers.utils.formatEther(balance));
+    console.log(`faucet drip`, ethers.utils.formatEther(await faucet.getDripAmount()));
+  } catch (error) {
+    console.log(`[ERROR] logStats`, error);
+  }
 };
 
 const sendDrip = async function (addresss: string) {
