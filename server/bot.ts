@@ -25,6 +25,7 @@ client.on(Events.ClientReady, () => {
 
 client.on(Events.MessageCreate, async (message) => {
   if (message.channelId !== targetChannelId) return;
+  if (message.content[0] !== '{') return;
   if (!message.author.bot) {
     let verified = false;
 
@@ -32,11 +33,16 @@ client.on(Events.MessageCreate, async (message) => {
       console.log(`verifiying ${message.author.username}`);
       const roles = message.member?.roles.cache.map((role) => role.name); // Map roles to their names.
       console.log(`[SERVER] roles`, roles);
+      if (!roles?.includes('verified')) {
+        throw new Error(`Must verify with captcha before linking a wallet and receiving drip`);
+      }
       const content = JSON.parse(message.content) as { sender: EthAddress; signature: string };
       if (content.signature && content.sender) {
         verified = verifySignature(content.signature, content.sender, message.author.username);
         if (!verified) {
-          throw new Error('Signature verification failed');
+          throw new Error(
+            'Signature verification failed.\nMake sure you correctly entered your username before copying the message at https://arena.dfdao.xyz'
+          );
         }
         if (verified) {
           console.log(`[SERVER] verified ${message.author.username}!`);
@@ -63,9 +69,7 @@ client.on(Events.MessageCreate, async (message) => {
       }
     } catch (error) {
       console.log(`[SERVER] error`, error);
-      await message.channel.send(
-        `Failed to verify: ${message.author.username}. ${error}\n\nMake sure you correctly entered your username before copying the message at https://arena.dfdao.xyz`
-      );
+      await message.channel.send(`Failed to verify: ${message.author.username}:\n\n${error}`);
     }
   }
 });
