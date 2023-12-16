@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { FAUCET_ADDRESS, NETWORK } from '@darkforest_eth/contracts';
 import { Network, hardhat, networks } from '@darkforest_eth/constants';
-import FAUCET_ABI from './DFArenaFaucet.js';
+import faucetContractAbi from '@darkforest_eth/contracts/abis/DFArenaFaucet.json' assert { type: 'json' };
 import 'dotenv/config';
 import { Request, Response } from 'express';
 
@@ -23,9 +23,7 @@ if (!pKey) throw new Error('Private key not found');
 const provider = new ethers.providers.JsonRpcProvider(getNetwork().httpRpc);
 
 const wallet = new ethers.Wallet(pKey, provider);
-
-const faucet = new ethers.Contract(FAUCET_ADDRESS, FAUCET_ABI, wallet);
-
+const faucet = new ethers.Contract(FAUCET_ADDRESS, faucetContractAbi, wallet);
 export const logStats = async function () {
   try {
     console.log(`Network`, getNetwork().name);
@@ -42,9 +40,8 @@ export const logStats = async function () {
 
 const sendDrip = async function (addresss: string) {
   const balance = await faucet.getBalance();
-  console.log();
+  console.log(`[FAUCET] has balance`, balance.toString());
   if (balance.lte(1)) {
-    const eth = '20';
     throw new Error('balance too low');
   }
   console.log(`${addresss} balance`, ethers.utils.formatEther(await provider.getBalance(addresss)));

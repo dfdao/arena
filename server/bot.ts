@@ -42,16 +42,31 @@ client.on(Events.MessageCreate, async (message) => {
       const content = JSON.parse(message.content) as { sender: EthAddress; signature: string };
       if (content.signature && content.sender) {
         verified = verifySignature(content.signature, content.sender, message.author.username);
+        if (!verified) {
+          throw new Error('Signature verification failed');
+        }
         if (verified) {
+          console.log(`[SERVER] verified ${message.author.username}!`);
           const discords: { [key: string]: string } = JSON.parse(
             await promises.readFile(DISCORDS_PATH, 'utf-8')
           );
+          if (discords[content.sender] === message.author.username) {
+            throw new Error(`You've already verified ${message.author.username} for this address`);
+          }
           discords[content.sender] = message.author.username;
           await promises.writeFile(DISCORDS_PATH, JSON.stringify(discords));
+          console.log([
+            `[SERVER] verified that ${message.author.username} controls ${content.sender}`,
+          ]);
+          console.log(`[SERVER] requesting drip for ${message.author.username}`);
         }
+        await message.channel.send(`Verified ${message.author.username}!`);
       }
     } catch (error) {
-      console.log(`[ERROR] Verifying`, error);
+      console.log(`[SERVER] error`, error);
+      await message.channel.send(
+        `Failed to verify: ${message.author.username}. Make sure you correctly entered your username before copying the message at https://arena.dfdao.xyz`
+      );
     }
     await message.channel.send(
       `TEST: verifying ${message.author.username}: ${verified ? 'Success' : 'Failure'}`
