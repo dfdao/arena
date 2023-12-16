@@ -40,7 +40,7 @@ export function LobbyConfirmPage({
   creating: boolean;
   validateAndCreateLobby: () => void;
 }) {
-  const blockscoutURL = `${getNetwork().blockExplorer}/${lobbyTx}`;
+  const blockscoutURL = `${getNetwork().blockExplorer}/tx/${lobbyTx}`;
   const url = `${window.location.origin}/play/${arenaCreationManager.getArenaAddress()}`;
   const configHash = arenaCreationManager.getArenaConfigHash();
   const { twitters } = useTwitters();

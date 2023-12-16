@@ -1059,7 +1059,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/tx/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );
@@ -1071,7 +1071,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/tx/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );
@@ -1083,7 +1083,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/tx/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );
@@ -1097,7 +1097,7 @@ class GameManager extends EventEmitter {
     this.terminal.current?.printLink(
       `${tx.hash?.slice(0, 6) ?? ''}`,
       () => {
-        window.open(`${getNetwork().blockExplorer}/${tx.hash ?? ''}`);
+        window.open(`${getNetwork().blockExplorer}/tx/${tx.hash ?? ''}`);
       },
       TerminalTextStyle.White
     );

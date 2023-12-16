@@ -8,7 +8,7 @@ function weiToEth(wei: BigNumber): number {
   return parseFloat(utils.formatEther(wei));
 }
 
-task('faucet:deploy', 'change the faucet amount players')
+task('faucet:deploy', 'deploy the faucet contract')
   .addPositionalParam('value', 'amount to fund faucet with', undefined, types.float)
   .setAction(deployFaucet);
 
@@ -58,7 +58,7 @@ async function deployFaucet(args: { value: number }, hre: HardhatRuntimeEnvironm
   await runScript('yarn workspace @darkforest_eth/contracts build');
 }
 
-task('faucet:changeDrip', 'change the faucet amount players')
+task('faucet:changeDrip', 'change the max players can receive')
   .addPositionalParam('value', 'drip value (in ether or xDAI)', undefined, types.float)
   .setAction(changeDrip);
 
@@ -73,7 +73,7 @@ async function changeDrip(args: { value: number }, hre: HardhatRuntimeEnvironmen
     const txReceipt = await contract.changeDrip(hre.ethers.utils.parseEther(args.value.toString()));
     await txReceipt.wait();
 
-    console.log(`changed drip to ${formatEther(await contract.getDripAmount())}`);
+    console.log(`changed max drip to ${formatEther(await contract.getMaxDripAmount())}`);
   } catch (error) {
     console.log('change drip failed', error);
   }
@@ -94,7 +94,7 @@ async function changeWaitTime(args: { seconds: number }, hre: HardhatRuntimeEnvi
     const txReceipt = await contract.changeWaitTime(args.seconds);
     await txReceipt.wait();
 
-    console.log(`changed drip to ${formatEther(await contract.getDripAmount())}`);
+    console.log(`changed max drip to ${formatEther(await contract.getMaxDripAmount())}`);
   } catch (error) {
     console.log('change drip failed', error);
   }

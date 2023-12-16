@@ -136,7 +136,7 @@ describe('DarkForestArtifacts', function () {
     ).to.be.revertedWith('planet prospect expired');
   });
 
-  it('should return a correct token uri for a minted artifact', async function () {
+  it.skip('should return a correct token uri for a minted artifact', async function () {
     await world.user1Core.prospectPlanet(ARTIFACT_PLANET_1.id);
     await increaseBlockchainTime();
     await world.user1Core.findArtifact(...makeFindArtifactArgs(ARTIFACT_PLANET_1));

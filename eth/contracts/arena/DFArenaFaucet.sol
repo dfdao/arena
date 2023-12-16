@@ -4,12 +4,16 @@ pragma solidity ^0.8.0;
 contract DFArenaFaucet {
     uint256 public waitTime = 24 hours;
     address public _owner;
-    uint256 public amount = 0.05 ether;
+    uint256 public maxDrip = 0.05 ether;
 
+    /** Used on creation of burner wallet */
+    mapping(address => bool) public receivedFirstDrip;
+
+    /** Used on subsequent drip requests */
     mapping(address => uint256) public nextAccessTime;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-    event AmountChanged(uint256 oldAmount, uint256 newAmount);
+    event DripChanged(uint256 oldDrip, uint256 newDrip);
     event WaitTimeChanged(uint256 oldTime, uint256 newTime);
 
     /**
@@ -37,11 +41,11 @@ contract DFArenaFaucet {
         emit OwnershipTransferred(oldOwner, newOwner);
     }
 
-    function changeDrip(uint256 newAmount) public onlyOwner {
-        require(newAmount != 0, "New drip is zero");
-        uint256 oldAmount = amount;
-        amount = newAmount;
-        emit AmountChanged(oldAmount, newAmount);
+    function changeDrip(uint256 newDrip) public onlyOwner {
+        require(newDrip != 0, "New drip is zero");
+        uint256 oldDrip = maxDrip;
+        maxDrip = newDrip;
+        emit DripChanged(oldDrip, maxDrip);
     }
 
     function changeWaitTime(uint256 waitTimeSeconds) public onlyOwner {
@@ -54,16 +58,28 @@ contract DFArenaFaucet {
     /*******************************Functionality *************************************/
 
     function canWithdraw(address _address) public view returns (bool) {
-        /* Admin can always withdraw. Can withdraw if have not received drip or allowed to access again */
-        return (_address == _owner || nextAccessTime[_address] == 0 || block.timestamp >= nextAccessTime[_address]);
+        bool isOwner = _address == _owner;
+        bool isBurner = !receivedFirstDrip[_address];
+        bool isAllowed = nextAccessTime[_address] == 0 || block.timestamp >= nextAccessTime[_address];
+        return (isOwner || isBurner || isAllowed);
     }
 
-    function drip(address _address) public onlyOwner {
-        require(canWithdraw(_address), "you can't withdraw yet");
-        require(amount < address(this).balance, "faucet out of funds");
-        bool success = payable(_address).send(amount);
+    function drip(address _recipient, uint256 dripAmount) public onlyOwner {
+        require(canWithdraw(_recipient), "you can't withdraw yet");
+        require(dripAmount < address(this).balance, "faucet out of funds");
+        require(dripAmount <= maxDrip, "drip amount too high");
+        
+        // If first drip, mark receivedFirstDrip to true
+        if(!receivedFirstDrip[_recipient]) {
+            receivedFirstDrip[_recipient] = true;
+        }
+        // If second drip, update next access time
+        else {
+            nextAccessTime[_recipient] = block.timestamp + waitTime;
+        }
+
+        bool success = payable(_recipient).send(dripAmount);
         require(success, "eth transfer failed");
-        nextAccessTime[_address] = block.timestamp + waitTime;
     }
 
     function withdraw(address _address) public onlyOwner {
@@ -85,12 +101,16 @@ contract DFArenaFaucet {
         return waitTime;
     }
 
-    function getDripAmount() public view returns (uint256) {
-        return amount;
+    function getMaxDripAmount() public view returns (uint256) {
+        return maxDrip;
     }
 
     function getNextAccessTime(address _recipient) public view returns (uint256) {
         return nextAccessTime[_recipient];
+    }
+
+    function getReceivedFirstDrip(address _recipient) public view returns (bool) {
+        return receivedFirstDrip[_recipient];
     }
 
     function getTimeUntilDrip(address _recipient) public view returns (uint256) {

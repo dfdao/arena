@@ -126,7 +126,7 @@ export const MAX_BIOME = Biome.CORRUPTED;
  *
  * https://www.xdaichain.com/for-developers/developer-resources/gas-price-oracle
  */
-export const GAS_PRICE_API = 'https://blockscout.com/xdai/mainnet/api/v1/gas-price-oracle' as const;
+export const GAS_PRICE_API = 'https://gnosis.blockscout.com/api/v1/gas-price-oracle' as const;
 
 /**
  * In case we cannot load gas prices from xDai, these are the default auto gas prices.
@@ -141,12 +141,12 @@ export const DEFAULT_GAS_PRICES: GasPrices = {
  * In case xDai's auto-price is something ridiculous, we don't want our players to insta run out of
  * money.
  */
-export const MAX_AUTO_GAS_PRICE_GWEI = 15 as const;
+export const MAX_AUTO_GAS_PRICE_GWEI = 50 as const;
 
 /**
  * The amount of time between gas price refreshes when fetching prices from the oracle.
  */
-export const GAS_PRICES_INTERVAL_MS = 60_000 as const;
+export const GAS_PRICES_INTERVAL_MS = 20_000 as const;
 
 /**
  * {@link PlanetContextPane} is this wide, and all the subpanes of that modal also try to stay this

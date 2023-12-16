@@ -209,7 +209,9 @@ describe('DarkForestUpgrade', function () {
     const upgradeablePlanetId = LVL2_PLANET_DEAD_SPACE.id;
 
     await world.user1Core.initializePlayer(...makeInitArgs(SPAWN_PLANET_1));
-    await world.contract.safeSetOwner(world.user1.address, ...makeInitArgs(LVL2_PLANET_DEAD_SPACE));
+    const args = [...makeInitArgs(LVL2_PLANET_DEAD_SPACE)].slice(0, -1);
+    // @ts-expect-error args list
+    await world.contract.safeSetOwner(world.user1.address, ...args);
 
     const branchOrder = [2, 2, 2, 1, 1];
     for (let i = 0; i < 5; i++) {

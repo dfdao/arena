@@ -19,7 +19,7 @@ import * as diamondUtils from './utils/diamond';
 import * as path from 'path';
 import * as settings from './settings';
 import { decodeContracts, decodeInitializers, decodeAdminPlanets } from '@darkforest_eth/settings';
-import { hardhat, specular as specularNetwork } from '@darkforest_eth/constants';
+import { hardhat, specular, gnosis } from '@darkforest_eth/constants';
 import './tasks/arena-deploy';
 import './tasks/arena-upgrade';
 import './tasks/artifact';
@@ -117,34 +117,23 @@ const mainnet = {
   },
   chainId: 1,
 };
-const kovan_optimism = {
-  url: 'https://kovan.optimism.io',
+
+const gnosis_network = {
+  url: gnosis.httpRpc,
   accounts: {
     mnemonic: DEPLOYER_MNEMONIC,
   },
-  chainId: 69,
-  gasLimit: 15000000,
-  gasMultiplier: 5,
+  chainId: gnosis.chainId,
+  gasLimit: gnosis.gasLimit,
 };
 
-const gnosis_optimism = {
-  url: 'https://optimism.gnosischain.com',
+const specular_network = {
+  url: specular.httpRpc,
   accounts: {
     mnemonic: DEPLOYER_MNEMONIC,
   },
-  chainId: 300,
-  gasLimit: 15000000,
-  gasMultiplier: 5,
-};
-
-const specular = {
-  url: specularNetwork.httpRpc,
-  accounts: {
-    mnemonic: DEPLOYER_MNEMONIC,
-  },
-  chainId: 93481,
-  gasLimit: 15000000,
-  gasMultiplier: 5,
+  chainId: specular.chainId,
+  gasLimit: specular.gasLimit,
 };
 
 const config: HardhatUserConfig = {
@@ -153,10 +142,8 @@ const config: HardhatUserConfig = {
     // Check for a DEPLOYER_MNEMONIC before we add xdai/mainnet network to the list of networks
     // Ex: If you try to deploy to xdai without DEPLOYER_MNEMONIC, you'll see this error:
     // > Error HH100: Network xdai doesn't exist
-    ...(DEPLOYER_MNEMONIC ? { gnosis_optimism } : undefined),
-    ...(DEPLOYER_MNEMONIC ? { specular } : undefined),
-    ...(DEPLOYER_MNEMONIC ? { kovan_optimism } : undefined),
-    ...(DEPLOYER_MNEMONIC ? { xdai } : undefined),
+    ...(DEPLOYER_MNEMONIC ? { specular_network } : undefined),
+    ...(DEPLOYER_MNEMONIC ? { gnosis_network } : undefined),
     ...(DEPLOYER_MNEMONIC ? { mainnet } : undefined),
     localhost: {
       url: hardhat.httpRpc,
