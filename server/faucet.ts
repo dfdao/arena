@@ -20,8 +20,8 @@ export const logStats = async function () {
     console.log(`faucet owner`, await faucet.getOwner());
     const balance = await faucet.getBalance();
     console.log(`faucet balance`, ethers.utils.formatEther(balance));
-    const maxDrip = ethers.utils.formatEther(await faucet.getDripAmount())
-    console.log(`faucet drip`, maxDrip);
+    const maxDrip = ethers.utils.formatEther(await faucet.getMaxDripAmount())
+    console.log(`faucet max drip`, maxDrip);
     if(parseFloat(maxDrip) < BURNER_DRIP || parseFloat(maxDrip) < VERIFY_DRIP) {
       throw new Error('Faucet max drip is lower than burner drip or verify drip')
     }
