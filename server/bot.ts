@@ -21,6 +21,8 @@ client.on(Events.ClientReady, () => {
   console.log(`Logged me in as ${client?.user?.tag}`);
 });
 
+// TODO: Implement a check that the same user hasn't request a drip in the last X hours
+
 client.on(Events.MessageCreate, async (message) => {
   if (message.channelId !== targetChannelId) return;
   if (!message.author.bot) {
