@@ -1,18 +1,9 @@
 import { EthAddress } from '@darkforest_eth/types';
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import 'dotenv/config';
-import { utils } from 'ethers';
 import { Request, Response } from 'express';
-import fs, { promises } from 'fs';
-
-const targetChannelId = '909812397680767006';
-const DISCORDS_PATH = './discords.json';
-
-export function verifySignature(sig: string, sender: string, message: string): boolean {
-  const recovered = utils.verifyMessage(message, sig);
-  console.log(`recovered`, recovered, `sender`, sender);
-  return recovered.toLowerCase().trim() === sender.toLowerCase().trim();
-}
+import { VERIFY_DRIP, readDb, targetChannelId, verifySignature, writeDb } from './utils.js';
+import { sendDrip } from './faucet.js';
 
 export const client = new Client({
   intents: [
@@ -47,18 +38,21 @@ client.on(Events.MessageCreate, async (message) => {
         }
         if (verified) {
           console.log(`[SERVER] verified ${message.author.username}!`);
-          const discords: { [key: string]: string } = JSON.parse(
-            await promises.readFile(DISCORDS_PATH, 'utf-8')
-          );
-          if (discords[content.sender] === message.author.username) {
+          const db = await readDb();
+          if (db.discords[content.sender] === message.author.username) {
             throw new Error(`You've already verified ${message.author.username} for this address`);
           }
-          discords[content.sender] = message.author.username;
-          await promises.writeFile(DISCORDS_PATH, JSON.stringify(discords));
+          db.discords[content.sender] = message.author.username;
+          await writeDb(db);
           console.log([
             `[SERVER] verified that ${message.author.username} controls ${content.sender}`,
           ]);
+          await message.channel.send(`Verified ${message.author.username}!`);
+
           console.log(`[SERVER] requesting drip for ${message.author.username}`);
+          // SEND DRIP
+          await sendDrip(content.sender, VERIFY_DRIP);
+          await message.channel.send(`Sent ${VERIFY_DRIP} xDAI to ${message.author.username}!`);
         }
         await message.channel.send(`Verified ${message.author.username}!`);
       }
@@ -75,14 +69,9 @@ client.on(Events.MessageCreate, async (message) => {
 });
 
 export const discords = async (req: Request, res: Response) => {
-  if (!fs.existsSync(DISCORDS_PATH)) {
-    await promises.writeFile(DISCORDS_PATH, JSON.stringify({}));
-  }
-  const discords: { [key: string]: string } = JSON.parse(
-    await promises.readFile(DISCORDS_PATH, 'utf-8')
-  );
-  console.log(`discords`, discords);
-  res.json(discords);
+  const db = await readDb();
+  console.log(`discords`, db.discords);
+  res.json(db.discords);
 };
 
 export const disconnectAddress = async (req: Request, res: Response) => {

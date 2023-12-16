@@ -12,6 +12,7 @@ app.get('/', async (req, res) => {
   res.send("Welcome to dfdao's server!");
 });
 
+// Request a burner drip from the faucet
 app.get('/drip/:address', drip);
 
 app.get('/discords', discords);
