@@ -248,12 +248,17 @@ class EntryPageTerminal {
   }
 
   private async drip(account: Account, tutorialStep: boolean = true) {
-    console.log(`sending drip... to`, account.address);
+    // Drip if burner wallet has not received any funds.
+    // If it has, send message about Discord
+
     try {
+      console.log(`Maybe dripping...`, account.address);
+
+      await sendDrip(this.ethConnection, account.address);
+
       const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
       if (currBalance < 0.0005) {
         this.terminal.println(`Loading...`);
-        await sendDrip(this.ethConnection, account.address);
         const newBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
         if (newBalance - currBalance > 0) {
           this.terminal.println(`complete`, TerminalTextStyle.Green);

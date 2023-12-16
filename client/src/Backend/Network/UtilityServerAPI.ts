@@ -1,6 +1,6 @@
 import { FAUCET_ADDRESS } from '@darkforest_eth/contracts';
 import { DFArenaFaucet } from '@darkforest_eth/contracts/typechain';
-import { EthConnection, weiToEth } from '@darkforest_eth/network';
+import { EthConnection } from '@darkforest_eth/network';
 import {
   EthAddress,
   RegisterResponse,
@@ -194,14 +194,13 @@ export const submitWhitelistKey = async (
 export async function sendDrip(connection: EthConnection, address: EthAddress) {
   // If drip fails
   try {
-    const currBalance = weiToEth(await connection.loadBalance(address));
     const faucet = await connection.loadContract<DFArenaFaucet>(FAUCET_ADDRESS, loadFaucetContract);
-    const nextAccessTimeSeconds = (await faucet.getNextAccessTime(address)).toNumber();
-    const nowSeconds = Date.now() / 999;
+    const hasReceivedFirstDrip = await faucet.getReceivedFirstDrip(address);
+    if (hasReceivedFirstDrip)
+      return console.warn(
+        `This wallet has already received first drip. For more funds, join our Discord`
+      );
 
-    if (currBalance > 0.0005 || nowSeconds < nextAccessTimeSeconds) {
-      return;
-    }
     const success = await requestFaucet(address);
 
     if (!success) {

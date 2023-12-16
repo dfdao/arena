@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { FAUCET_ADDRESS } from '@darkforest_eth/contracts';
 import faucetContractAbi from '@darkforest_eth/contracts/abis/DFArenaFaucet.json' assert { type: 'json' };
 import 'dotenv/config';
@@ -32,12 +32,12 @@ export const logStats = async function () {
 
 export const sendDrip = async function (address: string, amount: number) {
   const balance = await faucet.getBalance();
-  console.log(`[FAUCET] has balance`, balance.toString());
+  console.log(`[FAUCET] has balance`, ethers.utils.formatEther(balance));
   if (balance.lte(1)) {
     throw new Error('balance too low');
   }
   console.log(`${address} balance`, ethers.utils.formatEther(await provider.getBalance(address)));
-  const dripTx = await faucet.drip(address, amount);
+  const dripTx = await faucet.drip(address, utils.parseEther(amount.toString()));
   await dripTx.wait();
   console.log(
     `${address} balance after drip`,
