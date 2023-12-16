@@ -18,7 +18,7 @@ const fixture = async function () {
   return faucet;
 };
 
-describe.only('DFArenaFaucet ', function () {
+describe('DFArenaFaucet ', function () {
   let faucet: DFArenaFaucet;
   let owner: SignerWithAddress;
   let nonOwner: SignerWithAddress;
