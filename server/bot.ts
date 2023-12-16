@@ -41,9 +41,12 @@ client.on(Events.MessageCreate, async (message) => {
         if (verified) {
           console.log(`[SERVER] verified ${message.author.username}!`);
           const db = await readDb();
+          console.log(`[SERVER] db`, db);
+          if (!db.discords) db.discords = {};
           if (db.discords[content.sender] === message.author.username) {
             throw new Error(`You've already verified ${message.author.username} for this address`);
           }
+
           db.discords[content.sender] = message.author.username;
           await writeDb(db);
           console.log([
@@ -61,12 +64,9 @@ client.on(Events.MessageCreate, async (message) => {
     } catch (error) {
       console.log(`[SERVER] error`, error);
       await message.channel.send(
-        `Failed to verify: ${message.author.username}. Make sure you correctly entered your username before copying the message at https://arena.dfdao.xyz`
+        `Failed to verify: ${message.author.username}. ${error}\n\nMake sure you correctly entered your username before copying the message at https://arena.dfdao.xyz`
       );
     }
-    await message.channel.send(
-      `TEST: verifying ${message.author.username}: ${verified ? 'Success' : 'Failure'}`
-    );
   }
 });
 

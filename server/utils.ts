@@ -40,9 +40,14 @@ export const pKey =
 export const targetChannelId = '909812397680767006';
 export const DB_PATH = './data/data.json';
 
+const defaultDB: DBSchema = {
+  discords: {},
+  discordToDripTime: {},
+};
+
 export const readDb = async (): Promise<DBSchema> => {
   if (!fs.existsSync(DB_PATH)) {
-    await promises.writeFile(DB_PATH, JSON.stringify({}));
+    await promises.writeFile(DB_PATH, JSON.stringify({ defaultDB }));
   }
   const db: DBSchema = JSON.parse(await promises.readFile(DB_PATH, 'utf-8'));
   return db;
@@ -50,7 +55,7 @@ export const readDb = async (): Promise<DBSchema> => {
 
 export const writeDb = async (db: DBSchema): Promise<void> => {
   if (!fs.existsSync(DB_PATH)) {
-    await promises.writeFile(DB_PATH, JSON.stringify({}));
+    await promises.writeFile(DB_PATH, JSON.stringify({ defaultDB }));
   }
   try {
     await promises.writeFile(DB_PATH, JSON.stringify(db));

@@ -50,6 +50,8 @@ export const sendDrip = async function (address: string, amount: number) {
   }
   const drip: Drip = { address, discord, amount, timestamp: Date.now() } 
   
+  if(!db.discordToDripTime) db.discordToDripTime = {}; 
+
   if(!db.discordToDripTime[discord]) {
     db.discordToDripTime[discord] = [drip]
   }
