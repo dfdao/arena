@@ -146,12 +146,18 @@ describe.only('DFArenaFaucet ', function () {
       );
     });
 
-    it('person cannot receive funds too early', async function () {
-      const tx = await owner.sendTransaction({ to: faucet.address, value: parseEther('20') });
+    it('person can receive two drips before access time check kicks in', async function () {
+      const tx = await owner.sendTransaction({ to: faucet.address, value: parseEther('5') });
       await tx.wait();
       const drip = await faucet.getMaxDripAmount();
 
       expect(await faucet.getNextAccessTime(nonOwner.address)).to.equal(0);
+      expect(await faucet.getReceivedFirstDrip(nonOwner.address)).to.equal(false);
+
+      await expect(await faucet.drip(nonOwner.address, drip)).to.changeEtherBalance(nonOwner, drip);
+
+      expect(await faucet.getNextAccessTime(nonOwner.address)).to.equal(0);
+      expect(await faucet.getReceivedFirstDrip(nonOwner.address)).to.equal(true);
 
       await expect(await faucet.drip(nonOwner.address, drip)).to.changeEtherBalance(nonOwner, drip);
 
@@ -161,10 +167,31 @@ describe.only('DFArenaFaucet ', function () {
         "you can't withdraw yet"
       );
     });
+
+    it('person cannot receive funds too early', async function () {
+      const tx = await owner.sendTransaction({ to: faucet.address, value: parseEther('20') });
+      await tx.wait();
+      const drip = await faucet.getMaxDripAmount();
+
+      expect(await faucet.getNextAccessTime(nonOwner.address)).to.equal(0);
+
+      // Two withdraws, one for initial drip, one for subsequent time intervals
+      await expect(await faucet.drip(nonOwner.address, drip)).to.changeEtherBalance(nonOwner, drip);
+      await expect(await faucet.drip(nonOwner.address, drip)).to.changeEtherBalance(nonOwner, drip);
+
+      expect((await faucet.getNextAccessTime(nonOwner.address)).toNumber()).to.be.greaterThan(0);
+
+      await expect(faucet.drip(nonOwner.address, drip)).to.be.revertedWith(
+        "you can't withdraw yet"
+      );
+    });
+
     it('person can get refill after waiting', async function () {
       await owner.sendTransaction({ to: faucet.address, value: parseEther('20') });
       const drip = await faucet.getMaxDripAmount();
 
+      // Two withdraws, one for initial drip, one for subsequent time intervals
+      await expect(await faucet.drip(nonOwner.address, drip)).to.changeEtherBalance(nonOwner, drip);
       await expect(await faucet.drip(nonOwner.address, drip)).to.changeEtherBalance(nonOwner, drip);
 
       const tx = await faucet.changeWaitTime(5);

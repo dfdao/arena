@@ -6,6 +6,10 @@ contract DFArenaFaucet {
     address public _owner;
     uint256 public maxDrip = 0.05 ether;
 
+    /** Used on creation of burner wallet */
+    mapping(address => bool) public receivedFirstDrip;
+
+    /** Used on subsequent drip requests */
     mapping(address => uint256) public nextAccessTime;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -54,17 +58,28 @@ contract DFArenaFaucet {
     /*******************************Functionality *************************************/
 
     function canWithdraw(address _address) public view returns (bool) {
-        /* Admin can always withdraw. Can withdraw if have not received drip or allowed to access again */
-        return (_address == _owner || nextAccessTime[_address] == 0 || block.timestamp >= nextAccessTime[_address]);
+        bool isOwner = _address == _owner;
+        bool isBurner = !receivedFirstDrip[_address];
+        bool isAllowed = nextAccessTime[_address] == 0 || block.timestamp >= nextAccessTime[_address];
+        return (isOwner || isBurner || isAllowed);
     }
 
     function drip(address _recipient, uint256 dripAmount) public onlyOwner {
         require(canWithdraw(_recipient), "you can't withdraw yet");
         require(dripAmount < address(this).balance, "faucet out of funds");
         require(dripAmount <= maxDrip, "drip amount too high");
+        
+        // If first drip, mark receivedFirstDrip to true
+        if(!receivedFirstDrip[_recipient]) {
+            receivedFirstDrip[_recipient] = true;
+        }
+        // If second drip, update next access time
+        else {
+            nextAccessTime[_recipient] = block.timestamp + waitTime;
+        }
+
         bool success = payable(_recipient).send(dripAmount);
         require(success, "eth transfer failed");
-        nextAccessTime[_recipient] = block.timestamp + waitTime;
     }
 
     function withdraw(address _address) public onlyOwner {
@@ -92,6 +107,10 @@ contract DFArenaFaucet {
 
     function getNextAccessTime(address _recipient) public view returns (uint256) {
         return nextAccessTime[_recipient];
+    }
+
+    function getReceivedFirstDrip(address _recipient) public view returns (bool) {
+        return receivedFirstDrip[_recipient];
     }
 
     function getTimeUntilDrip(address _recipient) public view returns (uint256) {
