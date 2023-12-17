@@ -1,5 +1,4 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { setTimeout } from 'timers/promises';
 import { verify } from '../../actions/verify.js';
 import { targetChannelId } from '../../utils.js';
 
