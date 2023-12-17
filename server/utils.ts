@@ -1,6 +1,7 @@
 import { Network, hardhat, networks } from '@darkforest_eth/constants';
 import { NETWORK } from '@darkforest_eth/contracts';
 import { utils } from 'ethers';
+import 'dotenv/config';
 import fs, { promises } from 'fs';
 
 export interface User {

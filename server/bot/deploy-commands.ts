@@ -2,8 +2,6 @@ import { REST, Routes } from 'discord.js';
 import { commands } from './commands/index.js';
 import 'dotenv/config';
 
-const commandsData = Object.values(commands).map((command) => command.data);
-
 if (!process.env.BOT_TOKEN) throw new Error('BOT_TOKEN not found in .env file');
 
 const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
@@ -17,6 +15,7 @@ export async function deployCommands({ guildId }: DeployCommandsProps) {
     if (!process.env.DISCORD_CLIENT_ID) throw new Error('DISCORD_CLIENT_ID not found in .env file');
 
     console.log('Started refreshing application (/) commands.');
+    const commandsData = Object.values(commands).map((command) => command.data);
 
     await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId), {
       body: commandsData,

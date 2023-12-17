@@ -1,10 +1,10 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { verify } from '../../actions/verify.js';
 import { targetChannelId } from '../../utils.js';
-import { drip, dripCommand } from '../../actions/faucet.js';
+import { drip } from '../../actions/faucet.js';
 
 export const data = new SlashCommandBuilder()
   .setName('drip')
+  .setDescription('Get some sweet XDAI')
   .addStringOption((option) =>
     option.setName('wallet').setDescription('Wallet address').setRequired(false)
   );

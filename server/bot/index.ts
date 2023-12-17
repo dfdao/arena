@@ -1,6 +1,7 @@
 import { Client } from 'discord.js';
 import { commands } from './commands/index.js';
 import { deployCommands } from './deploy-commands.js';
+import { setTimeout } from 'timers/promises';
 import 'dotenv/config';
 
 export const client = new Client({
@@ -39,5 +40,6 @@ client.on('interactionCreate', async (interaction) => {
 if (process.argv[2] === 'commands') {
   const guildId = process.argv[3];
   if (!guildId) throw new Error(`No guild id!`);
+  await setTimeout(2000);
   await deployCommands({ guildId });
 }
