@@ -3,7 +3,7 @@ import { Client, Events, GatewayIntentBits } from 'discord.js';
 import 'dotenv/config';
 import { Request, Response } from 'express';
 import { VERIFY_DRIP, readDb, targetChannelId, verifySignature, writeDb } from './utils.js';
-import { sendDrip } from './faucet.js';
+import { sendDrip } from './actions/faucet.js';
 
 export const client = new Client({
   intents: [
@@ -19,59 +19,6 @@ client.on(Events.InteractionCreate, (interaction) => {
 
 client.on(Events.ClientReady, () => {
   console.log(`Logged me in as ${client?.user?.tag}`);
-});
-
-// TODO: Implement a check that the same user hasn't request a drip in the last X hours
-
-client.on(Events.MessageCreate, async (message) => {
-  if (message.channelId !== targetChannelId) return;
-  if (message.content[0] !== '{') return;
-  if (!message.author.bot) {
-    let verified = false;
-
-    try {
-      console.log(`verifiying ${message.author.username}`);
-      const roles = message.member?.roles.cache.map((role) => role.name); // Map roles to their names.
-      console.log(`[SERVER] roles`, roles);
-      if (!roles?.includes('verified')) {
-        throw new Error(`Must verify with captcha before linking a wallet and receiving drip`);
-      }
-      const content = JSON.parse(message.content) as { sender: EthAddress; signature: string };
-      if (content.signature && content.sender) {
-        verified = verifySignature(content.signature, content.sender, message.author.username);
-        if (!verified) {
-          throw new Error(
-            'Signature verification failed.\nMake sure you correctly entered your username before copying the message at https://arena.dfdao.xyz'
-          );
-        }
-        if (verified) {
-          console.log(`[SERVER] verified ${message.author.username}!`);
-          const db = await readDb();
-          console.log(`[SERVER] db`, db);
-          if (!db.discords) db.discords = {};
-          if (db.discords[content.sender] === message.author.username) {
-            throw new Error(`You've already verified ${message.author.username} for this address`);
-          }
-
-          db.discords[content.sender] = message.author.username;
-          await writeDb(db);
-          console.log([
-            `[SERVER] verified that ${message.author.username} controls ${content.sender}`,
-          ]);
-          await message.channel.send(`Verified ${message.author.username}!`);
-
-          console.log(`[SERVER] requesting drip for ${message.author.username}`);
-          // SEND DRIP
-          await sendDrip(content.sender, VERIFY_DRIP);
-          await message.channel.send(`Sent ${VERIFY_DRIP} xDAI to ${message.author.username}!`);
-        }
-        await message.channel.send(`Verified ${message.author.username}!`);
-      }
-    } catch (error) {
-      console.log(`[SERVER] error`, error);
-      await message.channel.send(`Failed to verify: ${message.author.username}:\n\n${error}`);
-    }
-  }
 });
 
 export const discords = async (req: Request, res: Response) => {

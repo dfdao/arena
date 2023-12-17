@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { drip, logStats } from './faucet.js';
-import { client, discords } from './bot.js';
+import { dripRequest, logStats } from './actions/faucet.js';
+import { client } from './bot/index.js';
 
 const app = express();
 app.use(cors());
@@ -13,9 +13,9 @@ app.get('/', async (req, res) => {
 });
 
 // Request a burner drip from the faucet
-app.get('/drip/:address', drip);
+app.get('/drip/:address', dripRequest);
 
-app.get('/discords', discords);
+// app.get('/discords', discords);
 
 app.listen(port, async () => {
   console.log(`dfdao server listening on port ${port}`);

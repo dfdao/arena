@@ -13,7 +13,7 @@ const onCopy = (
   }
   navigator.clipboard.writeText(textToCopy).then(
     () => {
-      console.log('Async: Copying to clipboard was successful!');
+      console.log(`Async: Copying ${textToCopy} clipboard was successful!`);
       onCopySuccess();
     },
     (err) => {

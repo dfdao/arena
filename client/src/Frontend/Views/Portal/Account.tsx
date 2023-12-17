@@ -15,6 +15,7 @@ import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 import { getNetwork } from '@Backend/Network/Blockchain';
 import { Link } from '@Components/CoreUI';
+import { DarkForestTextInput, TextInput } from '@Components/Input';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -26,10 +27,16 @@ interface AccountModalProps {
 const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, setOpen }) => {
   const eth = useEthConnection();
   const [copyDiscord, setCopyDiscord] = useState<{ signature: string; sender: EthAddress }>();
+  const [discordHandle, setDiscordHandle] = useState('');
 
   const verifyDiscord = async () => {
+    if (!discordHandle) {
+      return console.error('Please enter a discord handle');
+    }
+
     if (address) {
-      const tweetText = await eth.signMessage('');
+      const tweetText = await eth.signMessage(discordHandle);
+      // View message that was signed:
       console.log(`tweet text`, { signature: tweetText, sender: address });
       setCopyDiscord({ signature: tweetText, sender: address });
     }
@@ -75,9 +82,17 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
           </SmallButton>
         </div>
         {/* https://discord.gg/7DMzRb9a3K */}
+        {'Discord Handle:'}
+        <TextInput
+          value={discordHandle}
+          placeholder={'ex: cha0s.g0d or arena#1746'}
+          onChange={(e: Event & React.ChangeEvent<DarkForestTextInput>) =>
+            setDiscordHandle(e.target.value)
+          }
+        />
         <SmallButton onClick={verifyDiscord}> Connect Discord </SmallButton>
         {copyDiscord ? (
-          <Copyable textToCopy={JSON.stringify(copyDiscord)} onCopyError={() => {}}>
+          <Copyable textToCopy={`/verify ` + JSON.stringify(copyDiscord)} onCopyError={() => {}}>
             <span>
               Click the copy icon and paste the text in the{' '}
               <Link to={'https://discord.com/channels/850187588148396052/909812397680767006'}>
