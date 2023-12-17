@@ -110,11 +110,16 @@ export const drip = async (interaction: CommandInteraction) => {
           `[DRIP] no wallet specified. Please specify which wallet to drip to via /drip <wallet>`
         );
         let errorStr = `You have multiple wallets linked to this account. Please specify which wallet to drip to via /drip <wallet>`;
-        users.map((u) => (errorStr += `\n/drip ${u.address}`));
+        users.map((u) => (errorStr += `\n/drip wallet: ${u.address}`));
         throw new Error(errorStr);
       }
     }
-    await dripCommand(interaction, '', username, wallet, id);
+    const sentDrip = await dripCommand(interaction, '', username, wallet, id);
+    if (sentDrip) {
+      await interaction.followUp({
+        content: `🎉 ${username} has been sent $${VERIFY_DRIP} XDAI!`,
+      });
+    }
   } catch (error) {
     await interaction.followUp({
       content: `Drip failed. \n\n${error}`,
