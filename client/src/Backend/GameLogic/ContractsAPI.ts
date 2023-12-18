@@ -158,19 +158,7 @@ export class ContractsAPI extends EventEmitter {
     const address = this.ethConnection.getAddress();
     if (!address) throw new Error("can't send a transaction, no signer");
 
-    const balance = await this.ethConnection.loadBalance(address);
-
-    if (balance.lt(ContractsAPI.MIN_BALANCE)) {
-      const notifsManager = NotificationManager.getInstance();
-      notifsManager.balanceEmpty();
-      throw new Error('xDAI balance too low!');
-    }
-
-    const chainId = (await this.ethConnection.getProvider().getNetwork()).chainId;
-
     let defaultGasPriceWei = '1000000000'; // GNOSIS_CHAIN_ID gas
-    if (chainId === GNOSIS_OPTIMISM_CHAIN_ID) defaultGasPriceWei = '1';
-    if (chainId === KOVAN_OPTIMISM_CHAIN_ID) defaultGasPriceWei = '100000';
 
     const gasFeeWei = EthersBN.from(overrides?.gasPrice || defaultGasPriceWei);
     console.log(`[CLIENT] gas fee gwei: ${weiToGwei(gasFeeWei)}`);

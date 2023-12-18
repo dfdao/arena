@@ -13,10 +13,10 @@ import {
   logOut,
   setActive,
 } from '../../Backend/Network/AccountManager';
-import { getEthConnection, getNetwork } from '../../Backend/Network/Blockchain';
+import { getEthConnection } from '../../Backend/Network/Blockchain';
 import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import { loadAllPlayerData } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { getAllDiscords, getAllTwitters, sendDrip } from '../../Backend/Network/UtilityServerAPI';
+import { getAllDiscords, sendDrip } from '../../Backend/Network/UtilityServerAPI';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
@@ -41,7 +41,7 @@ class EntryPageTerminal {
   private ethConnection: EthConnection;
   private terminal: TerminalHandle;
   private accountSet: (account: Account, tutorial: boolean) => void;
-  private balancesEth: number[];
+  private balancesEth: { [address: EthAddress]: number };
 
   public constructor(
     ethConnection: EthConnection,
@@ -51,6 +51,7 @@ class EntryPageTerminal {
     this.ethConnection = ethConnection;
     this.terminal = terminal;
     this.accountSet = accountSet;
+    this.balancesEth = {};
   }
 
   private async loadBalances(addresses: EthAddress[]) {
@@ -63,7 +64,9 @@ class EntryPageTerminal {
       addresses.map((address) => queue.add(() => this.ethConnection.loadBalance(address)))
     );
 
-    this.balancesEth = balances.map(weiToEth);
+    addresses.map((a, i) => {
+      this.balancesEth[a] = weiToEth(balances[i]);
+    });
   }
 
   public async checkCompatibility() {
@@ -126,8 +129,8 @@ class EntryPageTerminal {
       this.terminal?.print(`(${i + 1}): `, TerminalTextStyle.Sub);
       this.terminal?.print(`${account.address} `);
       this.terminal?.println(
-        this.balancesEth[i].toFixed(4) + ' xDAI',
-        this.balancesEth[i] < 0.0005 ? TerminalTextStyle.Red : TerminalTextStyle.Green
+        this.balancesEth[account.address].toFixed(4) + ' xDAI',
+        this.balancesEth[account.address] < 0.1 ? TerminalTextStyle.Red : TerminalTextStyle.Green
       );
     });
 
@@ -142,7 +145,7 @@ class EntryPageTerminal {
 
     if (+userInput && +userInput <= accounts.length && +userInput > 0) {
       const selectedAccount = accounts[+userInput - 1];
-      this.drip(selectedAccount, false);
+      this.drip(selectedAccount, false, true);
     } else if (userInput === 'n') {
       this.generateAccount();
     } else if (userInput === 'i') {
@@ -214,6 +217,29 @@ class EntryPageTerminal {
 
   private async setAccount(account: Account, tutorial: boolean) {
     try {
+      if (this.balancesEth[account.address] < 0.1) {
+        this.terminal?.println(
+          `Your balance is low. You can get more XDAI here:`,
+          TerminalTextStyle.Red
+        );
+        this.terminal?.printLink(
+          `dfdao discord`,
+          () => window.open(`https://discord.gg/aaHada53mQ`),
+          TerminalTextStyle.Blue
+        );
+        this.terminal?.newline();
+        this.terminal?.printLink(
+          `Gnosis`,
+          () => window.open(`https://buyxdai.com`),
+          TerminalTextStyle.Blue
+        );
+        this.terminal?.newline();
+        this.terminal?.println(
+          `Press ENTER to continue with this account.`,
+          TerminalTextStyle.White
+        );
+        const input = await this.terminal?.getInput();
+      }
       await this.ethConnection.setAccount(account.privateKey);
       setActive(account);
       this.accountSet(account, tutorial);
@@ -247,25 +273,26 @@ class EntryPageTerminal {
     } catch (e) {}
   }
 
-  private async drip(account: Account, tutorialStep: boolean = true) {
-    // Drip if burner wallet has not received any funds.
-    // If it has, send message about Discord
-
+  private async drip(
+    account: Account,
+    tutorialStep: boolean = true,
+    existingAccount: boolean = false
+  ) {
     try {
       console.log(`Maybe dripping...`, account.address);
 
-      await sendDrip(this.ethConnection, account.address);
-
-      const currBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
-      if (currBalance < 0.0005) {
-        this.terminal.println(`Loading...`);
-        const newBalance = weiToEth(await this.ethConnection.loadBalance(account.address));
-        if (newBalance - currBalance > 0) {
-          this.terminal.println(`complete`, TerminalTextStyle.Green);
-        } else {
-          throw new Error('drip failed.');
+      const success = await sendDrip(this.ethConnection, account.address, this.terminal);
+      if (success && existingAccount) {
+        // Ask user to hit enter to continue
+        this.terminal?.newline();
+        this.terminal.println(`Press ENTER to continue`, TerminalTextStyle.Mythic);
+        const userInput = await this.terminal?.getInput();
+        if (userInput) {
+          await this.setAccount(account, false);
+          return;
         }
       }
+
       if (tutorialStep) await this.playTutorial(account);
       else await this.setAccount(account, false);
     } catch (e) {
@@ -273,7 +300,6 @@ class EntryPageTerminal {
       this.terminal?.println('Creation failed. Try again with an account that has XDAI tokens.');
       await new Promise((r) => setTimeout(r, 2000));
       this.terminal?.newline();
-
       await this.chooseAccount();
     }
   }
@@ -341,7 +367,7 @@ export function EntryPage() {
       const active = getActive();
       try {
         if (!!active) {
-          await sendDrip(ethConnection, active.address);
+          await sendDrip(ethConnection, active.address, terminal.current);
           await ethConnection.setAccount(active.privateKey);
           setLoadingStatus('complete');
         } else {

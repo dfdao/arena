@@ -19,7 +19,15 @@ app.get('/drip/:address', dripRequest);
 app.get('/discords', async (req, res) => {
   try {
     const db = await readDb();
-    res.json(db.discords);
+    const addressToUsername = Object.keys(db.discords).reduce(
+      (acc: { [key: string]: string }, key) => {
+        acc[key] = db.discords[key].discordUsername;
+        return acc;
+      },
+      {}
+    );
+
+    res.json(addressToUsername);
   } catch (error) {
     res.status(500).send(error);
   }
