@@ -26,7 +26,7 @@ export const verify = async (interaction: CommandInteraction) => {
 
     if (!verified) {
       throw new Error(
-        'Signature verification failed.\n Make sure you signed your exact Discord username at https://arena.dfdao.xyz'
+        'Signature verification failed.\n Make sure you signed your exact Discord username with your wallet address.'
       );
     }
 

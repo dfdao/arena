@@ -28,7 +28,7 @@ export const Copyable: React.FC<{
   displayValue?: string;
   onCopyError: (msg: string) => void;
   children: React.ReactNode;
-}> = ({ textToCopy, onCopyError, children }) => {
+}> = ({ textToCopy, onCopyError, children, displayValue }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const handleCopySuccess = () => {
     setCopied(true);
