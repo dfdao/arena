@@ -28,7 +28,7 @@ export function verifySignature(sig: string, sender: string, message: string): b
 export const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
 
 export const BURNER_DRIP = 0.25;
-export const VERIFY_DRIP = 0.01;
+export const VERIFY_DRIP = 0.5;
 export const CAPTCHA_VERIFIED_ROLE = 'verified';
 
 export const getNetwork = (): Network => {
