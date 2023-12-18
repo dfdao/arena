@@ -13,7 +13,7 @@ const onCopy = (
   }
   navigator.clipboard.writeText(textToCopy).then(
     () => {
-      console.log('Async: Copying to clipboard was successful!');
+      console.log(`Async: Copying ${textToCopy} clipboard was successful!`);
       onCopySuccess();
     },
     (err) => {
@@ -28,7 +28,7 @@ export const Copyable: React.FC<{
   displayValue?: string;
   onCopyError: (msg: string) => void;
   children: React.ReactNode;
-}> = ({ textToCopy, onCopyError, children }) => {
+}> = ({ textToCopy, onCopyError, children, displayValue }) => {
   const [copied, setCopied] = useState<boolean>(false);
   const handleCopySuccess = () => {
     setCopied(true);

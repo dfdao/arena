@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { logOut } from '../../../Backend/Network/AccountManager';
 import { Copyable } from '../../Components/Copyable';
-import { Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
+import { Discord, Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
 
 import { useDisableScroll, useEthConnection, useTwitters } from '../../Utils/AppHooks';
@@ -15,6 +15,7 @@ import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 import { getNetwork } from '@Backend/Network/Blockchain';
 import { Link } from '@Components/CoreUI';
+import { DarkForestTextInput, TextInput } from '@Components/Input';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -26,15 +27,21 @@ interface AccountModalProps {
 const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, setOpen }) => {
   const eth = useEthConnection();
   const [copyDiscord, setCopyDiscord] = useState<{ signature: string; sender: EthAddress }>();
+  const [discordHandle, setDiscordHandle] = useState('');
+  const [discordVerification, showDiscordVerification] = useState(false);
 
-  const verifyDiscord = async () => {
-    if (address) {
-      const tweetText = await eth.signMessage('');
+  useEffect(() => {
+    const sign = async () => {
+      if (!address) return console.error('No address');
+      const tweetText = await eth.signMessage(discordHandle);
       console.log(`tweet text`, { signature: tweetText, sender: address });
       setCopyDiscord({ signature: tweetText, sender: address });
+    };
+    if (discordHandle) {
+      console.log(`Signing ${discordHandle}`);
+      sign();
     }
-  };
-
+  }, [discordHandle, address]);
   if (!address) return <></>;
 
   return (
@@ -75,21 +82,44 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
           </SmallButton>
         </div>
         {/* https://discord.gg/7DMzRb9a3K */}
-        <SmallButton onClick={verifyDiscord}> Connect Discord </SmallButton>
-        {copyDiscord ? (
-          <Copyable textToCopy={JSON.stringify(copyDiscord)} onCopyError={() => {}}>
+        <SmallButton onClick={() => showDiscordVerification(!discordVerification)}>
+          {' '}
+          <Discord width='24px' height='24px' />
+          Connect Discord{' '}
+        </SmallButton>
+        {discordVerification ? (
+          // Text left in div
+          <div style={{ textAlign: 'left' }}>
+            {'Step 1. Input Discord Handle:'}
+            <br />
+            <br />
+            <TextInput
+              value={discordHandle}
+              placeholder={'ex: cha0s.g0d or arena#1746'}
+              onChange={async (e: Event & React.ChangeEvent<DarkForestTextInput>) => {
+                setDiscordHandle(e.target.value);
+              }}
+            />
+            <br />
+            <br />
+            <Copyable
+              displayValue={`Copy me!`}
+              textToCopy={`/verify message:` + JSON.stringify(copyDiscord)}
+              onCopyError={() => {}}
+              children={'Step 2. Copy signed message:'}
+            ></Copyable>
+            <br />
             <span>
-              Click the copy icon and paste the text in the{' '}
+              {"Step 3. Paste message in dfdao's"}{' '}
               <Link to={'https://discord.com/channels/850187588148396052/909812397680767006'}>
                 verify channel
               </Link>{' '}
-              in <Link to={`https://discord.gg/7DMzRb9a3K`}>dfdao's discord.</Link>
-              <br />
-              Then refresh!
             </span>
-          </Copyable>
+            <br />
+            <br />
+            {'Step 4. Refresh this page!'}
+          </div>
         ) : null}
-        {/* <TwitterVerifier twitter={twitter} /> */}
       </AccountContent>
       <Footer>
         <Button onClick={logOut}>

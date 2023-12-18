@@ -44,7 +44,7 @@ export const gnosis: Network = {
   chainId: 100,
   httpRpc: 'https://rpc.eu-central-2.gateway.fm/v4/gnosis/non-archival/mainnet',
   wsRpc: 'wss://rpc.eu-central-2.gateway.fm/ws/v4/gnosis/non-archival/mainnet',
-  serverUrl: '',
+  serverUrl: 'https://faucet.dfdao.org',
   faucetDrip: 0.25,
   graphNetwork: 'gnosis',
   graphUrl: '',

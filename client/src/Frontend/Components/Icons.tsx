@@ -85,6 +85,10 @@ export const Gnosis = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/gclogo.svg' />;
 };
 
+export const Discord = ({ height, width }: AlertIcon) => {
+  return <img height={height} width={width} src='/public/icons/discord_logo.svg' />;
+};
+
 export const Twitter = ({ height, width }: AlertIcon) => {
   return <img height={height} width={width} src='/public/icons/twitter.svg' />;
 };

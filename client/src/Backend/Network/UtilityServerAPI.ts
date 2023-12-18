@@ -12,6 +12,7 @@ import timeout from 'p-timeout';
 import { TerminalHandle } from '../../Frontend/Views/Terminal';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
 import { getNetwork, loadFaucetContract } from './Blockchain';
+import { TerminalTextStyle } from '@Utils/TerminalTypes';
 
 export const enum EmailResponse {
   Success,
@@ -191,24 +192,40 @@ export const submitWhitelistKey = async (
   }
 };
 
-export async function sendDrip(connection: EthConnection, address: EthAddress) {
-  // If drip fails
-  try {
-    const currBalance = weiToEth(await connection.loadBalance(address));
-    const faucet = await connection.loadContract<DFArenaFaucet>(FAUCET_ADDRESS, loadFaucetContract);
-    const nextAccessTimeSeconds = (await faucet.getNextAccessTime(address)).toNumber();
-    const nowSeconds = Date.now() / 999;
+export async function sendDrip(
+  connection: EthConnection,
+  address: EthAddress,
+  terminal?: TerminalHandle
+) {
+  const faucet = await connection.loadContract<DFArenaFaucet>(FAUCET_ADDRESS, loadFaucetContract);
+  const hasReceivedFirstDrip = await faucet.getReceivedFirstDrip(address);
+  if (hasReceivedFirstDrip) {
+    return console.log(`[FAUCET] ${address} has already received its initial funds.`);
+  }
+  const currBalance = weiToEth(await connection.loadBalance(address));
 
-    if (currBalance > 0.0005 || nowSeconds < nextAccessTimeSeconds) {
-      return;
-    }
-    const success = await requestFaucet(address);
+  terminal?.println('Requesting funds from faucet...', TerminalTextStyle.Blue);
+  const success = await requestFaucet(address);
 
-    if (!success) {
-      throw new Error('An error occurred in faucet. Try again with an account that has XDAI');
-    }
-  } catch (e) {
-    throw new Error(e);
+  if (!success) {
+    if (terminal)
+      terminal.println(
+        'An error occurred in faucet. Try sending XDAI to this account manually.',
+        TerminalTextStyle.Red
+      );
+    throw new Error('An error occurred in faucet. Try sending XDAI to this account manually.');
+  } else {
+    const finalBalance = weiToEth(await connection.loadBalance(address));
+    const diff = finalBalance - currBalance;
+    terminal?.println(`Received ${diff.toFixed(2)} XDAI from faucet!`, TerminalTextStyle.Green);
+    terminal?.printLink(
+      `For more funds, join our Discord`,
+      () => {
+        window.open(`https://discord.gg/aaHada53mQ`);
+      },
+      TerminalTextStyle.White
+    );
+    return success;
   }
 }
 
@@ -217,7 +234,7 @@ export const requestFaucet = async (address: EthAddress): Promise<boolean> => {
     return false;
   }
 
-  console.log(`sending faucet request for`, address);
+  console.log(`[FAUCET] sending faucet request for`, address);
 
   try {
     const res = await fetch(`${getNetwork().serverUrl}/drip/${address}`, {});
@@ -228,7 +245,7 @@ export const requestFaucet = async (address: EthAddress): Promise<boolean> => {
     }
     return true;
   } catch (e) {
-    console.error(`error when requesting drip: ${e}`);
+    console.error(`[ERROR] requesting drip: ${e}`);
     return false;
   }
 };

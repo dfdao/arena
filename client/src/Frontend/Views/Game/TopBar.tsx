@@ -181,6 +181,18 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
   const account = player.value?.address;
   const twitter = player.value?.twitter;
   const balance = useEmitterValue(uiManager.getMyBalance$(), uiManager.getMyBalanceBn());
+  const minBalance = 0.1;
+  const [shownWarning, setShownWarning] = useState(false);
+
+  useEffect(() => {
+    const balanceInEth = weiToEth(balance);
+    if (!shownWarning && balanceInEth < minBalance) {
+      alert(
+        `Your wallet balance is below ${minBalance}. You can get more XDAI here: https://discord.gg/9XeTpbc`
+      );
+      setShownWarning(true);
+    }
+  }, [balance, !shownWarning]);
 
   let captureZones = null;
   if (uiManager.captureZonesEnabled) {
