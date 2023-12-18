@@ -194,8 +194,6 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
     }
   }, [balance, !shownWarning]);
 
-  console.log(`[SHOWN WARNING]`, shownWarning);
-
   let captureZones = null;
   if (uiManager.captureZonesEnabled) {
     const captureZoneGenerator = uiManager.getCaptureZoneGenerator();
