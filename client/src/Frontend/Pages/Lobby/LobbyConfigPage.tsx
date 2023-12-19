@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useState, useRef } from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import {
@@ -33,12 +33,23 @@ export function LobbyConfigPage({
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
   const [lobbyTx, setLobbyTx] = useState<string | undefined>();
   const [status, setStatus] = useState<Status>(undefined);
+  const [words, setWords] = useState<string>('');
   const [error, setError] = useState<string | undefined>(undefined);
 
   const createDisabled = status === 'creating' || status === 'created';
   const creating =
     status === 'creating' || (status === 'created' && !arenaCreationManager.arenaCreated);
   const created = status === 'created' && arenaCreationManager.arenaCreated;
+
+  const prevWordsRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    if (words) {
+      prevWordsRef.current = [...prevWordsRef.current, words];
+    }
+  }, [words]);
+
+  useEffect(() => {}, [prevWordsRef.current]);
 
   // once admin tools are created, create and reveal
   useEffect(() => {
@@ -97,12 +108,17 @@ export function LobbyConfigPage({
       throw new Error('No planets staged');
     }
     let planets = config.ADMIN_PLANETS.currentValue;
+    console.log(`[CLIENT]`, `Bulk creating ${planets.length} planets`);
     const initializers = toInitializers(config);
     let i = 0;
     while (i < planets.length) {
       try {
         const chunk = planets.slice(i, i + BULK_CREATE_CHUNK_SIZE);
-        await arenaCreationManager.bulkCreateLobbyPlanets({ config: initializers, planets: chunk });
+        await arenaCreationManager.bulkCreateLobbyPlanets({
+          config: initializers,
+          planets: chunk,
+          updateStatus: setWords,
+        });
         updateConfig({
           type: 'ADMIN_PLANETS',
           value: undefined,
@@ -128,7 +144,10 @@ export function LobbyConfigPage({
     try {
       setStatus('creating');
       const initializers = toInitializers(config);
-      const { owner, lobby, startTx } = await arenaCreationManager.createAndInitArena(initializers);
+      const { owner, lobby, startTx } = await arenaCreationManager.createAndInitArena(
+        initializers,
+        setWords
+      );
       setLobbyTx(startTx.hash);
     } catch (err) {
       setStatus('errored');
@@ -175,6 +194,7 @@ export function LobbyConfigPage({
             created={created}
             creating={creating}
             validateAndCreateLobby={validateAndCreateLobby}
+            updates={prevWordsRef.current}
           />
         </Route>
         <Route path={`${root}/settings`}>

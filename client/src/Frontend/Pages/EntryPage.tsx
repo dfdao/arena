@@ -297,10 +297,29 @@ class EntryPageTerminal {
       else await this.setAccount(account, false);
     } catch (e) {
       console.log(e);
-      this.terminal?.println('Creation failed. Try again with an account that has XDAI tokens.');
-      await new Promise((r) => setTimeout(r, 2000));
       this.terminal?.newline();
-      await this.chooseAccount();
+      this.terminal.println(
+        `Press y to continue with this account OR press n to choose again`,
+        TerminalTextStyle.Blue
+      );
+      const userInput = await this.terminal?.getInput();
+      console.log(`[ERROR INPUT]`, userInput, userInput.length);
+      if (userInput === 'y') {
+        await this.setAccount(account, false);
+        return;
+      } else if (userInput === 'n') {
+        await this.chooseAccount();
+      } else {
+        this.terminal?.newline();
+        this.terminal?.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
+        this.terminal?.println('');
+        await this.chooseAccount();
+      }
+
+      // this.terminal?.println('Creation failed. Try again with an account that has XDAI tokens.');
+      // await new Promise((r) => setTimeout(r, 2000));
+      // this.terminal?.newline();
+      // await this.chooseAccount();
     }
   }
 }

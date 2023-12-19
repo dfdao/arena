@@ -69,7 +69,7 @@ export class ArenaCreationManager {
     this.createdPlanets = [];
   }
 
-  public async createAndInitArena(config: LobbyInitializers) {
+  public async createAndInitArena(config: LobbyInitializers, updateStatus?: (s: string) => void) {
     if (config.ADMIN_PLANETS) {
       config.INIT_PLANETS = this.lobbyPlanetsToInitPlanets(config, config.ADMIN_PLANETS);
     }
@@ -97,6 +97,7 @@ export class ArenaCreationManager {
         },
       ]);
       console.log('creating lobby at', this.contract.getContractAddress());
+      updateStatus?.(`Creating Arena ...`);
       const createTxIntent: UnconfirmedCreateLobby = {
         methodName: 'createLobby',
         contract: this.contract.contract,
@@ -110,6 +111,7 @@ export class ArenaCreationManager {
 
       const lobbyReceipt = await tx.confirmedPromise;
       console.log(`created arena with ${lobbyReceipt.gasUsed} gas`);
+      updateStatus?.(`Created Arena ✅`);
 
       const { owner, lobby } = this.getLobbyCreatedEvent(lobbyReceipt, this.contract.contract);
 
@@ -120,6 +122,7 @@ export class ArenaCreationManager {
         contract: diamond, // Calling this on new diamond
         args: Promise.resolve([]),
       };
+      updateStatus?.(`Initializing Arena ...`);
 
       const startTx = await this.contract.submitTransaction(startTxIntent, {
         // The createLobby function costs somewhere around 12mil gas
@@ -128,6 +131,8 @@ export class ArenaCreationManager {
 
       const startRct = await startTx.confirmedPromise;
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
+      updateStatus?.(`Initialized Arena ✅`);
+
       this.created = true;
       this.arenaAddress = lobby;
       this.configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
@@ -204,9 +209,11 @@ export class ArenaCreationManager {
   public async bulkCreateLobbyPlanets({
     config,
     planets,
+    updateStatus,
   }: {
     config: LobbyInitializers;
     planets?: LobbyPlanet[];
+    updateStatus?: (s: string) => void;
   }) {
     // make create Planet args
     const planetsToCreate = planets || config.ADMIN_PLANETS;
@@ -222,9 +229,11 @@ export class ArenaCreationManager {
     const tx = await this.contract.submitTransaction(txIntent, {
       gasLimit: getNetwork().gasLimit,
     });
+    updateStatus?.(`Creating ${planets?.length} planets... `);
 
     const createRct = await tx.confirmedPromise;
     console.log(`created ${planets?.length} planets with ${createRct.gasUsed} gas`);
+    updateStatus?.(`Created ${planets?.length} Planets ✅`);
     await tx.confirmedPromise;
     planetsToCreate.map((p) =>
       this.createdPlanets.push({ ...p, createTx: tx?.hash, revealTx: tx?.hash })
