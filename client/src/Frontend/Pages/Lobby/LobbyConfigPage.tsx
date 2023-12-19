@@ -128,6 +128,7 @@ export function LobbyConfigPage({
         planets.splice(i, BULK_CREATE_CHUNK_SIZE);
       } catch (err) {
         i += BULK_CREATE_CHUNK_SIZE;
+        setWords(`❌ Planet creation failed`);
         console.error('Error creating and revealing planets:', err);
         if (err instanceof InvalidConfigError) {
           setError(`Invalid ${err.key} value ${err.value ?? ''} - ${err.message}`);

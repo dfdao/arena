@@ -140,6 +140,7 @@ export class ArenaCreationManager {
       return { owner, lobby, startTx };
     } catch (e) {
       console.log(e);
+      updateStatus?.(`❌ Arena creation failed`);
       throw new Error('lobby creation transaction failed.');
     }
   }
