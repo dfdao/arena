@@ -1,12 +1,15 @@
 import { IconType } from '@darkforest_eth/ui';
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Link } from '../Components/CoreUI';
-import { Icon } from '../Components/Icons';
+import { Link, Spacer } from '../Components/CoreUI';
+import { Discord, Icon } from '../Components/Icons';
 import { HideSmall } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { LobbyButton } from './Lobby/LobbyMapEditor';
+// @ts-expect-error types
+import StarfieldAnimation from 'react-starfield-animation';
+import { Countdown } from '../Views/Countdown';
 
 export const enum LandingPageZIndex {
   Background = 0,
@@ -29,53 +32,104 @@ export default function LandingPage() {
   const [showWallbreakers, setShowWallbreakers] = useState<boolean>(false);
 
   return (
-    <>
-      <Container>
-        <BackgroundImage />
-        <Nav>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <Icon
-              style={{ width: '80px', height: '80px' } as CSSStyleDeclaration & CSSProperties}
-              type={IconType.Dfdao}
-            />
-          </div>
-          <LinksContainer>
-            {Object.entries(links).map(([link, href], key) => (
-              <React.Fragment key={key}>
-                <NavLink key={key} to={href}>
-                  {link}
-                </NavLink>
-                {key !== Object.entries(links).length - 1 && <p>{` | `}</p>}
-              </React.Fragment>
-            ))}
-          </LinksContainer>
-        </Nav>
-        <Content>
-          <TextContainer>
-            <Badge>
-              <HideSmall>Dark Forest Arena</HideSmall> 🏟️
-            </Badge>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <LobbyButton primary style={{ flex: '2' }} onClick={() => history.push('/portal')}>
-                Enter
-              </LobbyButton>
-              <LobbyButton
-                style={{ flex: '1' }}
-                onClick={() =>
-                  window.open(
-                    'https://medium.com/dfdao/dark-forest-grand-prix-season-1-3cfc48a7f9a2',
-                    'blank'
-                  )
-                }
-              >
-                Learn More
-              </LobbyButton>
-            </div>
-          </TextContainer>
-        </Content>
-      </Container>
-    </>
+    <div
+      style={{
+        backgroundSize: 'stretch',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column', // Set the direction to column
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <StarfieldAnimation
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
+      />
+      <div
+        style={{
+          zIndex: 2,
+          textAlign: 'center', // Center the text
+        }}
+      >
+        <h1
+          style={{
+            color: '#ffffff',
+            fontSize: '3em',
+            fontFamily: 'Quicksand, "Helvetica Neue", sans-serif',
+            textShadow: '2px 2px 8px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <Countdown />
+        </h1>
+      </div>
+      <br />
+      <Link
+        to={'https://discord.gg/7DMzRb9a3K'}
+        style={{
+          fontSize: '1.5em',
+          textDecoration: 'none', // Optional, for styling
+          textAlign: 'center', // Center the text,
+          zIndex: 2,
+        }}
+      >
+        Discord
+      </Link>
+    </div>
   );
+
+  // return (
+  //   <>
+  //     <Container>
+  //       <BackgroundImage />
+  //       <Nav>
+  //         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+  //           <Icon
+  //             style={{ width: '80px', height: '80px' } as CSSStyleDeclaration & CSSProperties}
+  //             type={IconType.Dfdao}
+  //           />
+  //         </div>
+  //         <LinksContainer>
+  //           {Object.entries(links).map(([link, href], key) => (
+  //             <React.Fragment key={key}>
+  //               <NavLink key={key} to={href}>
+  //                 {link}
+  //               </NavLink>
+  //               {key !== Object.entries(links).length - 1 && <p>{` | `}</p>}
+  //             </React.Fragment>
+  //           ))}
+  //         </LinksContainer>
+  //       </Nav>
+  //       <Content>
+  //         <TextContainer>
+  //           <Badge>
+  //             <HideSmall>Dark Forest Arena</HideSmall> 🏟️
+  //           </Badge>
+  //           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+  //             <LobbyButton primary style={{ flex: '2' }} onClick={() => history.push('/portal')}>
+  //               Enter
+  //             </LobbyButton>
+  //             <LobbyButton
+  //               style={{ flex: '1' }}
+  //               onClick={() =>
+  //                 window.open(
+  //                   'https://medium.com/dfdao/dark-forest-grand-prix-season-1-3cfc48a7f9a2',
+  //                   'blank'
+  //                 )
+  //               }
+  //             >
+  //               Learn More
+  //             </LobbyButton>
+  //           </div>
+  //         </TextContainer>
+  //       </Content>
+  //     </Container>
+  //   </>
+  // );
 }
 
 const NavLink = styled(Link)`
