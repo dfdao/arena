@@ -46,7 +46,7 @@ export const gnosis: Network = {
   wsRpc: 'wss://rpc.eu-central-2.gateway.fm/ws/v4/gnosis/non-archival/mainnet',
   serverUrl: 'https://server.dfdao.org',
   faucetDrip: 0.25,
-  graphNetwork: 'gnosis',
+  graphNetwork: 'xdai',
   graphUrl: '',
   blockExplorer: 'https://gnosisscan.io',
   gasLimit: 15_000_000, // It's actually 30_000_000 but we're setting it to 15_000_000 to be safe
