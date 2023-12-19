@@ -225,6 +225,7 @@ export async function sendDrip(
       },
       TerminalTextStyle.White
     );
+    terminal?.newline();
     return success;
   }
 }

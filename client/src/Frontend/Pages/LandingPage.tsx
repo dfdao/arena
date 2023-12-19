@@ -1,12 +1,16 @@
 import { IconType } from '@darkforest_eth/ui';
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { Link } from '../Components/CoreUI';
-import { Icon } from '../Components/Icons';
+import { Link, Spacer } from '../Components/CoreUI';
+import { Discord, Icon } from '../Components/Icons';
 import { HideSmall } from '../Components/Text';
 import dfstyles from '../Styles/dfstyles';
 import { LobbyButton } from './Lobby/LobbyMapEditor';
+// @ts-expect-error types
+import StarfieldAnimation from 'react-starfield-animation';
+import { Countdown } from '../Views/Countdown';
+import { Stars } from '../Views/Portal/Stars';
 
 export const enum LandingPageZIndex {
   Background = 0,
@@ -28,7 +32,11 @@ export default function LandingPage() {
   const history = useHistory();
   const [showWallbreakers, setShowWallbreakers] = useState<boolean>(false);
 
-  return (
+  const showStars = true;
+
+  return showStars ? (
+    <Stars />
+  ) : (
     <>
       <Container>
         <BackgroundImage />
