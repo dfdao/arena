@@ -38,7 +38,13 @@ task('arena:deploy', 'deploy all Arena Diamond.')
   .setAction(deploy);
 
 async function deploy(
-  args: { whitelist?: boolean; fund: number; subgraph?: string; faucet?: boolean },
+  args: {
+    whitelist?: boolean;
+    fund: number;
+    subgraph?: string;
+    faucet?: boolean;
+    museum?: boolean;
+  },
   hre: HardhatRuntimeEnvironment
 ) {
   const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';

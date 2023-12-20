@@ -62,6 +62,7 @@ import hre, { ethers } from 'hardhat';
 import { TestLocation } from './utils/TestLocation';
 import { ArenaPlanets } from '@darkforest_eth/settings';
 import { locationIdFromEthersBN } from '@darkforest_eth/serde';
+import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
 
 describe('Arena Functions', function () {
   describe('Create Planets', function () {
@@ -1323,17 +1324,43 @@ describe('Arena Functions', function () {
     });
   });
 
-  describe.skip('Fetch initializers', function () {
+  describe('Fetch initializers', function () {
     let world: World;
 
     beforeEach('load fixture', async function () {
       world = await fixtureLoader(initPlanetsArenaFixture);
     });
 
-    it('Logs All Initializers', async function () {
+    it('Can create a new contract with an identical config hash from the intializers', async function () {
+      //
+      const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
       const inits = await world.contract.getInitializers();
-      // console.log(inits);
-      console.log(inits.initArgs.INIT_PLANETS);
+      const diamondInit = world.diamondInit as DFArenaInitialize;
+      const initFunctionCall = diamondInit.interface.encodeFunctionData('init', [
+        { ...inits.initArgs },
+        {
+          ...inits.auxArgs,
+        },
+      ]);
+      // console.log(`DIAMOND INIT`, world.diamondInit.interface.parseTransaction({ data: parsed }));
+      const tx = await world.user1Core.createLobby(world.diamondInit.address, initFunctionCall);
+      const rc = await tx.wait();
+
+      if (!rc.events) throw Error('No event occurred');
+
+      const event = rc.events.find((event) => event.event === 'LobbyCreated') as any;
+      expect(event.args.creatorAddress).to.equal(world.user1.address);
+
+      const lobbyAddress = event.args.lobbyAddress;
+
+      if (!lobbyAddress) throw Error('No lobby address found');
+
+      const arena = (await hre.ethers.getContractAt('DarkForest', lobbyAddress)) as DarkForest;
+      const startTx = await arena.start();
+      const startRct = await startTx.wait();
+
+      const newConfigHash = (await arena.getArenaConstants()).CONFIG_HASH;
+      expect(initialConfigHash).to.equal(newConfigHash);
     });
   });
 
