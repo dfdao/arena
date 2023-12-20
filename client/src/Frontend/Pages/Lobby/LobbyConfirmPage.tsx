@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
@@ -27,6 +27,7 @@ export function LobbyConfirmPage({
   created,
   creating,
   validateAndCreateLobby,
+  updates,
 }: {
   config: LobbyConfigState;
   arenaCreationManager: ArenaCreationManager;
@@ -39,6 +40,7 @@ export function LobbyConfirmPage({
   created: boolean;
   creating: boolean;
   validateAndCreateLobby: () => void;
+  updates?: string[];
 }) {
   const blockscoutURL = `${getNetwork().blockExplorer}/tx/${lobbyTx}`;
   const url = `${window.location.origin}/play/${arenaCreationManager.getArenaAddress()}`;
@@ -207,6 +209,7 @@ export function LobbyConfirmPage({
             <Button onClick={() => history.push(`${root}/edit-map`)}>Add Planets</Button>
           </div>
         )}
+        {updates ? updates.map((update, index) => <p>{update}</p>) : null}
       </MapContainer>
     </Container>
   );
