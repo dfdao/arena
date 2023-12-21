@@ -238,9 +238,6 @@ export async function initializeWorld({
 
   let contract: DarkForest;
 
-  // let deploy = arena ? deployAndCutArena : deployAndCut;
-  // let deploy = deployAndCutArena;
-
   if (allowListEnabled) allowedAddresses = [deployer.address, user1.address, user2.address];
 
   const [diamond, diamondInit] = await deployAndCutArena(

@@ -16,15 +16,12 @@ import {WithArenaStorage} from "../libraries/LibArenaStorage.sol";
 
 // Types
 import {InitArgs} from "../DFTypes.sol";
-import {console} from "hardhat/console.sol";
 
 contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
     event LobbyCreated(address creatorAddress, address lobbyAddress);
 
     function createLobby(address initAddress, bytes calldata initData) public {
         address diamondAddress = gs().diamondAddress;
-        console.log("diamondAddress: %s", diamondAddress);
-        console.log("address this: %s", address(this));
         address diamondCutAddress = IDiamondLoupe(diamondAddress).facetAddress(
             IDiamondCut.diamondCut.selector
         );
@@ -44,8 +41,6 @@ contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
                 cutIdx++;
             }
         }
-        // Try setting value of arena constants on lobby 
-        // DFStartFacet(address(lobby)).setParentAddress(address(this));
 
         IDiamondCut(address(lobby)).diamondCut(facetCut, initAddress, initData);
         
@@ -53,8 +48,6 @@ contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
             IERC173(address(lobby)).transferOwnership(msg.sender);
         }
 
-        console.log("DADDY LOBBY ADDRESS: %s", address(this));
-        console.log("NEW LOBBY ADDRESS: %s", address(lobby));
         emit LobbyCreated(msg.sender, address(lobby));
 
         // Allow new arena to update parent Museum contract
@@ -63,14 +56,11 @@ contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
     }
 
     function addConfig(bytes32 newHash) public {
-        console.log('MSG SENDER UPDATOOR', msg.sender);
         if(museumStorage().allowedAdmins[msg.sender]) {
             // Only add the address if doesn't already exist
             if(museumStorage().configHashToArenaAddress[newHash] == address(0)) {
                 museumStorage().configHashToArenaAddress[newHash] = msg.sender;
                 museumStorage().configHashes.push(newHash);
-                console.log("Loggin new hash");
-                console.logBytes32(newHash);
             }
         }
         else {

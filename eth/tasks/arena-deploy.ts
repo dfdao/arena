@@ -43,7 +43,6 @@ async function deploy(
     fund: number;
     subgraph?: string;
     faucet?: boolean;
-    museum?: boolean;
   },
   hre: HardhatRuntimeEnvironment
 ) {

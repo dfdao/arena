@@ -29,11 +29,6 @@ import {PlanetDefaultStats, Upgrade, UpgradeBranch, Modifiers, Mod, ArenaCreateR
 contract DFStartFacet is WithStorage, WithArenaStorage {
   event ArenaInitialized(address ownerAddress, address lobbyAddress);
 
-  modifier onlyAdmin() {
-    LibDiamond.enforceIsContractOwner();
-    _;
-  }
-
   function start() public {
     addConfigToMuseum();
     

@@ -1310,14 +1310,14 @@ describe('Arena Functions', function () {
     });
   });
 
-  describe.only('Museum', function () {
+  describe('Museum', function () {
     let world: World;
 
     beforeEach('load fixture', async function () {
       world = await fixtureLoader(arenaWorldFixture);
     });
 
-    it.only('Can create a new contract with an identical config hash from the intializers', async function () {
+    it('Can create a new contract with an identical config hash from the intializers', async function () {
       const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
       const inits = await world.contract.getInitializers();
       const arena = await newArena(world, inits);
@@ -1325,7 +1325,7 @@ describe('Arena Functions', function () {
       expect(initialConfigHash).to.equal(newConfigHash);
     });
 
-    it.only('does stuff', async function () {
+    it('Creates new arena from museum, with identical config', async function () {
       const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
 
       let arenas = await world.contract.getArenas();

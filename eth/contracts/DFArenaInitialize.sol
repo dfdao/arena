@@ -76,7 +76,10 @@ contract DFArenaInitialize is WithStorage, WithArenaStorage {
         /* Store init values to be added to game storage */
         ai().initArgs = initArgs;
         ai().auxArgs = auxArgs;
+
+        /* Store the Diamond that created this Arena */
         arenaConstants().PARENT_ADDRESS = msg.sender;
+        
         /* 
             Transferring ownership here is necessary because contract owner needs to do it.
         */
