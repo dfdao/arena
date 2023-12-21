@@ -17,7 +17,7 @@ import {IERC173} from "../vendor/interfaces/IERC173.sol";
 
 // Storage imports
 import {WithStorage, GameConstants, SnarkConstants} from "../libraries/LibStorage.sol";
-import {WithArenaStorage, ArenaStorage, ArenaConstants, TournamentStorage, Initializers} from "../libraries/LibArenaStorage.sol";
+import {WithArenaStorage, ArenaStorage, ArenaConstants, Initializers} from "../libraries/LibArenaStorage.sol";
 
 import {
     SpaceType, 
@@ -210,17 +210,28 @@ contract DFArenaGetterFacet is WithStorage, WithArenaStorage {
         return arenaConstants();
     }
 
-    function getMatches() public view returns (address[] memory) {
-        return tournamentStorage().matches;
+    function getArenas() public view returns (address[] memory) {
+        return museumStorage().arenas;
     }
 
-    function getNumMatches() public view returns (uint256) {
-        return tournamentStorage().numMatches;
+    function getConfigHashes() public view returns (bytes32[] memory) {
+        return museumStorage().configHashes;
     }
 
-    function getMatch(uint256 id) public view returns (address) {
-        return tournamentStorage().matches[id];
+    function getArenaByConfigHash(bytes32 configHash) public view returns (address) {
+        return museumStorage().configHashToArenaAddress[configHash];
     }
+
+    function getArenaInitializersByConfigHash(bytes32 configHash) public view returns (Initializers memory) {
+        address arena = museumStorage().configHashToArenaAddress[configHash];
+        if(arena != address(0)) {
+           return DFArenaGetterFacet(arena).getInitializers(); 
+        }
+        else {
+            revert("No arena found for config hash");
+        }
+    }
+
 
     function getInitPlanetHashes() public view returns (bytes32[] memory) {
         bytes32[] memory initPlanetIds = arenaConstants().INIT_PLANET_HASHES;

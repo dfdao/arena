@@ -204,7 +204,7 @@ export async function deployAndCutArena(
   const arenaCoreFacet = await deployArenaCoreFacet({}, libraries, hre);
   const arenaGetterFacet = await deployArenaGetterFacet({}, libraries, hre);
   const spaceshipConfigFacet = await deployArenaSpaceShipFacet({}, libraries, hre);
-  const tournamentFacet = await deployArenaTournamentFacet({}, libraries, hre);
+  const museumFacet = await deployArenaMuseumFacet({}, libraries, hre);
   const startFacet = await deployArenaStarterFacet({}, libraries, hre);
 
   // The `cuts` to perform for Dark Forest facets
@@ -222,7 +222,7 @@ export async function deployAndCutArena(
     ...changes.getFacetCuts('DFArenaCoreFacet', arenaCoreFacet),
     ...changes.getFacetCuts('DFArenaGetterFacet', arenaGetterFacet),
     ...changes.getFacetCuts('DFSpaceshipConfigFacet', spaceshipConfigFacet),
-    ...changes.getFacetCuts('DFArenaTournamentFacet', tournamentFacet),
+    ...changes.getFacetCuts('DFArenaMuseumFacet', museumFacet),
     ...changes.getFacetCuts('DFStartFacet', startFacet),
   ];
 
@@ -290,6 +290,7 @@ export async function deployAndCutArena(
   const startRct = await startTx.wait();
 
   console.log(`start occurred with ${startRct.gasUsed} gas`);
+  console.log(`[ARENA] Deployment finished. Cut arena address: ${arena.address}`);
 
   // const initTx = await arena.diamondCut([], initAddress, initFunctionCall);
   // const initRct = await initTx.wait();
@@ -353,15 +354,11 @@ export async function deployArenaSpaceShipFacet(
   return contract;
 }
 
-export async function deployArenaTournamentFacet(
-  {},
-  {}: Libraries,
-  hre: HardhatRuntimeEnvironment
-) {
-  const factory = await hre.ethers.getContractFactory('DFArenaTournamentFacet');
+export async function deployArenaMuseumFacet({}, {}: Libraries, hre: HardhatRuntimeEnvironment) {
+  const factory = await hre.ethers.getContractFactory('DFArenaMuseumFacet');
   const contract = await factory.deploy();
   await contract.deployTransaction.wait();
-  console.log(`DFArenaTournamentFacet deployed to: ${contract.address}`);
+  console.log(`DFArenaMuseumFacet deployed to: ${contract.address}`);
   return contract;
 }
 

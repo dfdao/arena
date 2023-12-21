@@ -21,6 +21,7 @@ import {LibGameUtils} from "../libraries/LibGameUtils.sol";
 
 // Contract imports
 import {DFWhitelistFacet} from "./DFWhitelistFacet.sol";
+import {DFArenaMuseumFacet} from "../arena/DFArenaMuseumFacet.sol";
 
 // Type imports
 import {PlanetDefaultStats, Upgrade, UpgradeBranch, Modifiers, Mod, ArenaCreateRevealPlanetArgs, Spaceships} from "../DFTypes.sol";
@@ -28,8 +29,16 @@ import {PlanetDefaultStats, Upgrade, UpgradeBranch, Modifiers, Mod, ArenaCreateR
 contract DFStartFacet is WithStorage, WithArenaStorage {
   event ArenaInitialized(address ownerAddress, address lobbyAddress);
 
+  modifier onlyAdmin() {
+    LibDiamond.enforceIsContractOwner();
+    _;
+  }
+
   function start() public {
+    addConfigToMuseum();
+    
     gs().diamondAddress = address(this);
+    
 
     ws().enabled = ai().auxArgs.allowListEnabled;
     uint256 allowedAddressesLength = ai().auxArgs.allowedAddresses.length;
@@ -177,9 +186,12 @@ contract DFStartFacet is WithStorage, WithArenaStorage {
     );
 
     arenaConstants().NO_ADMIN = ai().initArgs.NO_ADMIN;
-    arenaConstants().CONFIG_HASH = keccak256(abi.encode(ai().initArgs));
     arenaConstants().CONFIRM_START = ai().initArgs.CONFIRM_START;
     arenaConstants().START_PAUSED = ai().initArgs.START_PAUSED;
+
+    /* The all important Config Hash */
+    arenaConstants().CONFIG_HASH = keccak256(abi.encode(ai().initArgs));
+
 
     uint256 initLength = ai().initArgs.INIT_PLANETS.length;
 
@@ -213,6 +225,14 @@ contract DFStartFacet is WithStorage, WithArenaStorage {
     emit ArenaInitialized(IERC173(address(this)).owner(), address(this));
   }
 
+  function addConfigToMuseum() internal {
+    address parent = arenaConstants().PARENT_ADDRESS;
+    if(parent != address(0)) {
+      DFArenaMuseumFacet(parent).addConfig(keccak256(abi.encode(ai().initArgs)));
+    }
+    
+  }
+  
   function initializeDefaults() public {
     PlanetDefaultStats[] storage planetDefaultStats = planetDefaultStats();
     require(

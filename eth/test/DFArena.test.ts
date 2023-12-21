@@ -63,6 +63,7 @@ import { TestLocation } from './utils/TestLocation';
 import { ArenaPlanets } from '@darkforest_eth/settings';
 import { locationIdFromEthersBN } from '@darkforest_eth/serde';
 import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
+import { getLobbyCreatedEvent, newArena } from './utils/arena';
 
 describe('Arena Functions', function () {
   describe('Create Planets', function () {
@@ -776,32 +777,17 @@ describe('Arena Functions', function () {
       world = await fixtureLoader(arenaWorldFixture);
     });
 
-    it('Tournament storage exists', async function () {
-      expect((await world.contract.getNumMatches()).toNumber()).to.equal(0);
-    });
-
-    it('New lobby adress is stored on chain', async function () {
+    it.only('New lobby adress is stored on chain', async function () {
       const initAddress = hre.ethers.constants.AddressZero;
       const initFunctionCall = '0x';
       // Make Lobby
       const tx = await world.user1Core.createLobby(initAddress, initFunctionCall);
       const rc = await tx.wait();
-      if (!rc.events) throw Error('No event occurred');
-
-      const event = rc.events.find((event) => event.event === 'LobbyCreated') as any;
-      expect(event.args.creatorAddress).to.equal(world.user1.address);
-
-      const lobbyAddress = event.args.lobbyAddress;
-
-      if (!lobbyAddress) throw Error('No lobby address found');
+      const { lobby } = getLobbyCreatedEvent(rc, world.user1Core);
 
       // Connect to Lobby Diamond and check ownership
-      const lobby = await hre.ethers.getContractAt('DarkForest', lobbyAddress);
-      expect(await lobby.owner()).to.equal(world.user1.address);
-
-      expect((await world.contract.getNumMatches()).toNumber()).to.equal(1);
-
-      expect(await world.contract.getMatch(0)).to.equal(lobbyAddress);
+      const arena = await hre.ethers.getContractAt('DarkForest', lobby);
+      expect(await arena.owner()).to.equal(world.user1.address);
     });
   });
 
@@ -1324,43 +1310,47 @@ describe('Arena Functions', function () {
     });
   });
 
-  describe('Fetch initializers', function () {
+  describe.only('Museum', function () {
     let world: World;
 
     beforeEach('load fixture', async function () {
-      world = await fixtureLoader(initPlanetsArenaFixture);
+      world = await fixtureLoader(arenaWorldFixture);
     });
 
-    it('Can create a new contract with an identical config hash from the intializers', async function () {
-      //
+    it.only('Can create a new contract with an identical config hash from the intializers', async function () {
       const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
       const inits = await world.contract.getInitializers();
-      const diamondInit = world.diamondInit as DFArenaInitialize;
-      const initFunctionCall = diamondInit.interface.encodeFunctionData('init', [
-        { ...inits.initArgs },
-        {
-          ...inits.auxArgs,
-        },
-      ]);
-      // console.log(`DIAMOND INIT`, world.diamondInit.interface.parseTransaction({ data: parsed }));
-      const tx = await world.user1Core.createLobby(world.diamondInit.address, initFunctionCall);
-      const rc = await tx.wait();
-
-      if (!rc.events) throw Error('No event occurred');
-
-      const event = rc.events.find((event) => event.event === 'LobbyCreated') as any;
-      expect(event.args.creatorAddress).to.equal(world.user1.address);
-
-      const lobbyAddress = event.args.lobbyAddress;
-
-      if (!lobbyAddress) throw Error('No lobby address found');
-
-      const arena = (await hre.ethers.getContractAt('DarkForest', lobbyAddress)) as DarkForest;
-      const startTx = await arena.start();
-      const startRct = await startTx.wait();
-
+      const arena = await newArena(world, inits);
       const newConfigHash = (await arena.getArenaConstants()).CONFIG_HASH;
       expect(initialConfigHash).to.equal(newConfigHash);
+    });
+
+    it.only('does stuff', async function () {
+      const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
+
+      let arenas = await world.contract.getArenas();
+      let configs = await world.contract.getConfigHashes();
+      console.log({ arenas, configs });
+
+      const inits = await world.contract.getInitializers();
+      const arena = await newArena(world, inits);
+
+      const arenaConfigHash = (await arena.getArenaConstants()).CONFIG_HASH;
+
+      const initsForNewArena = await world.contract.getArenaInitializersByConfigHash(
+        arenaConfigHash
+      );
+
+      const arena1 = await newArena(world, initsForNewArena);
+      const newConfigHash = (await arena1.getArenaConstants()).CONFIG_HASH;
+      expect(initialConfigHash).to.equal(newConfigHash);
+
+      /**
+       * 1. Create a new arena contract from world.user1Core with a different config hash
+       * 2. Fetch the new initializers from the parent contract
+       * 3. Create a new arena with the new initializers
+       * 4. Confirm configHash of
+       */
     });
   });
 

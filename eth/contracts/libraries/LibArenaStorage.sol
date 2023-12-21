@@ -24,9 +24,11 @@ import {
 
 /* Remember! Only add new storage variables at the end of structs !! */
 
-struct TournamentStorage {
-    address[] matches;
-    uint256 numMatches;
+struct MuseumStorage {
+    address[] arenas;
+    bytes32[] configHashes;
+    mapping (address => bool) allowedAdmins;
+    mapping (bytes32 => address) configHashToArenaAddress;
 }
 
 struct Initializers {
@@ -73,6 +75,7 @@ struct ArenaConstants {
     bool TEAMS_ENABLED;
     uint256 NUM_TEAMS;
     bool RANKED;
+    address PARENT_ADDRESS;
 }
 
 library LibArenaStorage {
@@ -80,7 +83,7 @@ library LibArenaStorage {
     bytes32 constant ARENA_INITIALIZERS_POSITION = keccak256("darkforest.initializers.arena");
     bytes32 constant ARENA_STORAGE_POSITION = keccak256("darkforest.storage.arena");
     bytes32 constant ARENA_CONSTANTS_POSITION = keccak256("darkforest.constants.arena");
-    bytes32 constant TOURNAMENT_STORAGE_POSITION = keccak256("darkforest.storage.tournament");
+    bytes32 constant MUSEUM_STORAGE_POSITION = keccak256("darkforest.storage.museum");
 
 
     function arenaStorage() internal pure returns (ArenaStorage storage gs) {
@@ -97,8 +100,8 @@ library LibArenaStorage {
         }
     }
 
-     function tournamentStorage() internal pure returns (TournamentStorage storage ts) {
-        bytes32 position = TOURNAMENT_STORAGE_POSITION;
+     function museumStorage() internal pure returns (MuseumStorage storage ts) {
+        bytes32 position = MUSEUM_STORAGE_POSITION;
         assembly {
             ts.slot := position
         }
@@ -121,8 +124,8 @@ contract WithArenaStorage {
         return LibArenaStorage.arenaConstants();
     }
     
-    function tournamentStorage() internal pure returns (TournamentStorage storage) {
-        return LibArenaStorage.tournamentStorage();
+    function museumStorage() internal pure returns (MuseumStorage storage) {
+        return LibArenaStorage.museumStorage();
     }
 
     function ai() internal pure returns (Initializers storage) {
