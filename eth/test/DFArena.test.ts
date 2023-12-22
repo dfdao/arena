@@ -64,6 +64,7 @@ import { ArenaPlanets } from '@darkforest_eth/settings';
 import { locationIdFromEthersBN } from '@darkforest_eth/serde';
 import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
 import { getLobbyCreatedEvent, newArena } from './utils/arena';
+import { get } from 'lodash';
 
 describe('Arena Functions', function () {
   describe('Create Planets', function () {
@@ -1351,6 +1352,90 @@ describe('Arena Functions', function () {
        * 3. Create a new arena with the new initializers
        * 4. Confirm configHash of
        */
+    });
+  });
+
+  describe.only('Museum Arena Players', function () {
+    let world: World;
+    let arena: DarkForest;
+
+    async function worldFixture() {
+      world = await fixtureLoader(targetPlanetFixture);
+      const inits = await world.contract.getInitializers();
+      arena = (await newArena(world, inits)).connect(world.user1);
+      let initArgs = makeInitArgs(SPAWN_PLANET_1);
+      await arena.initializePlayer(...initArgs);
+
+      initArgs = makeInitArgs(SPAWN_PLANET_2);
+      await arena.connect(world.user2).initializePlayer(...initArgs);
+
+      const perlin = 20;
+      const level = 0;
+      const planetType = 1; // asteroid field
+
+      await arena.createArenaPlanet({
+        location: LVL0_PLANET_DEEP_SPACE.id,
+        x: 10,
+        y: 10,
+        perlin,
+        level,
+        planetType,
+        requireValidLocationId: true,
+        isTargetPlanet: true,
+        isSpawnPlanet: false,
+        blockedPlanetIds: [],
+      });
+    }
+
+    beforeEach(async function () {
+      await fixtureLoader(worldFixture);
+    });
+
+    describe('Game is Over', function () {
+      beforeEach(async function () {
+        const dist = 1;
+        const shipsSent = 30000;
+        const silverSent = 0;
+        await arena.move(
+          ...makeMoveArgs(SPAWN_PLANET_1, LVL0_PLANET_DEEP_SPACE, dist, shipsSent, silverSent)
+        );
+      });
+
+      it('after players initialize, parent museum is updated', async function () {
+        const arenaConstants = await arena.getArenaConstants();
+
+        const players = await world.contract.getPlayersByConfigHash(arenaConstants.CONFIG_HASH);
+        expect(players.length).to.equal(2);
+
+        const user1Arena = await world.contract.getArenasStartedByConfigHashAndPlayer(
+          arenaConstants.CONFIG_HASH,
+          world.user1.address
+        );
+        expect(user1Arena.length).to.equal(1);
+        expect(user1Arena[0].toLowerCase()).to.equal(arena.address.toLowerCase());
+      });
+
+      it('After Claim Victory, parent museum is updated', async function () {
+        await increaseBlockchainTime(600);
+        await arena.refreshPlanet(LVL0_PLANET_DEEP_SPACE.id);
+
+        await expect(arena.claimVictory()).to.emit(arena, 'Gameover').withArgs(world.user1.address);
+
+        expect((await arena.getRoundDuration()).toNumber()).to.be.greaterThan(600);
+        const arenaConstants = await arena.getArenaConstants();
+
+        const arenaPlayer = await world.contract.getArenaPlayer(
+          arenaConstants.CONFIG_HASH,
+          world.user1.address,
+          arena.address
+        );
+
+        const arenaPlayers = await world.contract.getArenaPlayersByConfigHash(
+          arenaConstants.CONFIG_HASH
+        );
+        expect(arenaPlayers.length).to.equal(1);
+        expect(arenaPlayers[0]).to.deep.equal(arenaPlayer);
+      });
     });
   });
 

@@ -32,7 +32,8 @@ import {
     PlanetExtendedInfo2,
     AuxiliaryArgs,
     ArenaPlanetInfo,
-    ArenaPlayerInfo
+    ArenaPlayerInfo,
+    ArenaPlayer
 } from "../DFTypes.sol";
 
 
@@ -232,6 +233,22 @@ contract DFArenaGetterFacet is WithStorage, WithArenaStorage {
         }
     }
 
+    function getArenaPlayer(bytes32 configHash, address player, address arena) public view returns (ArenaPlayer memory) {
+        bytes32 arenaPlayerHash = keccak256(abi.encode(configHash, player, arena));
+        return museumStorage().arenaPlayerLookup[arenaPlayerHash];
+    }
+
+    function getArenaPlayersByConfigHash(bytes32 configHash) public view returns (ArenaPlayer[] memory) {
+        return museumStorage().arenasFinishedByConfigHash[configHash];
+    }
+
+    function getPlayersByConfigHash(bytes32 configHash) public view returns (address[] memory) {
+        return museumStorage().playersByConfigHash[configHash];
+    }
+
+    function getArenasStartedByConfigHashAndPlayer(bytes32 configHash, address player) public view returns (address[] memory) {
+        return museumStorage().arenasStartedByConfigHashAndPlayer[configHash][player];
+    }
 
     function getInitPlanetHashes() public view returns (bytes32[] memory) {
         bytes32[] memory initPlanetIds = arenaConstants().INIT_PLANET_HASHES;

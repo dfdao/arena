@@ -157,18 +157,18 @@ contract DFArenaCoreFacet is WithStorage, WithArenaStorage {
         bytes32 configHash = arenaConstants().CONFIG_HASH;
         uint256 startTime = arenaStorage().startTime;
 
-        ArenaPlayer memory arenaPlayer = ArenaPlayer(
-            msg.sender,
-            address(this),
-            configHash,
-            startTime,
-            block.timestamp,
-            block.timestamp - startTime
-        );
+        ArenaPlayer memory arenaPlayer = ArenaPlayer({
+            player: msg.sender,
+            arena: address(this),
+            configHash: configHash,
+            time: block.timestamp - startTime,
+            startTime: startTime,
+            endTime: block.timestamp
+        });
 
         address parent = arenaConstants().PARENT_ADDRESS;
         if(parent != address(0)) {
-            DFArenaMuseumFacet(parent).addArenaPlayer(arenaPlayer);
+            DFArenaMuseumFacet(parent).addFinishedArenaPlayer(arenaPlayer);
         }
 
         emit Gameover(msg.sender);

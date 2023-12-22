@@ -90,14 +90,16 @@ contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
  
     }
 
-    function addArenaPlayer(ArenaPlayer memory arenaPlayer) public {
+    function addFinishedArenaPlayer(ArenaPlayer memory arenaPlayer) public {
         if(museumStorage().allowedAdmins[msg.sender]) {
             // Verify that msg.sender is the arenaPlayer.arena
             if(arenaPlayer.arena != msg.sender) {
                 revert("Not allowed to add arena player");
             }
             museumStorage().arenasFinishedByConfigHash[arenaPlayer.configHash].push(arenaPlayer);
-            bytes32 arenaPlayerHash = keccak256(abi.encode(arenaPlayer.configHash, msg.sender, arenaPlayer.arena));
+            // Need consistent util for this hash lol.
+            // Config hash, player addres, arena address
+            bytes32 arenaPlayerHash = keccak256(abi.encode(arenaPlayer.configHash, arenaPlayer.player, msg.sender));
             museumStorage().arenaPlayerLookup[arenaPlayerHash] = arenaPlayer;
         }
         else {
