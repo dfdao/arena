@@ -225,7 +225,6 @@ contract DFStartFacet is WithStorage, WithArenaStorage {
     if(parent != address(0)) {
       DFArenaMuseumFacet(parent).addConfig(keccak256(abi.encode(ai().initArgs)));
     }
-    
   }
   
   function initializeDefaults() public {

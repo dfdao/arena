@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 // Contract imports
 import {Diamond} from "../vendor/Diamond.sol";
-import {DFStartFacet} from "../facets/DFStartFacet.sol";
 
 // Interface imports
 import {IDiamondCut} from "../vendor/interfaces/IDiamondCut.sol";
@@ -15,7 +14,7 @@ import {WithStorage} from "../libraries/LibStorage.sol";
 import {WithArenaStorage} from "../libraries/LibArenaStorage.sol";
 
 // Types
-import {InitArgs} from "../DFTypes.sol";
+import {InitArgs, ArenaPlayer} from "../DFTypes.sol";
 
 contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
     event LobbyCreated(address creatorAddress, address lobbyAddress);
@@ -53,18 +52,56 @@ contract DFArenaMuseumFacet is WithStorage, WithArenaStorage {
         // Allow new arena to update parent Museum contract
         museumStorage().allowedAdmins[address(lobby)] = true;
         museumStorage().arenas.push(address(lobby));
+
+        // Add creator to list of all creators
+        if(!museumStorage().allCreatorLookup[msg.sender]) {
+            museumStorage().allCreatorLookup[msg.sender] = true;
+            museumStorage().allCreators.push(msg.sender);
+        }
     }
 
+    // Only callable by a child Arena contract
     function addConfig(bytes32 newHash) public {
         if(museumStorage().allowedAdmins[msg.sender]) {
-            // Only add the address if doesn't already exist
-            if(museumStorage().configHashToArenaAddress[newHash] == address(0)) {
-                museumStorage().configHashToArenaAddress[newHash] = msg.sender;
+            // Add the config and it's associated arena 
+            if(museumStorage().configHashToArena[newHash] == address(0)) {
+                museumStorage().configHashToArena[newHash] = msg.sender;
                 museumStorage().configHashes.push(newHash);
             }
+            // Always add arena to list of arenas for this config
+            museumStorage().configHashToArenas[newHash].push(msg.sender);
         }
         else {
             revert("Not allowed to update config hash");
+        }
+ 
+    }
+
+    function addNewPlayer(bytes32 configHash, address player) public {
+        if(museumStorage().allowedAdmins[msg.sender]) {
+            // Update arenasStartedByConfigHashAndPlayer
+            museumStorage().arenasStartedByConfigHashAndPlayer[configHash][player].push(msg.sender);
+            // Update playersByConfigHash 
+            museumStorage().playersByConfigHash[configHash].push(player);
+        }
+        else {
+            revert("Not allowed to update config hash");
+        }
+ 
+    }
+
+    function addArenaPlayer(ArenaPlayer memory arenaPlayer) public {
+        if(museumStorage().allowedAdmins[msg.sender]) {
+            // Verify that msg.sender is the arenaPlayer.arena
+            if(arenaPlayer.arena != msg.sender) {
+                revert("Not allowed to add arena player");
+            }
+            museumStorage().arenasFinishedByConfigHash[arenaPlayer.configHash].push(arenaPlayer);
+            bytes32 arenaPlayerHash = keccak256(abi.encode(arenaPlayer.configHash, msg.sender, arenaPlayer.arena));
+            museumStorage().arenaPlayerLookup[arenaPlayerHash] = arenaPlayer;
+        }
+        else {
+            revert("Not allowed to add arena player");
         }
  
     }

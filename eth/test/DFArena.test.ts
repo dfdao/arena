@@ -777,7 +777,7 @@ describe('Arena Functions', function () {
       world = await fixtureLoader(arenaWorldFixture);
     });
 
-    it.only('New lobby adress is stored on chain', async function () {
+    it('New lobby adress is stored on chain', async function () {
       const initAddress = hre.ethers.constants.AddressZero;
       const initFunctionCall = '0x';
       // Make Lobby

@@ -219,11 +219,11 @@ contract DFArenaGetterFacet is WithStorage, WithArenaStorage {
     }
 
     function getArenaByConfigHash(bytes32 configHash) public view returns (address) {
-        return museumStorage().configHashToArenaAddress[configHash];
+        return museumStorage().configHashToArena[configHash];
     }
 
     function getArenaInitializersByConfigHash(bytes32 configHash) public view returns (Initializers memory) {
-        address arena = museumStorage().configHashToArenaAddress[configHash];
+        address arena = museumStorage().configHashToArena[configHash];
         if(arena != address(0)) {
            return DFArenaGetterFacet(arena).getInitializers(); 
         }
