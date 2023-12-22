@@ -211,6 +211,10 @@ contract DFArenaGetterFacet is WithStorage, WithArenaStorage {
         return arenaConstants();
     }
 
+    function getArenaCreators() public view returns (address[] memory) {
+        return museumStorage().allCreators;
+    }
+
     function getArenas() public view returns (address[] memory) {
         return museumStorage().arenas;
     }

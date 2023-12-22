@@ -1345,17 +1345,10 @@ describe('Arena Functions', function () {
       const arena1 = await newArena(world, initsForNewArena);
       const newConfigHash = (await arena1.getArenaConstants()).CONFIG_HASH;
       expect(initialConfigHash).to.equal(newConfigHash);
-
-      /**
-       * 1. Create a new arena contract from world.user1Core with a different config hash
-       * 2. Fetch the new initializers from the parent contract
-       * 3. Create a new arena with the new initializers
-       * 4. Confirm configHash of
-       */
     });
   });
 
-  describe.only('Museum Arena Players', function () {
+  describe('Museum Arena Players', function () {
     let world: World;
     let arena: DarkForest;
 
@@ -1391,7 +1384,7 @@ describe('Arena Functions', function () {
       await fixtureLoader(worldFixture);
     });
 
-    describe('Game is Over', function () {
+    describe('Parent contract updates', function () {
       beforeEach(async function () {
         const dist = 1;
         const shipsSent = 30000;
@@ -1399,6 +1392,27 @@ describe('Arena Functions', function () {
         await arena.move(
           ...makeMoveArgs(SPAWN_PLANET_1, LVL0_PLANET_DEEP_SPACE, dist, shipsSent, silverSent)
         );
+      });
+
+      it('after arena is created, parent museum is updated', async function () {
+        // Confirm that player 1, but not player2 is in the list of all creators
+        const allCreators = await world.contract.getArenaCreators();
+        expect(allCreators.length).to.equal(1);
+        expect(allCreators[0].toLowerCase()).to.equal(world.user1.address.toLowerCase());
+
+        const arenas = await world.contract.getArenas();
+        expect(arenas.length).to.equal(1);
+        expect(arenas[0].toLowerCase()).to.equal(arena.address.toLowerCase());
+
+        const configs = await world.contract.getConfigHashes();
+        const arenaConstants = await arena.getArenaConstants();
+        expect(configs.length).to.equal(1);
+        expect(configs[0].toLowerCase()).to.equal(arenaConstants.CONFIG_HASH);
+
+        const arenaByConfigHash = await world.contract.getArenaByConfigHash(
+          arenaConstants.CONFIG_HASH
+        );
+        expect(arenaByConfigHash.toLowerCase()).to.equal(arena.address);
       });
 
       it('after players initialize, parent museum is updated', async function () {
