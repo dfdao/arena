@@ -13,22 +13,15 @@ export const PortalCommunityView: React.FC<{}> = () => {
   const [numGamesPerConfig, setNumGamesPerConfig] = useState<Map<string, number>>(
     new Map<string, number>()
   );
-  const [initArgs, setInitArgs] = useState<Awaited<ReturnType<DarkForest['getInitializers']>>[]>(
-    []
-  );
   const [configs, setConfigs] = useState<string[]>([]);
   const connection = useEthConnection();
 
   useEffect(() => {
-    console.log(`Fetching arenas from directly on chain lol`);
+    // TODO: Think about better way to fetch this data
     const getArenas = async () => {
       const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
       const configsFromContract = await df.getConfigHashes();
       setConfigs(configsFromContract);
-      // console.log(`configs`, arenas);
-      // const initReqs = arenas.map((configHash) => df.getArenaInitializersByConfigHash(configHash));
-      // const inits = await Promise.all(initReqs);
-      // setInitArgs(inits);
     };
     getArenas();
   }, []);
