@@ -1,10 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { EthAddress } from '@darkforest_eth/types';
-import {
-  generateMinimapConfig,
-  generateMinimapConfigFromContract,
-  MinimapConfig,
-} from '../../../Panes/Lobby/MinimapUtils';
+import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
 import { debounce } from 'lodash';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
@@ -13,12 +9,9 @@ import { Minimap } from '../../../Components/Minimap';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { truncateAddress } from '../PortalUtils';
 import { Spacer } from '../../../Components/CoreUI';
-import { useConfigFromHash, useEthConnection } from '../../../Utils/AppHooks';
+import { useConfigFromContract } from '../../../Utils/AppHooks';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import { useTwitters } from '../../../Utils/AppHooks';
-import { DarkForest } from '@darkforest_eth/contracts/typechain';
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { loadDiamondContract } from '@Backend/Network/Blockchain';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
@@ -26,39 +19,23 @@ export const MapGridDetail: React.FC<{
   lobbyAddress?: EthAddress;
   nGames?: number;
 }> = ({ configHash, creator, lobbyAddress, nGames }) => {
-  const { config } = useConfigFromHash(configHash);
+  const { config, error } = useConfigFromContract(configHash);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
   const { twitters } = useTwitters();
-  const connection = useEthConnection();
-  const [initArgs, setInitArgs] = useState<
-    Awaited<ReturnType<DarkForest['getInitializers']>> | undefined
-  >(undefined);
-
-  useEffect(() => {
-    const getConfig = async () => {
-      const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
-      const inits = await df.getArenaInitializersByConfigHash(configHash);
-      setInitArgs(inits);
-    };
-    getConfig();
-    // const inits = await Promise.all(initReqs);
-    // setInitArgs(inits);
-  }, []);
 
   const onMapChange = useMemo(() => {
     return debounce((config: MinimapConfig) => configHash && setMinimapConfig(config), 500);
   }, [setMinimapConfig]);
 
   useEffect(() => {
-    if (initArgs) {
-      console.log(`MAP`, getConfigName(configHash));
-      onMapChange(generateMinimapConfigFromContract(initArgs, 18));
+    if (error) {
+      console.log(`[ERROR] fetching config`);
     } else if (config) {
       onMapChange(generateMinimapConfig(config, 18));
     } else {
       setMinimapConfig(undefined);
     }
-  }, [config, onMapChange, initArgs]);
+  }, [config, onMapChange, error]);
 
   const history = useHistory();
 

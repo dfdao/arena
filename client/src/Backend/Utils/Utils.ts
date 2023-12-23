@@ -18,9 +18,6 @@ import { BigInteger } from 'big-integer';
 import { BigNumber, ethers, utils } from 'ethers';
 import { roundEndTimestamp, roundStartTimestamp } from '../../Frontend/Utils/constants';
 import { StatIdx } from '../../_types/global/GlobalTypes';
-import { DarkForest } from '@darkforest_eth/contracts/typechain';
-import { LobbyInitializers } from '../../Frontend/Panes/Lobby/Reducer';
-import { MinimapConfig } from '../../Frontend/Panes/Lobby/MinimapUtils';
 
 export const ONE_DAY = 24 * 60 * 60 * 1000;
 

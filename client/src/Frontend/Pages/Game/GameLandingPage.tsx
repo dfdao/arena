@@ -105,14 +105,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         if (!config) return console.warn(`No config found for this contract`);
         const playerAddress = ethConnection.getAddress();
         if (!playerAddress) throw new Error('not logged in');
-        console.log(`CREATING ARENA WITH CONFIG`, config);
         terminal.current?.print('Creating new arena instance... ');
         try {
           const newCreationManager = await ArenaCreationManager.create(
             ethConnection,
             defaultAddress
           );
-          // const fetchedConfig = await fetchConfig();
           const { owner, lobby } = await newCreationManager.createAndInitArena(config);
 
           if (owner == playerAddress) {
