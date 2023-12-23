@@ -7,7 +7,7 @@ import { CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getNetwork } from '../Blockchain';
 
-function toNum(num: BigNumber): number {
+export function toNum(num: BigNumber): number {
   return BigNumber.from(num).toNumber();
 }
 

@@ -6,6 +6,8 @@ import {
 } from '../../../Backend/GameLogic/ArenaCreationManager';
 import { LobbyPlanet } from './LobbiesUtils';
 import { LobbyInitializers } from './Reducer';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { toNum } from '@Backend/Network/GraphApi/ConfigApi';
 
 export type MinimapConfig = {
   worldRadius: number;
@@ -55,6 +57,44 @@ export function generateMinimapConfig(
     perlinThreshold2: config.PERLIN_THRESHOLD_2,
     perlinThreshold3: config.PERLIN_THRESHOLD_3,
     stagedPlanets: config.ADMIN_PLANETS || [],
+    createdPlanets: arenaCreationManager?.planets || [],
+    dot,
+  } as MinimapConfig;
+}
+
+const initPlanetsToLobbyPlanets = (
+  initPlanets: Awaited<ReturnType<DarkForest['getInitializers']>>['initArgs']['INIT_PLANETS']
+) => {
+  return initPlanets.map((initPlanet) => {
+    const lobbyPlanet: LobbyPlanet = {
+      x: toNum(initPlanet.x),
+      y: toNum(initPlanet.y),
+      level: toNum(initPlanet.level),
+      planetType: initPlanet.planetType,
+      isTargetPlanet: initPlanet.isTargetPlanet,
+      isSpawnPlanet: initPlanet.isSpawnPlanet,
+      blockedPlanetLocs: [],
+    };
+    return lobbyPlanet;
+  });
+};
+
+export function generateMinimapConfigFromContract(
+  inits: Awaited<ReturnType<DarkForest['getInitializers']>>,
+  dot: number = 10,
+  arenaCreationManager: ArenaCreationManager | undefined = undefined
+): MinimapConfig {
+  const config = inits.initArgs;
+  return {
+    worldRadius: toNum(config.WORLD_RADIUS_MIN),
+    key: toNum(config.SPACETYPE_KEY),
+    scale: toNum(config.PERLIN_LENGTH_SCALE),
+    mirrorX: config.PERLIN_MIRROR_X,
+    mirrorY: config.PERLIN_MIRROR_Y,
+    perlinThreshold1: toNum(config.PERLIN_THRESHOLD_1),
+    perlinThreshold2: toNum(config.PERLIN_THRESHOLD_2),
+    perlinThreshold3: toNum(config.PERLIN_THRESHOLD_3),
+    stagedPlanets: initPlanetsToLobbyPlanets(config.INIT_PLANETS) || [],
     createdPlanets: arenaCreationManager?.planets || [],
     dot,
   } as MinimapConfig;

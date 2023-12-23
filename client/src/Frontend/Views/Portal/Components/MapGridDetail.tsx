@@ -1,6 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { EthAddress } from '@darkforest_eth/types';
-import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
+import {
+  generateMinimapConfig,
+  generateMinimapConfigFromContract,
+  MinimapConfig,
+} from '../../../Panes/Lobby/MinimapUtils';
 import { debounce } from 'lodash';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
@@ -9,31 +13,51 @@ import { Minimap } from '../../../Components/Minimap';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { truncateAddress } from '../PortalUtils';
 import { Spacer } from '../../../Components/CoreUI';
-import { useConfigFromHash } from '../../../Utils/AppHooks';
+import { useConfigFromHash, useEthConnection } from '../../../Utils/AppHooks';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import { useTwitters } from '../../../Utils/AppHooks';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
+import { loadDiamondContract } from '@Backend/Network/Blockchain';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
-  creator: EthAddress;
+  creator?: EthAddress;
   lobbyAddress?: EthAddress;
   nGames?: number;
 }> = ({ configHash, creator, lobbyAddress, nGames }) => {
   const { config } = useConfigFromHash(configHash);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
   const { twitters } = useTwitters();
+  const connection = useEthConnection();
+  const [initArgs, setInitArgs] = useState<
+    Awaited<ReturnType<DarkForest['getInitializers']>> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const getConfig = async () => {
+      const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
+      const inits = await df.getArenaInitializersByConfigHash(configHash);
+      setInitArgs(inits);
+    };
+    getConfig();
+    // const inits = await Promise.all(initReqs);
+    // setInitArgs(inits);
+  }, []);
 
   const onMapChange = useMemo(() => {
     return debounce((config: MinimapConfig) => configHash && setMinimapConfig(config), 500);
   }, [setMinimapConfig]);
 
   useEffect(() => {
-    if (config) {
+    if (initArgs) {
+      onMapChange(generateMinimapConfigFromContract(initArgs, 18));
+    } else if (config) {
       onMapChange(generateMinimapConfig(config, 18));
     } else {
       setMinimapConfig(undefined);
     }
-  }, [config, onMapChange]);
+  }, [config, onMapChange, initArgs]);
 
   const history = useHistory();
 
@@ -60,7 +84,7 @@ export const MapGridDetail: React.FC<{
       )}
       <Spacer height={16} />
       <ConfigTitle>{getConfigName(configHash)}</ConfigTitle>
-      {lobbyAddress && (
+      {lobbyAddress && creator && (
         <>
           <span>By {twitters[creator] ? `@${twitters[creator]}` : truncateAddress(creator)}</span>
           <span>Lobby: {truncateAddress(lobbyAddress)}</span>
