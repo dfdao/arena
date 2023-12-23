@@ -5,10 +5,79 @@ import styled from 'styled-components';
 import { Spacer } from '../../Components/CoreUI';
 import { Minimap } from '../../Components/Minimap';
 import { ConfigUpload, Logo } from '../../Panes/Lobby/LobbiesUtils';
-import { MinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { MinimapConfig, generateMinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { stockConfig } from '../../Utils/StockConfigs';
 import { Account } from '../../Views/Portal/Account';
+
+interface map {
+  title: string;
+  initializers: LobbyInitializers;
+  description: string;
+}
+
+const stockMaps: map[] = [
+  {
+    title: '(1P) Grand Prix',
+    initializers: stockConfig.onePlayerRace,
+    description: "Try this week's competitive event!",
+  },
+  {
+    title: '(4P) Battle for the Center',
+    initializers: stockConfig.fourPlayerBattle,
+    description: 'Win the planet in the center!',
+  },
+  {
+    title: '(2P) Race',
+    initializers: stockConfig.sprint,
+    description: 'Sprint for the target!',
+  },
+  {
+    title: 'Custom',
+    initializers: stockConfig.vanilla,
+    description: 'Design your own game',
+  },
+];
+
+const MapItemComponent: React.FC<{
+  mapContent: map;
+  idx: number;
+  pickMap: (initializers: LobbyInitializers, active?: number) => void;
+}> = ({ mapContent, idx, pickMap }) => {
+  const [currentPointer, setCurrentPointer] = useState<WorldCoords | undefined>();
+  const mapSizePx = '250px';
+
+  return (
+    <MapItem
+      onClick={() => pickMap(mapContent.initializers, idx)}
+      style={
+        {
+          '--x': currentPointer?.x,
+          '--y': currentPointer?.y,
+        } as CSSProperties
+      }
+      onMouseMove={(e: any) => {
+        const x = e.clientX - e.target.offsetLeft;
+        const y = e.clientY - e.target.offsetTop;
+        setCurrentPointer({ x: x, y: y });
+      }}
+    >
+      <MapContent>
+        <Minimap
+          style={{ height: mapSizePx, width: mapSizePx }}
+          minimapConfig={generateMinimapConfig(mapContent.initializers)}
+        />
+        <Spacer height={32} />
+        <MapItemText>
+          <MapTitle>{mapContent.title}</MapTitle>
+          <span>{mapContent.description}</span>
+          <span>Radius: {mapContent.initializers.WORLD_RADIUS_MIN}</span>
+        </MapItemText>
+      </MapContent>
+    </MapItem>
+  );
+};
+const MemoMapItemComponent = React.memo(MapItemComponent);
 
 export const LobbyMapSelectPage: React.FC<{
   address: EthAddress;
@@ -18,92 +87,12 @@ export const LobbyMapSelectPage: React.FC<{
   root: string;
   setError: (error: string) => void;
 }> = ({ address, startingConfig, updateConfig, createDisabled, root, setError }) => {
-  const mapSizePx = '250px';
   const history = useHistory();
 
   function pickMap(initializers: LobbyInitializers, active?: number) {
     updateConfig({ type: 'RESET', value: lobbyConfigInit(initializers) });
     history.push(`${root}/confirm`);
   }
-
-  function generateMinimapConfig(config: LobbyInitializers): MinimapConfig {
-    return {
-      worldRadius: config.WORLD_RADIUS_MIN,
-      key: config.SPACETYPE_KEY,
-      scale: config.PERLIN_LENGTH_SCALE,
-      mirrorX: config.PERLIN_MIRROR_X,
-      mirrorY: config.PERLIN_MIRROR_Y,
-      perlinThreshold1: config.PERLIN_THRESHOLD_1,
-      perlinThreshold2: config.PERLIN_THRESHOLD_2,
-      perlinThreshold3: config.PERLIN_THRESHOLD_3,
-      stagedPlanets: config.ADMIN_PLANETS || [],
-      createdPlanets: [],
-      dot: 10,
-    } as MinimapConfig;
-  }
-
-  interface map {
-    title: string;
-    initializers: LobbyInitializers;
-    description: string;
-  }
-
-  const stockMaps: map[] = [
-    {
-      title: '(1P) Grand Prix',
-      initializers: stockConfig.onePlayerRace,
-      description: "Try this week's competitive event!",
-    },
-    {
-      title: '(4P) Battle for the Center',
-      initializers: stockConfig.fourPlayerBattle,
-      description: 'Win the planet in the center!',
-    },
-    {
-      title: '(2P) Race',
-      initializers: stockConfig.sprint,
-      description: 'Sprint for the target!',
-    },
-    {
-      title: 'Custom',
-      initializers: startingConfig,
-      description: 'Design your own game',
-    },
-  ];
-
-  const MapItemComponent: React.FC<{ mapContent: map; idx: number }> = ({ mapContent, idx }) => {
-    const [currentPointer, setCurrentPointer] = useState<WorldCoords | undefined>();
-    return (
-      <MapItem
-        onClick={() => pickMap(mapContent.initializers, idx)}
-        style={
-          {
-            '--x': currentPointer?.x,
-            '--y': currentPointer?.y,
-          } as CSSProperties
-        }
-        onMouseMove={(e: any) => {
-          const x = e.clientX - e.target.offsetLeft;
-          const y = e.clientY - e.target.offsetTop;
-          setCurrentPointer({ x: x, y: y });
-        }}
-      >
-        <MapContent>
-          <Minimap
-            style={{ height: mapSizePx, width: mapSizePx }}
-            minimapConfig={generateMinimapConfig(mapContent.initializers)}
-          />
-          <Spacer height={32} />
-          <MapItemText>
-            <MapTitle>{mapContent.title}</MapTitle>
-            <span>{mapContent.description}</span>
-            <span>Radius: {mapContent.initializers.WORLD_RADIUS_MIN}</span>
-          </MapItemText>
-        </MapContent>
-      </MapItem>
-    );
-  };
-
   return (
     <Container>
       <Topbar>
@@ -124,7 +113,12 @@ export const LobbyMapSelectPage: React.FC<{
       </Header>
       <MapsContainer>
         {stockMaps.map((mapContent, idx) => (
-          <MapItemComponent key={`map-item-${idx}`} mapContent={mapContent} idx={idx} />
+          <MemoMapItemComponent
+            key={`map-item-${idx}`}
+            mapContent={mapContent}
+            idx={idx}
+            pickMap={pickMap}
+          />
         ))}
       </MapsContainer>
       <ConfigUpload
