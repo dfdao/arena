@@ -8,6 +8,9 @@ import { LobbyPlanet } from './LobbiesUtils';
 import { LobbyInitializers } from './Reducer';
 import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import { toNum } from '@Backend/Network/GraphApi/ConfigApi';
+import { getConfigName } from '@darkforest_eth/procedural';
+import { decodeCoords, decodeRevealedCoords } from '@darkforest_eth/serde';
+import { BigNumber, utils } from 'ethers';
 
 export type MinimapConfig = {
   worldRadius: number;
@@ -66,9 +69,10 @@ const initPlanetsToLobbyPlanets = (
   initPlanets: Awaited<ReturnType<DarkForest['getInitializers']>>['initArgs']['INIT_PLANETS']
 ) => {
   return initPlanets.map((initPlanet) => {
+    const { x, y } = decodeCoords({ x: initPlanet.x, y: initPlanet.y });
     const lobbyPlanet: LobbyPlanet = {
-      x: toNum(initPlanet.x),
-      y: toNum(initPlanet.y),
+      x,
+      y,
       level: toNum(initPlanet.level),
       planetType: initPlanet.planetType,
       isTargetPlanet: initPlanet.isTargetPlanet,
@@ -85,6 +89,12 @@ export function generateMinimapConfigFromContract(
   arenaCreationManager: ArenaCreationManager | undefined = undefined
 ): MinimapConfig {
   const config = inits.initArgs;
+  console.log(
+    `INIT PLANETS`,
+    config.INIT_PLANETS,
+    `STAGED PLANETS`,
+    initPlanetsToLobbyPlanets(config.INIT_PLANETS)
+  );
   return {
     worldRadius: toNum(config.WORLD_RADIUS_MIN),
     key: toNum(config.SPACETYPE_KEY),

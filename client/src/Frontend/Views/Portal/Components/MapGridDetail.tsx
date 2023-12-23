@@ -51,6 +51,7 @@ export const MapGridDetail: React.FC<{
 
   useEffect(() => {
     if (initArgs) {
+      console.log(`MAP`, getConfigName(configHash));
       onMapChange(generateMinimapConfigFromContract(initArgs, 18));
     } else if (config) {
       onMapChange(generateMinimapConfig(config, 18));
