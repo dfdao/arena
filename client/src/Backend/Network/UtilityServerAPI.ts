@@ -11,7 +11,7 @@ import * as EmailValidator from 'email-validator';
 import timeout from 'p-timeout';
 import { TerminalHandle } from '../../Frontend/Views/Terminal';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
-import { getNetwork, loadFaucetContract } from './Blockchain';
+import { getNetwork, isProdNetwork, loadFaucetContract } from './Blockchain';
 import { TerminalTextStyle } from '@Utils/TerminalTypes';
 
 export const enum EmailResponse {
@@ -204,9 +204,9 @@ export async function sendDrip(
   }
   const currBalance = weiToEth(await connection.loadBalance(address));
 
-  terminal?.println('Requesting funds from faucet...', TerminalTextStyle.Blue);
   const success = await requestFaucet(address);
-
+  if (!success && !isProdNetwork) return true;
+  terminal?.println('Requesting funds from faucet...', TerminalTextStyle.Blue);
   if (!success) {
     if (terminal)
       terminal.println(

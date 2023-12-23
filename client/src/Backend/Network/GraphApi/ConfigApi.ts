@@ -6,6 +6,8 @@ import { LobbyInitializers } from '../../../Frontend/Panes/Lobby/Reducer';
 import { CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getNetwork } from '../Blockchain';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { initPlanetsToLobbyPlanets } from '../../../Frontend/Panes/Lobby/MinimapUtils';
 
 export function toNum(num: BigNumber): number {
   return BigNumber.from(num).toNumber();
@@ -190,4 +192,106 @@ export function convertGraphConfig(arena: GraphArena): {
     },
     address: arena.lobbyAddress,
   };
+}
+
+export function parseConfigFromContract(
+  inits: Awaited<ReturnType<DarkForest['getInitializers']>>
+): LobbyInitializers {
+  const cf = inits.initArgs;
+  const lobbyInitializers: LobbyInitializers = {
+    ...cf,
+    ABANDON_RANGE_CHANGE_PERCENT: toNum(cf.ABANDON_RANGE_CHANGE_PERCENT),
+    ABANDON_SPEED_CHANGE_PERCENT: toNum(cf.ABANDON_SPEED_CHANGE_PERCENT),
+    ARTIFACT_POINT_VALUES: [
+      toNum(cf.ARTIFACT_POINT_VALUES[0]),
+      toNum(cf.ARTIFACT_POINT_VALUES[1]),
+      toNum(cf.ARTIFACT_POINT_VALUES[2]),
+      toNum(cf.ARTIFACT_POINT_VALUES[3]),
+      toNum(cf.ARTIFACT_POINT_VALUES[4]),
+      toNum(cf.ARTIFACT_POINT_VALUES[5]),
+    ],
+    BIOME_THRESHOLD_1: toNum(cf.BIOME_THRESHOLD_1),
+    BIOME_THRESHOLD_2: toNum(cf.BIOME_THRESHOLD_2),
+    BIOMEBASE_KEY: toNum(cf.BIOMEBASE_KEY),
+    CAPTURE_ZONE_CHANGE_BLOCK_INTERVAL: toNum(cf.CAPTURE_ZONE_CHANGE_BLOCK_INTERVAL),
+    CAPTURE_ZONE_COUNT: toNum(cf.CAPTURE_ZONE_COUNT),
+    CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED: toNum(cf.CAPTURE_ZONE_HOLD_BLOCKS_REQUIRED),
+    CAPTURE_ZONE_PLANET_LEVEL_SCORE: [
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[0]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[1]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[2]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[3]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[4]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[5]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[6]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[7]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[8]),
+      toNum(cf.CAPTURE_ZONE_PLANET_LEVEL_SCORE[9]),
+    ],
+    CAPTURE_ZONE_RADIUS: toNum(cf.CAPTURE_ZONE_RADIUS),
+    CAPTURE_ZONES_PER_5000_WORLD_RADIUS: toNum(cf.CAPTURE_ZONES_PER_5000_WORLD_RADIUS),
+    CLAIM_VICTORY_ENERGY_PERCENT: toNum(cf.CLAIM_VICTORY_ENERGY_PERCENT),
+    INIT_PERLIN_MAX: toNum(cf.INIT_PERLIN_MAX),
+    INIT_PERLIN_MIN: toNum(cf.INIT_PERLIN_MIN),
+    LOCATION_REVEAL_COOLDOWN: toNum(cf.LOCATION_REVEAL_COOLDOWN),
+    MAX_NATURAL_PLANET_LEVEL: toNum(cf.MAX_NATURAL_PLANET_LEVEL),
+    MODIFIERS: [
+      toNum(cf.MODIFIERS[0]),
+      toNum(cf.MODIFIERS[1]),
+      toNum(cf.MODIFIERS[2]),
+      toNum(cf.MODIFIERS[3]),
+      toNum(cf.MODIFIERS[4]),
+      toNum(cf.MODIFIERS[5]),
+      toNum(cf.MODIFIERS[6]),
+      toNum(cf.MODIFIERS[7]),
+    ],
+    NUM_TEAMS: toNum(cf.NUM_TEAMS),
+    PERLIN_LENGTH_SCALE: toNum(cf.PERLIN_LENGTH_SCALE),
+    PERLIN_THRESHOLD_1: toNum(cf.PERLIN_THRESHOLD_1),
+    PERLIN_THRESHOLD_2: toNum(cf.PERLIN_THRESHOLD_2),
+    PERLIN_THRESHOLD_3: toNum(cf.PERLIN_THRESHOLD_3),
+    PHOTOID_ACTIVATION_DELAY: toNum(cf.PHOTOID_ACTIVATION_DELAY),
+    PLANET_LEVEL_JUNK: [
+      toNum(cf.PLANET_LEVEL_JUNK[0]),
+      toNum(cf.PLANET_LEVEL_JUNK[1]),
+      toNum(cf.PLANET_LEVEL_JUNK[2]),
+      toNum(cf.PLANET_LEVEL_JUNK[3]),
+      toNum(cf.PLANET_LEVEL_JUNK[4]),
+      toNum(cf.PLANET_LEVEL_JUNK[5]),
+      toNum(cf.PLANET_LEVEL_JUNK[6]),
+      toNum(cf.PLANET_LEVEL_JUNK[7]),
+      toNum(cf.PLANET_LEVEL_JUNK[8]),
+      toNum(cf.PLANET_LEVEL_JUNK[9]),
+    ],
+    PLANET_LEVEL_THRESHOLDS: [
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[0]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[1]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[2]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[3]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[4]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[5]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[6]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[7]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[8]),
+      toNum(cf.PLANET_LEVEL_THRESHOLDS[9]),
+    ],
+    PLANET_RARITY: toNum(cf.PLANET_RARITY),
+    PLANETHASH_KEY: toNum(cf.PLANETHASH_KEY),
+    SILVER_SCORE_VALUE: toNum(cf.SILVER_SCORE_VALUE),
+    SPACE_JUNK_LIMIT: toNum(cf.SPACE_JUNK_LIMIT),
+    SPACETYPE_KEY: toNum(cf.SPACETYPE_KEY),
+    SPAWN_RIM_AREA: toNum(cf.SPAWN_RIM_AREA),
+    TARGETS_REQUIRED_FOR_VICTORY: toNum(cf.TARGETS_REQUIRED_FOR_VICTORY),
+    TIME_FACTOR_HUNDREDTHS: toNum(cf.TIME_FACTOR_HUNDREDTHS),
+    TOKEN_MINT_END_TIMESTAMP: toNum(cf.TOKEN_MINT_END_TIMESTAMP),
+    WORLD_RADIUS_MIN: toNum(cf.WORLD_RADIUS_MIN),
+    // CLAIM_PLANET_COOLDOWN: 0,
+    PLANET_TYPE_WEIGHTS: cf.PLANET_TYPE_WEIGHTS,
+    WHITELIST: [],
+    ADMIN_PLANETS: initPlanetsToLobbyPlanets(cf.INIT_PLANETS),
+    INIT_PLANETS: [],
+    WHITELIST_ENABLED: inits.auxArgs.allowListEnabled,
+  };
+
+  return lobbyInitializers;
 }

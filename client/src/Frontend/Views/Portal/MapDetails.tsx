@@ -33,7 +33,7 @@ export function MapDetails({
   const leaders = loadGrandPrixLeaderboard(allPlayers, finalConfigHash, twitters);
   const seasonData = useSeasonData();
 
-  // 5sec poll if live data
+  // 5 sec poll if live data
   const { liveMatches, spyError } = useLiveMatches(
     seasonData,
     finalConfigHash,

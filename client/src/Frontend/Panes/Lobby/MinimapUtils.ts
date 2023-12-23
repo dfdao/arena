@@ -65,7 +65,7 @@ export function generateMinimapConfig(
   } as MinimapConfig;
 }
 
-const initPlanetsToLobbyPlanets = (
+export const initPlanetsToLobbyPlanets = (
   initPlanets: Awaited<ReturnType<DarkForest['getInitializers']>>['initArgs']['INIT_PLANETS']
 ) => {
   return initPlanets.map((initPlanet) => {
@@ -89,12 +89,6 @@ export function generateMinimapConfigFromContract(
   arenaCreationManager: ArenaCreationManager | undefined = undefined
 ): MinimapConfig {
   const config = inits.initArgs;
-  console.log(
-    `INIT PLANETS`,
-    config.INIT_PLANETS,
-    `STAGED PLANETS`,
-    initPlanetsToLobbyPlanets(config.INIT_PLANETS)
-  );
   return {
     worldRadius: toNum(config.WORLD_RADIUS_MIN),
     key: toNum(config.SPACETYPE_KEY),
