@@ -17,7 +17,7 @@ import {IERC173} from "../vendor/interfaces/IERC173.sol";
 
 // Storage imports
 import {WithStorage, GameConstants, SnarkConstants} from "../libraries/LibStorage.sol";
-import {WithArenaStorage, ArenaStorage, ArenaConstants, TournamentStorage, Initializers} from "../libraries/LibArenaStorage.sol";
+import {WithArenaStorage, ArenaStorage, ArenaConstants, Initializers} from "../libraries/LibArenaStorage.sol";
 
 import {
     SpaceType, 
@@ -32,7 +32,8 @@ import {
     PlanetExtendedInfo2,
     AuxiliaryArgs,
     ArenaPlanetInfo,
-    ArenaPlayerInfo
+    ArenaPlayerInfo,
+    ArenaPlayer
 } from "../DFTypes.sol";
 
 
@@ -210,16 +211,47 @@ contract DFArenaGetterFacet is WithStorage, WithArenaStorage {
         return arenaConstants();
     }
 
-    function getMatches() public view returns (address[] memory) {
-        return tournamentStorage().matches;
+    function getArenaCreators() public view returns (address[] memory) {
+        return museumStorage().allCreators;
     }
 
-    function getNumMatches() public view returns (uint256) {
-        return tournamentStorage().numMatches;
+    function getArenas() public view returns (address[] memory) {
+        return museumStorage().arenas;
     }
 
-    function getMatch(uint256 id) public view returns (address) {
-        return tournamentStorage().matches[id];
+    function getConfigHashes() public view returns (bytes32[] memory) {
+        return museumStorage().configHashes;
+    }
+
+    function getArenaByConfigHash(bytes32 configHash) public view returns (address) {
+        return museumStorage().configHashToArena[configHash];
+    }
+
+    function getArenaInitializersByConfigHash(bytes32 configHash) public view returns (Initializers memory) {
+        address arena = museumStorage().configHashToArena[configHash];
+        if(arena != address(0)) {
+           return DFArenaGetterFacet(arena).getInitializers(); 
+        }
+        else {
+            revert("No arena found for config hash");
+        }
+    }
+
+    function getArenaPlayer(bytes32 configHash, address player, address arena) public view returns (ArenaPlayer memory) {
+        bytes32 arenaPlayerHash = keccak256(abi.encode(configHash, player, arena));
+        return museumStorage().arenaPlayerLookup[arenaPlayerHash];
+    }
+
+    function getArenaPlayersByConfigHash(bytes32 configHash) public view returns (ArenaPlayer[] memory) {
+        return museumStorage().arenasFinishedByConfigHash[configHash];
+    }
+
+    function getPlayersByConfigHash(bytes32 configHash) public view returns (address[] memory) {
+        return museumStorage().playersByConfigHash[configHash];
+    }
+
+    function getArenasStartedByConfigHashAndPlayer(bytes32 configHash, address player) public view returns (address[] memory) {
+        return museumStorage().arenasStartedByConfigHashAndPlayer[configHash][player];
     }
 
     function getInitPlanetHashes() public view returns (bytes32[] memory) {

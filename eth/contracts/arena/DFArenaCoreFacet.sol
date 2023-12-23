@@ -10,6 +10,7 @@ import {LibPlanet} from "../libraries/LibPlanet.sol";
 import {Diamond} from "../vendor/Diamond.sol";
 import {DFWhitelistFacet} from "../facets/DFWhitelistFacet.sol";
 import {DFCoreFacet} from "../facets/DFCoreFacet.sol";
+import {DFArenaMuseumFacet} from "../arena/DFArenaMuseumFacet.sol";
 
 // Interface imports
 import {IDiamondCut} from "../vendor/interfaces/IDiamondCut.sol";
@@ -19,7 +20,7 @@ import {IERC173} from "../vendor/interfaces/IERC173.sol";
 // Storage imports
 import {WithStorage} from "../libraries/LibStorage.sol";
 import {WithArenaStorage, ArenaStorage, ArenaPlanetInfo, ArenaConstants} from "../libraries/LibArenaStorage.sol";
-import {Planet, PlanetExtendedInfo, PlanetExtendedInfo2, PlanetEventMetadata, PlanetDefaultStats, Player, SpaceType, Artifact, ArtifactType, DFPInitPlanetArgs, ArenaPlanetInfo, ArenaPlayerInfo, ArenaCreateRevealPlanetArgs} from "../DFTypes.sol";
+import {Planet, PlanetExtendedInfo, PlanetExtendedInfo2, PlanetEventMetadata, PlanetDefaultStats, Player, SpaceType, Artifact, ArtifactType, DFPInitPlanetArgs, ArenaPlanetInfo, ArenaPlayerInfo, ArenaCreateRevealPlanetArgs, ArenaPlayer} from "../DFTypes.sol";
 
 contract DFArenaCoreFacet is WithStorage, WithArenaStorage {
     event AdminPlanetCreated(uint256 loc);
@@ -124,8 +125,18 @@ contract DFArenaCoreFacet is WithStorage, WithArenaStorage {
         );
 
         LibGameUtils.updateWorldRadius();
+        addPlayerToMuseum();
+
         emit PlayerInitialized(msg.sender, _location);
         return _location;
+    }
+
+    function addPlayerToMuseum() internal {
+        address parent = arenaConstants().PARENT_ADDRESS;
+        bytes32 configHash = arenaConstants().CONFIG_HASH;
+        if(parent != address(0)) {
+            DFArenaMuseumFacet(parent).addNewPlayer(configHash, msg.sender);
+        }
     }
 
     function claimVictory() public onlyWhitelisted notPaused {
@@ -143,6 +154,23 @@ contract DFArenaCoreFacet is WithStorage, WithArenaStorage {
         arenaStorage().gameover = true;
         arenaStorage().endTime = block.timestamp;
         gs().paused = true;
+        bytes32 configHash = arenaConstants().CONFIG_HASH;
+        uint256 startTime = arenaStorage().startTime;
+
+        ArenaPlayer memory arenaPlayer = ArenaPlayer({
+            player: msg.sender,
+            arena: address(this),
+            configHash: configHash,
+            time: block.timestamp - startTime,
+            startTime: startTime,
+            endTime: block.timestamp
+        });
+
+        address parent = arenaConstants().PARENT_ADDRESS;
+        if(parent != address(0)) {
+            DFArenaMuseumFacet(parent).addFinishedArenaPlayer(arenaPlayer);
+        }
+
         emit Gameover(msg.sender);
     }
 

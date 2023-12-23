@@ -21,7 +21,10 @@ import {
 } from '@darkforest_eth/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
-import { loadConfigFromHash } from '../../Backend/Network/GraphApi/ConfigApi';
+import {
+  loadConfigFromHash,
+  parseConfigFromContract,
+} from '../../Backend/Network/GraphApi/ConfigApi';
 import { Account } from '../../Backend/Network/AccountManager';
 import { loadArenaLeaderboard } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import { loadEloLeaderboard } from '../../Backend/Network/GraphApi/EloLeaderboardApi';
@@ -37,6 +40,9 @@ import { useEmitterSubscribe, useEmitterValue, useWrappedEmitter } from './Emitt
 import { usePoll } from './Hooks';
 import { DUMMY } from './constants';
 import { createDummyLiveMatches } from '../Views/Portal/PortalUtils';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
+import { loadDiamondContract } from '@Backend/Network/Blockchain';
 
 export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
   createDefinedContext<EthConnection>();
@@ -330,6 +336,31 @@ export function useConfigFromHash(configHash?: string) {
   }, [configHash]);
 
   return { config, lobbyAddress, error };
+}
+
+export function useConfigFromContract(configHash?: string) {
+  const [config, setConfig] = useState<LobbyInitializers | undefined>(undefined);
+  const [error, setError] = useState<boolean>(false);
+  const connection = useEthConnection();
+
+  useEffect(() => {
+    const getConfig = async () => {
+      try {
+        if (!configHash) throw new Error(`No config hash provided`);
+        const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
+        // Load config and initializers
+        const initializers = await df.getArenaInitializersByConfigHash(configHash);
+        console.log(`[RAW INITS]`, initializers);
+        setConfig(parseConfigFromContract(initializers));
+      } catch (error) {
+        console.log(`[ERROR] loading config`, error);
+        setError(true);
+      }
+    };
+    getConfig();
+  }, [configHash]);
+
+  return { config, error };
 }
 
 export function useLiveMatches(

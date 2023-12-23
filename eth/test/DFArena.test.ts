@@ -62,6 +62,9 @@ import hre, { ethers } from 'hardhat';
 import { TestLocation } from './utils/TestLocation';
 import { ArenaPlanets } from '@darkforest_eth/settings';
 import { locationIdFromEthersBN } from '@darkforest_eth/serde';
+import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
+import { getLobbyCreatedEvent, newArena } from './utils/arena';
+import { get } from 'lodash';
 
 describe('Arena Functions', function () {
   describe('Create Planets', function () {
@@ -775,32 +778,17 @@ describe('Arena Functions', function () {
       world = await fixtureLoader(arenaWorldFixture);
     });
 
-    it('Tournament storage exists', async function () {
-      expect((await world.contract.getNumMatches()).toNumber()).to.equal(0);
-    });
-
     it('New lobby adress is stored on chain', async function () {
       const initAddress = hre.ethers.constants.AddressZero;
       const initFunctionCall = '0x';
       // Make Lobby
       const tx = await world.user1Core.createLobby(initAddress, initFunctionCall);
       const rc = await tx.wait();
-      if (!rc.events) throw Error('No event occurred');
-
-      const event = rc.events.find((event) => event.event === 'LobbyCreated') as any;
-      expect(event.args.creatorAddress).to.equal(world.user1.address);
-
-      const lobbyAddress = event.args.lobbyAddress;
-
-      if (!lobbyAddress) throw Error('No lobby address found');
+      const { lobby } = getLobbyCreatedEvent(rc, world.user1Core);
 
       // Connect to Lobby Diamond and check ownership
-      const lobby = await hre.ethers.getContractAt('DarkForest', lobbyAddress);
-      expect(await lobby.owner()).to.equal(world.user1.address);
-
-      expect((await world.contract.getNumMatches()).toNumber()).to.equal(1);
-
-      expect(await world.contract.getMatch(0)).to.equal(lobbyAddress);
+      const arena = await hre.ethers.getContractAt('DarkForest', lobby);
+      expect(await arena.owner()).to.equal(world.user1.address);
     });
   });
 
@@ -1323,17 +1311,145 @@ describe('Arena Functions', function () {
     });
   });
 
-  describe.skip('Fetch initializers', function () {
+  describe('Museum', function () {
     let world: World;
 
     beforeEach('load fixture', async function () {
-      world = await fixtureLoader(initPlanetsArenaFixture);
+      world = await fixtureLoader(arenaWorldFixture);
     });
 
-    it('Logs All Initializers', async function () {
+    it('Can create a new contract with an identical config hash from the intializers', async function () {
+      const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
       const inits = await world.contract.getInitializers();
-      // console.log(inits);
-      console.log(inits.initArgs.INIT_PLANETS);
+      const arena = await newArena(world, inits);
+      const newConfigHash = (await arena.getArenaConstants()).CONFIG_HASH;
+      expect(initialConfigHash).to.equal(newConfigHash);
+    });
+
+    it('Creates new arena from museum, with identical config', async function () {
+      const initialConfigHash = (await world.contract.getArenaConstants()).CONFIG_HASH;
+
+      let arenas = await world.contract.getArenas();
+      let configs = await world.contract.getConfigHashes();
+      console.log({ arenas, configs });
+
+      const inits = await world.contract.getInitializers();
+      const arena = await newArena(world, inits);
+
+      const arenaConfigHash = (await arena.getArenaConstants()).CONFIG_HASH;
+
+      const initsForNewArena = await world.contract.getArenaInitializersByConfigHash(
+        arenaConfigHash
+      );
+
+      const arena1 = await newArena(world, initsForNewArena);
+      const newConfigHash = (await arena1.getArenaConstants()).CONFIG_HASH;
+      expect(initialConfigHash).to.equal(newConfigHash);
+    });
+  });
+
+  describe('Museum Arena Players', function () {
+    let world: World;
+    let arena: DarkForest;
+
+    async function worldFixture() {
+      world = await fixtureLoader(targetPlanetFixture);
+      const inits = await world.contract.getInitializers();
+      arena = (await newArena(world, inits)).connect(world.user1);
+      let initArgs = makeInitArgs(SPAWN_PLANET_1);
+      await arena.initializePlayer(...initArgs);
+
+      initArgs = makeInitArgs(SPAWN_PLANET_2);
+      await arena.connect(world.user2).initializePlayer(...initArgs);
+
+      const perlin = 20;
+      const level = 0;
+      const planetType = 1; // asteroid field
+
+      await arena.createArenaPlanet({
+        location: LVL0_PLANET_DEEP_SPACE.id,
+        x: 10,
+        y: 10,
+        perlin,
+        level,
+        planetType,
+        requireValidLocationId: true,
+        isTargetPlanet: true,
+        isSpawnPlanet: false,
+        blockedPlanetIds: [],
+      });
+    }
+
+    beforeEach(async function () {
+      await fixtureLoader(worldFixture);
+    });
+
+    describe('Parent contract updates', function () {
+      beforeEach(async function () {
+        const dist = 1;
+        const shipsSent = 30000;
+        const silverSent = 0;
+        await arena.move(
+          ...makeMoveArgs(SPAWN_PLANET_1, LVL0_PLANET_DEEP_SPACE, dist, shipsSent, silverSent)
+        );
+      });
+
+      it('after arena is created, parent museum is updated', async function () {
+        // Confirm that player 1, but not player2 is in the list of all creators
+        const allCreators = await world.contract.getArenaCreators();
+        expect(allCreators.length).to.equal(1);
+        expect(allCreators[0].toLowerCase()).to.equal(world.user1.address.toLowerCase());
+
+        const arenas = await world.contract.getArenas();
+        expect(arenas.length).to.equal(1);
+        expect(arenas[0].toLowerCase()).to.equal(arena.address.toLowerCase());
+
+        const configs = await world.contract.getConfigHashes();
+        const arenaConstants = await arena.getArenaConstants();
+        expect(configs.length).to.equal(1);
+        expect(configs[0].toLowerCase()).to.equal(arenaConstants.CONFIG_HASH);
+
+        const arenaByConfigHash = await world.contract.getArenaByConfigHash(
+          arenaConstants.CONFIG_HASH
+        );
+        expect(arenaByConfigHash.toLowerCase()).to.equal(arena.address);
+      });
+
+      it('after players initialize, parent museum is updated', async function () {
+        const arenaConstants = await arena.getArenaConstants();
+
+        const players = await world.contract.getPlayersByConfigHash(arenaConstants.CONFIG_HASH);
+        expect(players.length).to.equal(2);
+
+        const user1Arena = await world.contract.getArenasStartedByConfigHashAndPlayer(
+          arenaConstants.CONFIG_HASH,
+          world.user1.address
+        );
+        expect(user1Arena.length).to.equal(1);
+        expect(user1Arena[0].toLowerCase()).to.equal(arena.address.toLowerCase());
+      });
+
+      it('After Claim Victory, parent museum is updated', async function () {
+        await increaseBlockchainTime(600);
+        await arena.refreshPlanet(LVL0_PLANET_DEEP_SPACE.id);
+
+        await expect(arena.claimVictory()).to.emit(arena, 'Gameover').withArgs(world.user1.address);
+
+        expect((await arena.getRoundDuration()).toNumber()).to.be.greaterThan(600);
+        const arenaConstants = await arena.getArenaConstants();
+
+        const arenaPlayer = await world.contract.getArenaPlayer(
+          arenaConstants.CONFIG_HASH,
+          world.user1.address,
+          arena.address
+        );
+
+        const arenaPlayers = await world.contract.getArenaPlayersByConfigHash(
+          arenaConstants.CONFIG_HASH
+        );
+        expect(arenaPlayers.length).to.equal(1);
+        expect(arenaPlayers[0]).to.deep.equal(arenaPlayer);
+      });
     });
   });
 

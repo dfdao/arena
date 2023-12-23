@@ -31,7 +31,12 @@ import {
   Wrapper,
 } from '../../Components/GameLandingPageComponents';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
-import { TopLevelDivProvider, UIManagerProvider, useEthConnection } from '../../Utils/AppHooks';
+import {
+  TopLevelDivProvider,
+  UIManagerProvider,
+  useConfigFromContract,
+  useEthConnection,
+} from '../../Utils/AppHooks';
 import { stockConfig } from '../../Utils/StockConfigs';
 import { TerminalTextStyle } from '../../Utils/TerminalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
@@ -63,6 +68,13 @@ const enum TerminalPromptStep {
 
 export function GameLandingPage({ match, location }: RouteComponentProps<{ contract: string }>) {
   const contractParam = match.params.contract;
+  const params = new URLSearchParams(location.search);
+  const useZkWhitelist = params.has('zkWhitelist');
+  const createInstance = params.has('create');
+  const configHashParam = params.get('configHash') || undefined;
+
+  const { config } = useConfigFromContract(configHashParam);
+
   const history = useHistory();
   const terminalHandle = useRef<TerminalHandle>();
   const gameUIManagerRef = useRef<GameUIManager | undefined>();
@@ -78,11 +90,8 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const tutorial = contractParam == 'tutorial';
   const [configHash, setConfigHash] = useState<string>('');
   const [step, setStep] = useState(TerminalPromptStep.ACCOUNT_SET);
-  const [config, setConfig] = useState<LobbyInitializers>(stockConfig.competitive);
   const [creationManager, setCreationManager] = useState<ArenaCreationManager>();
-  const params = new URLSearchParams(location.search);
-  const useZkWhitelist = params.has('zkWhitelist');
-  const createInstance = params.has('create');
+
   const [fromCreate, setFromCreate] = useState(false);
   const defaultAddress = address(CONTRACT_ADDRESS);
 
@@ -93,24 +102,22 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       if (!createInstance && !tutorial) {
         setStep(TerminalPromptStep.CONTRACT_SET);
       } else {
+        if (!config) return console.warn(`No config found for this contract`);
         const playerAddress = ethConnection.getAddress();
         if (!playerAddress) throw new Error('not logged in');
-
         terminal.current?.print('Creating new arena instance... ');
         try {
           const newCreationManager = await ArenaCreationManager.create(
             ethConnection,
             defaultAddress
           );
-          const fetchedConfig = await fetchConfig();
-          const { owner, lobby } = await newCreationManager.createAndInitArena(fetchedConfig);
+          const { owner, lobby } = await newCreationManager.createAndInitArena(config);
 
           if (owner == playerAddress) {
             setFromCreate(true);
             history.push({ pathname: `${lobby}`, state: { contract: lobby } });
             setContractAddress(lobby);
           }
-          setConfig(fetchedConfig);
           setCreationManager(newCreationManager);
           terminal.current?.println('arena created.', TerminalTextStyle.Green);
           setStep(TerminalPromptStep.ARENA_CREATED);
@@ -126,11 +133,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         }
       }
     },
-    [ethConnection]
+    [config, ethConnection]
   );
 
   const advanceStateFromArenaCreated = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
+      if (!config) return console.warn(`No config found for this hash`);
       terminal.current?.print('Adding custom planets... ');
 
       try {
@@ -150,7 +158,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         return;
       }
     },
-    [ethConnection, contractAddress, creationManager]
+    [ethConnection, contractAddress, creationManager, config]
   );
 
   // TODO: Check that the config hash matches the competitive hash to ensure the game will be counted
@@ -788,7 +796,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         await advanceStateFromError();
       }
     },
-    [step, ethConnection]
+    [step, ethConnection, config]
   );
 
   async function fetchConfig(): Promise<LobbyInitializers> {

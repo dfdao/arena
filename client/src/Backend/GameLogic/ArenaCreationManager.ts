@@ -96,6 +96,8 @@ export class ArenaCreationManager {
           allowedAddresses: config.WHITELIST,
         },
       ]);
+
+      console.log(`[PARSED]`, initInterface.parseTransaction({ data: initFunctionCall }));
       console.log('creating lobby at', this.contract.getContractAddress());
       updateStatus?.(`Creating Arena ...`);
       const createTxIntent: UnconfirmedCreateLobby = {

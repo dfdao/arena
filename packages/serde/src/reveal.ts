@@ -4,6 +4,7 @@ import type { RevealedCoords } from '@darkforest_eth/types';
 import bigInt from 'big-integer';
 import { address } from './address';
 import { locationIdFromDecStr } from './location';
+import { BigNumber } from 'ethers';
 
 export type RawRevealedCoords = Awaited<ReturnType<DarkForest['revealedCoords']>>;
 
@@ -34,5 +35,24 @@ export function decodeRevealedCoords(rawRevealedCoords: RawRevealedCoords): Reve
     x,
     y,
     revealer: address(rawRevealedCoords.revealer),
+  };
+}
+
+export function decodeCoords({ x, y }: { x: BigNumber; y: BigNumber }): { x: number; y: number } {
+  let xBI = bigInt(x.toString()); // nonnegative residue mod p
+  let yBI = bigInt(y.toString()); // nonnegative residue mod p
+  if (xBI.gt(LOCATION_ID_UB.divide(2))) {
+    xBI = xBI.minus(LOCATION_ID_UB);
+  }
+  let decodedX = 0;
+  let decodedY = 0;
+  decodedX = xBI.toJSNumber();
+  if (yBI.gt(LOCATION_ID_UB.divide(2))) {
+    yBI = yBI.minus(LOCATION_ID_UB);
+  }
+  decodedY = yBI.toJSNumber();
+  return {
+    x: decodedX,
+    y: decodedY,
   };
 }

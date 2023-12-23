@@ -19,14 +19,46 @@ import {
     ArenaCreateRevealPlanetArgs,
     Spaceships,
     InitArgs,
-    AuxiliaryArgs
+    AuxiliaryArgs,
+    ArenaPlayer,
+    ArenaPlayerBest
 } from "../DFTypes.sol";
 
 /* Remember! Only add new storage variables at the end of structs !! */
 
-struct TournamentStorage {
-    address[] matches;
-    uint256 numMatches;
+struct MuseumStorage {
+    /* Global Arena data */
+
+    /* On Arena Creation */
+    // Every player who has ever created an arena
+    mapping (address => bool) allCreatorLookup; // Updated on Arena creation
+    address[] allCreators; // Updated on arena creation, unique values added only 
+    address[] arenas; // Updated on arena creation, unqiue values only
+    bytes32[] configHashes; // Updated on arena creation, unique values only (lookup in configHashToArenaAddress)
+    mapping (address => bool) allowedAdmins; // Updated on arena creation, list of all child Arenas
+
+    mapping (bytes32 => address) configHashToArena; // Updated on arena creation, unique values of configHash only 
+    mapping (bytes32 => address[]) configHashToArenas; // Updated on arena creation
+
+    /* Specific Arena data */
+
+    /* On PlayerInitialized */
+    // configHash => playerWhoJoined => arenas they've joined 
+    mapping (bytes32 => mapping (address => address[])) arenasStartedByConfigHashAndPlayer ; // Updated on playerInitialized
+    mapping (bytes32 => address[]) playersByConfigHash; // Updated on playerInitialized 
+
+    /* On ClaimVictory */
+
+    mapping (bytes32 => ArenaPlayer[]) arenasFinishedByConfigHash; // Updated on claimVictory
+    // bytes32 is not configHash, it is hash (configHash, playerAddress, arenaAddress)
+    mapping (bytes32 => ArenaPlayer) arenaPlayerLookup; // Updated on claimVictory 
+
+    // To calculate the best times, do the following: 
+    // 1. Filter out arenas that are outside of time window. Sort rest.
+    // 2. Verify sorted list on-chain: arenasFinishedByConfigHash
+    // 2. Allow Mint of NFT from sorted bestTimes mapping.
+    // Might be stored completely separately on NFT / Registry Contract?
+    mapping (bytes => mapping (address => ArenaPlayerBest)) bestTimes; // Update
 }
 
 struct Initializers {
@@ -73,6 +105,7 @@ struct ArenaConstants {
     bool TEAMS_ENABLED;
     uint256 NUM_TEAMS;
     bool RANKED;
+    address PARENT_ADDRESS;
 }
 
 library LibArenaStorage {
@@ -80,7 +113,7 @@ library LibArenaStorage {
     bytes32 constant ARENA_INITIALIZERS_POSITION = keccak256("darkforest.initializers.arena");
     bytes32 constant ARENA_STORAGE_POSITION = keccak256("darkforest.storage.arena");
     bytes32 constant ARENA_CONSTANTS_POSITION = keccak256("darkforest.constants.arena");
-    bytes32 constant TOURNAMENT_STORAGE_POSITION = keccak256("darkforest.storage.tournament");
+    bytes32 constant MUSEUM_STORAGE_POSITION = keccak256("darkforest.storage.museum");
 
 
     function arenaStorage() internal pure returns (ArenaStorage storage gs) {
@@ -97,8 +130,8 @@ library LibArenaStorage {
         }
     }
 
-     function tournamentStorage() internal pure returns (TournamentStorage storage ts) {
-        bytes32 position = TOURNAMENT_STORAGE_POSITION;
+     function museumStorage() internal pure returns (MuseumStorage storage ts) {
+        bytes32 position = MUSEUM_STORAGE_POSITION;
         assembly {
             ts.slot := position
         }
@@ -121,8 +154,8 @@ contract WithArenaStorage {
         return LibArenaStorage.arenaConstants();
     }
     
-    function tournamentStorage() internal pure returns (TournamentStorage storage) {
-        return LibArenaStorage.tournamentStorage();
+    function museumStorage() internal pure returns (MuseumStorage storage) {
+        return LibArenaStorage.museumStorage();
     }
 
     function ai() internal pure returns (Initializers storage) {

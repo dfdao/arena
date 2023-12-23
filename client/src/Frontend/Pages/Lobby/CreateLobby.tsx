@@ -4,9 +4,8 @@ import { EthAddress } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
-import { loadConfigFromAddress } from '../../../Backend/Network/GraphApi/ConfigApi';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
-import { useEthConnection } from '../../Utils/AppHooks';
+import { useConfigFromContract, useEthConnection } from '../../Utils/AppHooks';
 import { stockConfig } from '../../Utils/StockConfigs';
 import { CadetWormhole } from '../../Views/CadetWormhole';
 import LoadingPage from '../LoadingPage';
@@ -17,7 +16,7 @@ type ErrorState =
   | { type: 'contractLoad' }
   | { type: 'invalidContract' };
 
-export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>) {
+export function CreateLobby({ match, location }: RouteComponentProps<{ contract: string }>) {
   const [arenaCreationManager, setArenaCreationManager] = useState<
     ArenaCreationManager | undefined
   >();
@@ -30,6 +29,11 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
 
   const connection = useEthConnection();
 
+  const params = new URLSearchParams(location.search);
+  const configHashParam = params.get('configHash') || undefined;
+
+  const { config, error } = useConfigFromContract(configHashParam);
+
   // when connected
   useEffect(() => {
     if (contractAddress && !arenaCreationManager) {
@@ -40,15 +44,16 @@ export function CreateLobby({ match }: RouteComponentProps<{ contract: string }>
           setErrorState({ type: 'contractLoad' });
         });
     }
-    if (configContractAddress && !startingConfig) {
-      loadConfigFromAddress(configContractAddress)
-        .then((config) => setStartingConfig(config.config))
-        .catch((e) => {
-          console.log(e);
-          setStartingConfig(stockConfig.vanilla);
-        });
+  }, [contractAddress]);
+
+  useEffect(() => {
+    if (error) {
+      console.log(`[ERROR]`, error);
+      setStartingConfig(stockConfig.vanilla);
+    } else if (config) {
+      setStartingConfig(config);
     }
-  }, [contractAddress, startingConfig]);
+  }, [config, error]);
 
   if (errorState) {
     switch (errorState.type) {

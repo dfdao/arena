@@ -46,7 +46,7 @@ export async function loadInitContract<T extends Contract>(
   return createContract<T>(address, abi, provider, signer);
 }
 
-const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
+export const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toString() !== 'hardhat';
 
 export function getEthConnection(): Promise<EthConnection> {
   const network = getNetwork();

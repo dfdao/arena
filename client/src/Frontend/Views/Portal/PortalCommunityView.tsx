@@ -3,12 +3,28 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { loadRecentMaps } from '../../../Backend/Network/GraphApi/MapsApi';
 import { MapGridDetail } from './Components/MapGridDetail';
+import { useEthConnection } from '@Utils/AppHooks';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
+import { loadDiamondContract } from '@Backend/Network/Blockchain';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 
 export const PortalCommunityView: React.FC<{}> = () => {
   const [portalMaps, setPortalMaps] = useState<MapInfo[]>([]);
   const [numGamesPerConfig, setNumGamesPerConfig] = useState<Map<string, number>>(
     new Map<string, number>()
   );
+  const [configs, setConfigs] = useState<string[]>([]);
+  const connection = useEthConnection();
+
+  useEffect(() => {
+    // TODO: Think about better way to fetch this data
+    const getArenas = async () => {
+      const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
+      const configsFromContract = await df.getConfigHashes();
+      setConfigs(configsFromContract);
+    };
+    getArenas();
+  }, []);
 
   useEffect(() => {
     loadRecentMaps(40)
@@ -41,7 +57,7 @@ export const PortalCommunityView: React.FC<{}> = () => {
     <Container>
       <Main>
         <span style={{ fontSize: '3em', gridColumn: '1/7' }}>Community Maps</span>
-        <Grid>
+        {/* <Grid>
           {portalMaps
             .filter((map) => map.planets && map.planets.length > 0)
             .sort((a, b) => {
@@ -58,6 +74,11 @@ export const PortalCommunityView: React.FC<{}> = () => {
                 nGames={numGamesPerConfig.get(map.configHash) || 0}
               />
             ))}
+        </Grid> */}
+        <Grid>
+          {configs.map((hash, index) => (
+            <MapGridDetail key={index} configHash={hash} />
+          ))}
         </Grid>
       </Main>
     </Container>

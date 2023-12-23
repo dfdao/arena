@@ -13,7 +13,7 @@ import {
   logOut,
   setActive,
 } from '../../Backend/Network/AccountManager';
-import { getEthConnection } from '../../Backend/Network/Blockchain';
+import { getEthConnection, isProdNetwork } from '../../Backend/Network/Blockchain';
 import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import { loadAllPlayerData } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { getAllDiscords, sendDrip } from '../../Backend/Network/UtilityServerAPI';
@@ -150,6 +150,8 @@ class EntryPageTerminal {
       this.generateAccount();
     } else if (userInput === 'i') {
       this.importAccount();
+    } else if (userInput === undefined) {
+      return;
     } else {
       this.terminal?.println('Unrecognized input. Please try again.', TerminalTextStyle.Red);
       this.terminal?.println('');
@@ -282,6 +284,10 @@ class EntryPageTerminal {
       console.log(`Maybe dripping...`, account.address);
 
       const success = await sendDrip(this.ethConnection, account.address, this.terminal);
+      if (success && !isProdNetwork) {
+        await this.setAccount(account, false);
+        return;
+      }
       if (success && existingAccount) {
         // Ask user to hit enter to continue
         this.terminal?.newline();
@@ -306,7 +312,6 @@ class EntryPageTerminal {
       console.log(`[ERROR INPUT]`, userInput, userInput.length);
       if (userInput === 'y') {
         await this.setAccount(account, false);
-        return;
       } else if (userInput === 'n') {
         await this.chooseAccount();
       } else {

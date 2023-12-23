@@ -1,6 +1,6 @@
-import type { DarkForest } from '@darkforest_eth/contracts/typechain';
+import type { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
 import type { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber, Contract, utils } from 'ethers';
 import hre from 'hardhat';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployAndCutArena } from '../../tasks/arena-deploy';
@@ -29,6 +29,7 @@ export interface World {
   deployer: SignerWithAddress;
   user1Core: DarkForest;
   user2Core: DarkForest;
+  diamondInit: Contract;
 }
 
 export interface Player {
@@ -237,12 +238,9 @@ export async function initializeWorld({
 
   let contract: DarkForest;
 
-  // let deploy = arena ? deployAndCutArena : deployAndCut;
-  let deploy = deployAndCutArena;
-
   if (allowListEnabled) allowedAddresses = [deployer.address, user1.address, user2.address];
 
-  const [diamond, diamondInit] = await deploy(
+  const [diamond, diamondInit] = await deployAndCutArena(
     {
       ownerAddress: deployer.address,
       allowListEnabled,
@@ -268,5 +266,6 @@ export async function initializeWorld({
     deployer,
     user1Core: contract.connect(user1),
     user2Core: contract.connect(user2),
+    diamondInit,
   };
 }

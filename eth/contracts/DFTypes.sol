@@ -6,6 +6,26 @@ enum PlanetEventType {ARRIVAL}
 enum SpaceType {NEBULA, SPACE, DEEP_SPACE, DEAD_SPACE}
 enum UpgradeBranch {DEFENSE, RANGE, SPEED}
 
+struct ArenaPlayer {
+    address player; 
+    address arena;
+	bytes32 configHash;
+    uint256 time;
+    uint256 startTime;
+    uint256 endTime;
+}
+
+// An aggregate data structure
+// ASSUMES FILTERING HAS BEEN DONE TO ONLY INCLUDE RUNS WITHIN THE TIME WINDOW
+struct ArenaPlayerBest {
+    address player; 
+	bytes32 configHash;
+	address fastestArena;
+    uint256 attempts;
+    uint256 bestTime;
+    uint256 rank;
+}
+
 struct Player {
     bool isInitialized;
     address player;

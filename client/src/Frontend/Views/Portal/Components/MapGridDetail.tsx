@@ -9,17 +9,17 @@ import { Minimap } from '../../../Components/Minimap';
 import { getConfigName } from '@darkforest_eth/procedural';
 import { truncateAddress } from '../PortalUtils';
 import { Spacer } from '../../../Components/CoreUI';
-import { useConfigFromHash } from '../../../Utils/AppHooks';
+import { useConfigFromContract } from '../../../Utils/AppHooks';
 import dfstyles from '@darkforest_eth/ui/dist/styles';
 import { useTwitters } from '../../../Utils/AppHooks';
 
 export const MapGridDetail: React.FC<{
   configHash: string;
-  creator: EthAddress;
+  creator?: EthAddress;
   lobbyAddress?: EthAddress;
   nGames?: number;
 }> = ({ configHash, creator, lobbyAddress, nGames }) => {
-  const { config } = useConfigFromHash(configHash);
+  const { config, error } = useConfigFromContract(configHash);
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
   const { twitters } = useTwitters();
 
@@ -28,12 +28,14 @@ export const MapGridDetail: React.FC<{
   }, [setMinimapConfig]);
 
   useEffect(() => {
-    if (config) {
+    if (error) {
+      console.log(`[ERROR] fetching config`);
+    } else if (config) {
       onMapChange(generateMinimapConfig(config, 18));
     } else {
       setMinimapConfig(undefined);
     }
-  }, [config, onMapChange]);
+  }, [config, onMapChange, error]);
 
   const history = useHistory();
 
@@ -60,7 +62,7 @@ export const MapGridDetail: React.FC<{
       )}
       <Spacer height={16} />
       <ConfigTitle>{getConfigName(configHash)}</ConfigTitle>
-      {lobbyAddress && (
+      {lobbyAddress && creator && (
         <>
           <span>By {twitters[creator] ? `@${twitters[creator]}` : truncateAddress(creator)}</span>
           <span>Lobby: {truncateAddress(lobbyAddress)}</span>
