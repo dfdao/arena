@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
 
-import {ArenaPlayer} from '../DFTypes.sol';
-import {DFArenaGetterFacet} from './DFArenaGetterFacet.sol';
-
 contract DFArenaRegistry {
     event GrandPrixAdded(bytes32 indexed configHash);
     event GrandPrixDeleted(bytes32 indexed configHash);
@@ -16,15 +13,13 @@ contract DFArenaRegistry {
         address diamondAddress;
     }
 
+    address[] public admins;
     address public contractOwner;
-    mapping(bytes32 => GrandPrixMetadata) public configHashToMetadata;
     mapping(address => bool) public isAdmin;
 
-    mapping (bytes32 => ArenaPlayer[]) public configHashToRankedPlayers;
-
     // Array to iterate on GrandPrix
-    GrandPrixMetadata[] public grandPrixList;
-    address[] public admins;
+    GrandPrixMetadata[] public grandPrixs;
+    mapping(bytes32 => GrandPrixMetadata) public configHashToMetadata;
 
     constructor() {
         contractOwner = msg.sender;
@@ -32,9 +27,7 @@ contract DFArenaRegistry {
         admins.push(msg.sender);
     }
 
-    /*
-		Access Control
-		*/
+    /* Access Control */
 
     modifier onlyAdmin() {
         require(isAdmin[msg.sender], "Not admin");
@@ -64,6 +57,13 @@ contract DFArenaRegistry {
         isAdmin[admin] = allowed;
     }
 
+    function setContractOwner(address newOwner) public onlyContractOwner {
+        require(newOwner != address(0), "Owner cannot be zero address");
+        contractOwner = newOwner;
+    }
+
+    /* Getters */
+
     function getAllAdmins() public view returns (address[] memory) {
         return admins;
     }
@@ -73,14 +73,10 @@ contract DFArenaRegistry {
         view
         returns (GrandPrixMetadata[] memory)
     {
-        return grandPrixList;
+        return grandPrixs;
     }
 
-    function setContractOwner(address newOwner) public onlyContractOwner {
-        require(newOwner != address(0), "Owner cannot be zero address");
-        contractOwner = newOwner;
-    }
-
+    /* Grand Prix Registry */
     function addGrandPrix(
         uint256 startTime,
         uint256 endTime,
@@ -103,15 +99,15 @@ contract DFArenaRegistry {
             seasonId,
             diamondAddress
         );
-        grandPrixList.push(configHashToMetadata[configHash]);
+        grandPrixs.push(configHashToMetadata[configHash]);
         emit GrandPrixAdded(configHash);
     }
 
     function deleteRound(bytes32 _configHash) public onlyAdmin {
-        for (uint256 i = 0; i < grandPrixList.length; i++) {
-            if (grandPrixList[i].configHash == _configHash) {
+        for (uint256 i = 0; i < grandPrixs.length; i++) {
+            if (grandPrixs[i].configHash == _configHash) {
                 delete configHashToMetadata[_configHash];
-                delete grandPrixList[i];
+                delete grandPrixs[i];
                 emit GrandPrixDeleted(_configHash);
                 break;
             }
@@ -125,10 +121,10 @@ contract DFArenaRegistry {
     {
         bool startBeforeEnd = _startTime < _endTime;
         bool noOverlap = true;
-        for (uint256 i = 0; i < grandPrixList.length; i++) {
+        for (uint256 i = 0; i < grandPrixs.length; i++) {
             if (
-                grandPrixList[i].startTime < _endTime &&
-                grandPrixList[i].endTime > _startTime
+                grandPrixs[i].startTime < _endTime &&
+                grandPrixs[i].endTime > _startTime
             ) {
                 noOverlap = false;
                 break;
