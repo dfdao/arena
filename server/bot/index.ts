@@ -12,13 +12,13 @@ client.once('ready', () => {
   console.log('Discord bot is ready! 🤖');
 });
 
-client.on('messageCreate', (message) => {
-  if (!message.guild) return; // Ensure this is not a direct message
+// client.on('messageCreate', (message) => {
+//   if (!message.guild) return; // Ensure this is not a direct message
 
-  const guildId = message.guild.id;
-  // dfdao guild id: 850187588148396052
-  console.log(`Guild ID: ${guildId}`);
-});
+//   const guildId = message.guild.id;
+//   // dfdao guild id: 850187588148396052
+//   console.log(`Guild ID: ${guildId}`);
+// });
 
 client.on('guildCreate', async (guild) => {
   await deployCommands({ guildId: guild.id });

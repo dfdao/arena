@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { targetChannelId } from '../../utils.js';
+import { verifyChannelId } from '../../utils.js';
 import { drip } from '../../actions/faucet.js';
 
 export const data = new SlashCommandBuilder()
@@ -10,9 +10,9 @@ export const data = new SlashCommandBuilder()
   );
 
 export async function execute(interaction: CommandInteraction) {
-  if (interaction.channelId !== targetChannelId) {
+  if (interaction.channelId !== verifyChannelId) {
     await interaction.reply({
-      content: `Invalid channel. Please use <#${targetChannelId}>`,
+      content: `Invalid channel. Please use <#${verifyChannelId}>`,
       ephemeral: true,
     });
     return;

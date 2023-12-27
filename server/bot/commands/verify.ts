@@ -1,6 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { verify } from '../../actions/verify.js';
-import { targetChannelId } from '../../utils.js';
+import { verifyChannelId } from '../../utils.js';
 
 export const data = new SlashCommandBuilder()
   .setName('verify')
@@ -12,9 +12,9 @@ export const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 export async function execute(interaction: CommandInteraction) {
-  if (interaction.channelId !== targetChannelId) {
+  if (interaction.channelId !== verifyChannelId) {
     await interaction.reply({
-      content: `Invalid channel. Please use <#${targetChannelId}>`,
+      content: `Invalid channel: ${interaction.channelId}. Please use <#${verifyChannelId}>`,
       ephemeral: true,
     });
     return;
