@@ -42,6 +42,27 @@ describe('Space Ships', function () {
       expect((await world.user1Core.getArtifactsOnPlanet(SPAWN_PLANET_1.id)).length).to.be.equal(5);
     });
 
+    it('mothership increases energy regen on starting planet when a move occurs', async function () {
+      const dist = 100;
+
+      await world.contract.refreshPlanet(SPAWN_PLANET_1.id);
+
+      const planet = await world.contract.planets(SPAWN_PLANET_1.id);
+
+      const mothership = (await world.user1Core.getArtifactsOnPlanet(SPAWN_PLANET_1.id)).find(
+        (a) => a.artifact.artifactType === ArtifactType.ShipMothership
+      )?.artifact;
+
+      // Move mothership off of planet
+      await world.user1Core.move(
+        ...makeMoveArgs(SPAWN_PLANET_1, SPAWN_PLANET_2, dist, 0, 0, mothership?.id)
+      );
+      await world.contract.refreshPlanet(SPAWN_PLANET_1.id);
+
+      const planetAfterNoMothership = await world.contract.planets(SPAWN_PLANET_1.id);
+      expect(planet.populationGrowth).to.be.equal(planetAfterNoMothership.populationGrowth.mul(2));
+    });
+
     it('can only be done once per player', async function () {
       await expect(world.user1Core.giveSpaceShips(SPAWN_PLANET_1.id)).to.be.revertedWith(
         'player already claimed ships'

@@ -35,6 +35,7 @@ import './tasks/utils';
 import './tasks/wallet';
 import './tasks/whitelist';
 import './tasks/faucet';
+import './tasks/registry';
 
 require('dotenv').config();
 

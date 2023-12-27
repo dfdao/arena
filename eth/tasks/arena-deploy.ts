@@ -339,12 +339,13 @@ export async function deployArenaGetterFacet({}, {}: Libraries, hre: HardhatRunt
 
 export async function deployArenaSpaceShipFacet(
   {},
-  { LibGameUtils }: Libraries,
+  { LibGameUtils, LibPlanet }: Libraries,
   hre: HardhatRuntimeEnvironment
 ) {
   const factory = await hre.ethers.getContractFactory('DFSpaceshipConfigFacet', {
     libraries: {
       LibGameUtils,
+      LibPlanet,
     },
   });
   const contract = await factory.deploy();

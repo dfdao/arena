@@ -324,14 +324,14 @@ library LibPlanet {
         PlanetExtendedInfo2 memory planetExtendedInfo2
     )
         public
-        pure
+        view 
         returns (
             Planet memory,
             PlanetExtendedInfo memory,
             PlanetExtendedInfo2 memory
         )
     {
-        if (planet.isHomePlanet) {
+        if (planet.isHomePlanet && artifact.artifactType == ArtifactType.ShipTitan) {
             return (planet, planetExtendedInfo, planetExtendedInfo2);
         }
 

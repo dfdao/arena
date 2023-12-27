@@ -61,10 +61,8 @@ import {
 import hre, { ethers } from 'hardhat';
 import { TestLocation } from './utils/TestLocation';
 import { ArenaPlanets } from '@darkforest_eth/settings';
-import { locationIdFromEthersBN } from '@darkforest_eth/serde';
-import { DFArenaInitialize, DarkForest } from '@darkforest_eth/contracts/typechain';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import { getLobbyCreatedEvent, newArena } from './utils/arena';
-import { get } from 'lodash';
 
 describe('Arena Functions', function () {
   describe('Create Planets', function () {
