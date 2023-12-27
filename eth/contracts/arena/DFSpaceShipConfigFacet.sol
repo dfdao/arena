@@ -9,9 +9,11 @@ import {DFArtifactFacet} from "../facets/DFArtifactFacet.sol";
 import {ArenaConstants, WithArenaStorage} from "../libraries/LibArenaStorage.sol";
 import {WithStorage} from "../libraries/LibStorage.sol";
 import {LibGameUtils} from "../libraries/LibGameUtils.sol";
+import {LibPlanet} from "../libraries/LibPlanet.sol";
 import {LibDiamond} from "../vendor/libraries/LibDiamond.sol";
+
 // Type imports
-import { ArtifactType, DFTCreateArtifactArgs, ArtifactRarity, Artifact, Biome, Spaceships} from "../DFTypes.sol";
+import { ArtifactType, DFTCreateArtifactArgs, ArtifactRarity, Artifact, Biome, Spaceships, Planet, PlanetExtendedInfo, PlanetExtendedInfo2 } from "../DFTypes.sol";
 
 contract DFSpaceshipConfigFacet is WithStorage, WithArenaStorage {
     event ArtifactFound(address player, uint256 artifactId, uint256 loc);
@@ -111,6 +113,22 @@ contract DFSpaceshipConfigFacet is WithStorage, WithArenaStorage {
         );
         LibGameUtils._putArtifactOnPlanet(foundArtifact.id, planetId);
 
+        Planet memory planet = gs().planets[planetId];
+        PlanetExtendedInfo memory planetExtendedInfo = gs().planetsExtendedInfo[planetId];
+        PlanetExtendedInfo2 memory planetExtendedInfo2 = gs().planetsExtendedInfo2[planetId];
+
+        (planet, planetExtendedInfo, planetExtendedInfo2) = LibPlanet.applySpaceshipArrive(
+            foundArtifact,
+            planet,
+            planetExtendedInfo,
+            planetExtendedInfo2
+        );
+
+
+        gs().planets[planetId] = planet;
+        gs().planetsExtendedInfo[planetId] = planetExtendedInfo;
+        gs().planetsExtendedInfo2[planetId] = planetExtendedInfo2;
+        
         return id;
     }
 }

@@ -282,7 +282,7 @@ contract DFMoveFacet is WithStorage, WithArenaStorage {
             PlanetExtendedInfo2 memory
         )
     {
-        if (planet.isHomePlanet) {
+        if (planet.isHomePlanet && artifact.artifactType == ArtifactType.ShipTitan) {
             return (planet, planetExtendedInfo, planetExtendedInfo2);
         }
 

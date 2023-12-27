@@ -24,6 +24,7 @@ import {
     Upgrade,
     UpgradeBranch
 } from "../DFTypes.sol";
+import {console} from 'hardhat/console.sol';
 
 library LibPlanet {
     function gs() internal pure returns (GameStorage storage) {
@@ -324,18 +325,19 @@ library LibPlanet {
         PlanetExtendedInfo2 memory planetExtendedInfo2
     )
         public
-        pure
+        view 
         returns (
             Planet memory,
             PlanetExtendedInfo memory,
             PlanetExtendedInfo2 memory
         )
     {
-        if (planet.isHomePlanet) {
+        if (planet.isHomePlanet && artifact.artifactType == ArtifactType.ShipTitan) {
             return (planet, planetExtendedInfo, planetExtendedInfo2);
         }
 
         if (artifact.artifactType == ArtifactType.ShipMothership) {
+            console.log("Placing mothership");
             planet.populationGrowth *= 2;
         } else if (artifact.artifactType == ArtifactType.ShipWhale) {
             planet.silverGrowth *= 2;
