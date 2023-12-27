@@ -30,7 +30,32 @@ async function deployRegistry(args: { value: number }, hre: HardhatRuntimeEnviro
 }
 
 // Add / remove admin
+task('registry:addAdmin', 'add an admin to the registry')
+  .addParam('admin', 'address of admin')
+  .setAction(addAdmin);
+
+async function addAdmin(args: { admin: string }, hre: HardhatRuntimeEnvironment) {
+  try {
+    await hre.run('utils:assertChainId');
+
+    if (!hre.contracts.REGISTRY_ADDRESS) throw new Error('Registry address not found');
+
+    const contract = await hre.ethers.getContractAt(
+      'DFArenaRegistry',
+      hre.contracts.REGISTRY_ADDRESS
+    );
+
+    const txReceipt = await contract.setAdmin(args.admin, true);
+    await txReceipt.wait();
+    const admins = await contract.getAllAdmins();
+    console.log(`Added admin`, admins[admins.length - 1]);
+  } catch (error) {
+    console.log('Add admin failed', error);
+  }
+}
 
 // Add GrandPrix
+// task(`registry:addGrandPrix`, `add a grand prix to the registry`);
 
 // Remove Grand Prix
+// task(`registry:removeGrandPrix`, `remove a grand prix from the registry`);
