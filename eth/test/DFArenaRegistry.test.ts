@@ -8,10 +8,6 @@ import * as hre from 'hardhat';
 import { World, arenaWorldFixture } from './utils/TestWorld';
 import { fixtureLoader } from './utils/TestUtils';
 
-const populateFinishedArenas = async () => {
-  //
-};
-
 describe('DFArenaRegistry ', function () {
   let registry: DFArenaRegistry;
   let world: World;
