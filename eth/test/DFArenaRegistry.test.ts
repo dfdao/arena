@@ -9,7 +9,7 @@ import { World, arenaWorldFixture } from './utils/TestWorld';
 import { fixtureLoader } from './utils/TestUtils';
 import { constants, utils } from 'ethers';
 
-describe.only('DFArenaRegistry ', function () {
+describe('DFArenaRegistry ', function () {
   let registry: DFArenaRegistry;
   let owner: SignerWithAddress;
   let nonOwner: SignerWithAddress;
