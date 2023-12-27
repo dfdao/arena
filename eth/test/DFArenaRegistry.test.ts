@@ -48,6 +48,23 @@ describe.only('DFArenaRegistry ', function () {
     it('owner is admin', async function () {
       expect(await registry.isAdmin(owner.address)).to.be.true;
     });
+
+    it('owner can add admin', async function () {
+      await registry.connect(owner).setAdmin(nonOwner.address, true);
+      expect(await registry.isAdmin(nonOwner.address)).to.be.true;
+    });
+
+    it('owner can remove admin', async function () {
+      await registry.connect(owner).setAdmin(nonOwner.address, true);
+      expect(await registry.isAdmin(nonOwner.address)).to.be.true;
+      await registry.connect(owner).setAdmin(nonOwner.address, false);
+      expect(await registry.isAdmin(nonOwner.address)).to.be.false;
+    });
+
+    it('owner can add new owner', async function () {
+      await registry.connect(owner).setContractOwner(nonOwner.address);
+      expect(await registry.contractOwner()).to.equal(nonOwner.address);
+    });
   });
 
   describe('Grand Prixs', function () {
@@ -76,6 +93,20 @@ describe.only('DFArenaRegistry ', function () {
       );
       const grandPrixs = await registry.getAllGrandPrix();
       expect(grandPrixs[0].configHash).to.be.equal(utils.formatBytes32String('0xdead'));
+    });
+
+    it('admin can add remove grand prix', async function () {
+      await registry.connect(owner).addGrandPrix(
+        12345,
+        12346,
+        // Bytes32 ethers
+        utils.formatBytes32String('0xdead'),
+        world.contract.address,
+        1
+      );
+      await registry.connect(owner).removeGrandPrix(utils.formatBytes32String('0xdead'));
+      const grandPrixs = await registry.getAllGrandPrix();
+      expect(grandPrixs[0].deleted).to.be.true;
     });
 
     it('non admin cannot add grand prix', async function () {

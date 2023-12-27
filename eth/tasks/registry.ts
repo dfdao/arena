@@ -28,3 +28,9 @@ async function deployRegistry(args: { value: number }, hre: HardhatRuntimeEnviro
 
   await runScript('yarn workspace @darkforest_eth/contracts build');
 }
+
+// Add / remove admin
+
+// Add GrandPrix
+
+// Remove Grand Prix

@@ -5,12 +5,13 @@ contract DFArenaRegistry {
     event GrandPrixAdded(bytes32 indexed configHash);
     event GrandPrixDeleted(bytes32 indexed configHash);
 
-    struct GrandPrixMetadata {
+    struct GrandPrix {
         uint256 startTime;
         uint256 endTime;
         bytes32 configHash;
         uint256 seasonId;
         address diamondAddress;
+        bool deleted;
     }
 
     address[] public admins;
@@ -18,8 +19,8 @@ contract DFArenaRegistry {
     mapping(address => bool) public isAdmin;
 
     // Array to iterate on GrandPrix
-    GrandPrixMetadata[] public grandPrixs;
-    mapping(bytes32 => GrandPrixMetadata) public configHashToMetadata;
+    bytes32[] public grandPrixHashes;
+    mapping(bytes32 => GrandPrix) public configHashToMetadata;
 
     constructor() {
         contractOwner = msg.sender;
@@ -68,14 +69,15 @@ contract DFArenaRegistry {
         return admins;
     }
 
-    function getAllGrandPrix()
-        public
-        view
-        returns (GrandPrixMetadata[] memory)
-    {
-        return grandPrixs;
-    }
+    function getAllGrandPrix() public view returns (GrandPrix[] memory) {
+        GrandPrix[] memory allGrandPrixs = new GrandPrix[](grandPrixHashes.length);
 
+        for (uint i = 0; i < grandPrixHashes.length; i++) {
+            allGrandPrixs[i] = configHashToMetadata[grandPrixHashes[i]];
+        }
+
+        return allGrandPrixs;
+    }
     /* Grand Prix Registry */
     function addGrandPrix(
         uint256 startTime,
@@ -92,26 +94,22 @@ contract DFArenaRegistry {
             diamondAddress != address(0),
             "diamond address cannot be zero address"
         );
-        configHashToMetadata[configHash] = GrandPrixMetadata(
-            startTime,
-            endTime,
-            configHash,
-            seasonId,
-            diamondAddress
-        );
-        grandPrixs.push(configHashToMetadata[configHash]);
+        configHashToMetadata[configHash] = GrandPrix({
+            startTime: startTime,
+            endTime: endTime,
+            configHash: configHash,
+            seasonId: seasonId,
+            diamondAddress: diamondAddress,
+            deleted: false
+        });
+
+        grandPrixHashes.push(configHash);
         emit GrandPrixAdded(configHash);
     }
 
-    function deleteRound(bytes32 _configHash) public onlyAdmin {
-        for (uint256 i = 0; i < grandPrixs.length; i++) {
-            if (grandPrixs[i].configHash == _configHash) {
-                delete configHashToMetadata[_configHash];
-                delete grandPrixs[i];
-                emit GrandPrixDeleted(_configHash);
-                break;
-            }
-        }
+    function removeGrandPrix(bytes32 _configHash) public onlyAdmin {
+        GrandPrix storage gp = configHashToMetadata[_configHash];
+        gp.deleted = true;
     }
 
     function _validateGrandPrixTime(uint256 _startTime, uint256 _endTime)
@@ -121,10 +119,10 @@ contract DFArenaRegistry {
     {
         bool startBeforeEnd = _startTime < _endTime;
         bool noOverlap = true;
-        for (uint256 i = 0; i < grandPrixs.length; i++) {
+        for (uint256 i = 0; i < grandPrixHashes.length; i++) {
             if (
-                grandPrixs[i].startTime < _endTime &&
-                grandPrixs[i].endTime > _startTime
+                configHashToMetadata[grandPrixHashes[i]].startTime < _endTime &&
+                configHashToMetadata[grandPrixHashes[i]].endTime > _startTime
             ) {
                 noOverlap = false;
                 break;
