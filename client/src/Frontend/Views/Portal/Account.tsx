@@ -1,4 +1,4 @@
-import { EthAddress } from '@darkforest_eth/types';
+import { AutoGasSetting, EthAddress, Setting } from '@darkforest_eth/types';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import React, { useEffect, useState } from 'react';
@@ -8,15 +8,20 @@ import { Copyable } from '../../Components/Copyable';
 import { Discord, Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
 
-import { useDisableScroll, useEthConnection, useTwitters } from '../../Utils/AppHooks';
-import { TwitterVerifier } from './Components/TwitterVerifier';
+import {
+  useDisableScroll,
+  useEthConnection,
+  useTwitters,
+  useUIManager,
+} from '../../Utils/AppHooks';
 import { PortalModal } from './Components/PortalModal';
 import { addressToColor, truncateAddress } from './PortalUtils';
 import { theme } from './styleUtils';
 import { getNetwork } from '@Backend/Network/Blockchain';
 import { Link } from '@Components/CoreUI';
 import { DarkForestTextInput, TextInput } from '@Components/Input';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useEmitterValue } from '@Utils/EmitterHooks';
+import { useSetting } from '@Utils/SettingsHooks';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -30,6 +35,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
   const [copyDiscord, setCopyDiscord] = useState<{ signature: string; sender: EthAddress }>();
   const [discordHandle, setDiscordHandle] = useState('');
   const [discordVerification, showDiscordVerification] = useState(false);
+  const gasPrices = useEmitterValue(eth.gasPrices$, eth.getAutoGasPrices());
 
   useEffect(() => {
     const sign = async () => {
@@ -63,6 +69,9 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
           )}
         </div>
         <span style={{ color: theme.colors.fgMuted2 }}>{balance ?? 0} xDAI</span>
+        <span style={{ color: theme.colors.fgMuted2 }}>
+          {gasPrices.fast ?? 0} gwei (default gas price)
+        </span>
         <div
           style={{
             display: 'flex',
@@ -146,7 +155,6 @@ export function Account() {
   const balance = connection.getMyBalance();
   const { twitters } = useTwitters();
   const [blockScroll, allowScroll] = useDisableScroll();
-  const history = useHistory();
 
   useEffect(() => {
     if (open) blockScroll();
@@ -179,7 +187,7 @@ export function Account() {
             <ChevronDown />
           </AvatarSection>
         ) : (
-          <Link to={`/portal/login`} openInThisTab={true}>
+          <Link to={`/portal/login?returnUrl=${window.location.pathname}`} openInThisTab={true}>
             {' '}
             Login
           </Link>

@@ -49,11 +49,8 @@ function MapOverview({ configHash, config }: { configHash: string; config: Lobby
           <MythicLabelText text={`Galactic League Official Map`} />
         )}
         <MapTitle>{mapName}</MapTitle>
-        <TextPreview
-          text={`Config: ${configHash}`}
-          focusedWidth={'200px'}
-          unFocusedWidth={'200px'}
-        />
+        <span>Config: </span>
+        <TextPreview text={configHash} focusedWidth={'200px'} unFocusedWidth={'200px'} />
       </div>
 
       {!minimapConfig ? (
