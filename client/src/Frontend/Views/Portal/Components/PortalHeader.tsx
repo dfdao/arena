@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Account } from '../Account';
 import { theme } from '../styleUtils';
 import { TabNav } from './TabNav';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-import { useConfigFromHash, useDisableScroll, useEthConnection } from '../../../Utils/AppHooks';
-import { tutorialConfig } from '../../../Utils/constants';
+import { useEthConnection } from '../../../Utils/AppHooks';
 import { MinimalButton } from '../PortalMainView';
 import { populate, populateBulk } from '../../../../Backend/Utils/Populate';
 import { address } from '@darkforest_eth/serde';
 import { Logo } from '../../../Panes/Lobby/LobbiesUtils';
-import { loadRegistry } from '../../../../Backend/Network/GraphApi/GrandPrixApi';
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
-import { PortalModal } from './PortalModal';
 import { PortalHelpCenter } from '../PortalHelpCenter';
 import { getActive } from '@Backend/Network/AccountManager';
 
