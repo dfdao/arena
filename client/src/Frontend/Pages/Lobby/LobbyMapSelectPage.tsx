@@ -4,11 +4,10 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { Spacer } from '../../Components/CoreUI';
 import { Minimap } from '../../Components/Minimap';
-import { ConfigUpload, Logo } from '../../Panes/Lobby/LobbiesUtils';
-import { MinimapConfig, generateMinimapConfig } from '../../Panes/Lobby/MinimapUtils';
+import { ConfigUpload } from '../../Panes/Lobby/LobbiesUtils';
+import { generateMinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import { LobbyAction, lobbyConfigInit, LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import { stockConfig } from '../../Utils/StockConfigs';
-import { Account } from '../../Views/Portal/Account';
 
 interface map {
   title: string;
@@ -95,21 +94,8 @@ export const LobbyMapSelectPage: React.FC<{
   }
   return (
     <Container>
-      <Topbar>
-        <p
-          style={{ fontWeight: 'bold', fontSize: '1.5em', cursor: 'pointer' }}
-          onClick={() => history.push('/portal/home')}
-        >
-          Home
-        </p>
-        <Account />
-      </Topbar>
-
       <Header>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <Logo />
-          <Title>Create a new Arena Match</Title>
-        </div>
+        <Title>Create a new Arena </Title>
       </Header>
       <MapsContainer>
         {stockMaps.map((mapContent, idx) => (
@@ -135,15 +121,8 @@ export const LobbyMapSelectPage: React.FC<{
   );
 };
 
-const Topbar = styled.div`
-  width: 100%;
-  height: 50px;
-  display: flex;
-  justify-content: space-between;
-`;
-
 const Title = styled.span`
-  font-size: 32px;
+  font-size: 24px;
   letter-spacing: 0.06em;
   color: #fff;
   text-transform: uppercase;
@@ -155,8 +134,8 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 12px;
+  background: 1f1f1f;
 `;
 
 const Header = styled.div`
@@ -166,16 +145,16 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: 6px;
+  margin-bottom: 6px;
 `;
 
 const UploadCustomMapContainer = styled.div<{ disabled: boolean }>`
   color: #fff;
-  padding: 24px;
+  padding: 12px;
   display: flex;
   align-items: center;
-  margin-top: 24px;
+  margin-top: 12px;
   justify-content: center;
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   border-radius: 3px;

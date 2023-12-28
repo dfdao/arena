@@ -1,5 +1,12 @@
 import { CommandInteraction, GuildMemberRoleManager } from 'discord.js';
-import { CAPTCHA_VERIFIED_ROLE, VERIFY_DRIP, readDb, verifySignature, writeDb } from '../utils.js';
+import {
+  CAPTCHA_VERIFIED_ROLE,
+  VERIFY_DRIP,
+  captchaChannelId,
+  readDb,
+  verifySignature,
+  writeDb,
+} from '../utils.js';
 import { EthAddress } from '@darkforest_eth/types';
 import { dripCommand, sendDrip } from './faucet.js';
 
@@ -13,7 +20,9 @@ export const verify = async (interaction: CommandInteraction) => {
     const roles = interaction.member?.roles as GuildMemberRoleManager;
     const userRoles = roles.cache.map((role) => role.name); // Map roles to their names.
     if (!userRoles?.includes(CAPTCHA_VERIFIED_ROLE)) {
-      throw new Error(`Missing verified role. Must verify with a captcha before linking`);
+      throw new Error(
+        `Missing verified role. Must verify in <#${captchaChannelId}> before linking.`
+      );
     }
     const message = interaction.options.get('message')?.value as string;
     if (!message) throw new Error(`No signature provided`);

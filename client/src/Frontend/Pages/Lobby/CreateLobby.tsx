@@ -10,6 +10,7 @@ import { stockConfig } from '../../Utils/StockConfigs';
 import { CadetWormhole } from '../../Views/CadetWormhole';
 import LoadingPage from '../LoadingPage';
 import { LobbyConfigPage } from './LobbyConfigPage';
+import { PortalHeader } from '../../Views/Portal/Components/PortalHeader';
 
 type ErrorState =
   | { type: 'invalidAddress' }
@@ -71,11 +72,14 @@ export function CreateLobby({ match, location }: RouteComponentProps<{ contract:
 
   if (startingConfig && arenaCreationManager) {
     return (
-      <LobbyConfigPage
-        arenaCreationManager={arenaCreationManager}
-        startingConfig={startingConfig}
-        root={`/arena/${configContractAddress}`}
-      />
+      <>
+        <PortalHeader />
+        <LobbyConfigPage
+          arenaCreationManager={arenaCreationManager}
+          startingConfig={startingConfig}
+          root={`/arena/${configContractAddress}`}
+        />
+      </>
     );
   } else {
     return <LoadingPage />;

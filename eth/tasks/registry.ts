@@ -1,6 +1,7 @@
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { runScript, writeToContractsPackage } from '../utils/deploy';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 
 task('registry:deploy', 'deploy the registry contract').setAction(deployRegistry);
 
@@ -21,7 +22,7 @@ async function deployRegistry(args: { value: number }, hre: HardhatRuntimeEnviro
   `;
 
   writeToContractsPackage(hre, tsContents, `registry`);
-  console.log('appended Faucet address to contracts');
+  console.log('appended Registry address to contracts');
 
   const registryContract = await hre.ethers.getContractAt('DFArenaRegistry', registry.address);
   console.log('owner', await registryContract.contractOwner());
@@ -55,7 +56,37 @@ async function addAdmin(args: { admin: string }, hre: HardhatRuntimeEnvironment)
 }
 
 // Add GrandPrix
-// task(`registry:addGrandPrix`, `add a grand prix to the registry`);
+task(`registry:addGrandPrix`, `add a grand prix to the registry`)
+  .addParam('configHash', 'map config hash', undefined)
+  .setAction(addGrandPrix);
+
+async function addGrandPrix(args: { configHash: string }, hre: HardhatRuntimeEnvironment) {
+  try {
+    await hre.run('utils:assertChainId');
+
+    if (!hre.contracts.REGISTRY_ADDRESS) throw new Error('Registry address not found');
+
+    const contract = await hre.ethers.getContractAt(
+      'DFArenaRegistry',
+      hre.contracts.REGISTRY_ADDRESS
+    );
+
+    console.log(`[REGISTRY] adding grand prix...`);
+    const tx = await contract.addGrandPrix(
+      Math.floor(Date.now() / 1000),
+      Math.floor(Date.now() / 1000) + 172800, // two days in seconds 172800
+      args.configHash,
+      CONTRACT_ADDRESS,
+      1
+    );
+
+    await tx.wait();
+    const prixs = await contract.getAllGrandPrix();
+    console.log(`Added grand prix`, prixs[prixs.length - 1]);
+  } catch (error) {
+    console.log('Add admin failed', error);
+  }
+}
 
 // Remove Grand Prix
 // task(`registry:removeGrandPrix`, `remove a grand prix from the registry`);

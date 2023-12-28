@@ -13,7 +13,6 @@ import GameManager, { GameManagerEvent } from '../../../Backend/GameLogic/GameMa
 import GameUIManager from '../../../Backend/GameLogic/GameUIManager';
 import { logOut } from '../../../Backend/Network/AccountManager';
 import { getNetwork, loadDiamondContract } from '../../../Backend/Network/Blockchain';
-import { loadConfigFromAddress } from '../../../Backend/Network/GraphApi/ConfigApi';
 import {
   EmailResponse,
   RegisterConfirmationResponse,
@@ -30,14 +29,12 @@ import {
   TerminalWrapper,
   Wrapper,
 } from '../../Components/GameLandingPageComponents';
-import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
 import {
   TopLevelDivProvider,
   UIManagerProvider,
   useConfigFromContract,
   useEthConnection,
 } from '../../Utils/AppHooks';
-import { stockConfig } from '../../Utils/StockConfigs';
 import { TerminalTextStyle } from '../../Utils/TerminalTypes';
 import UIEmitter, { UIEmitterEvent } from '../../Utils/UIEmitter';
 import { tutorialConfig } from '../../Utils/constants';
@@ -71,9 +68,10 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const params = new URLSearchParams(location.search);
   const useZkWhitelist = params.has('zkWhitelist');
   const createInstance = params.has('create');
+  const isTutorial = params.has('tutorial');
   const configHashParam = params.get('configHash') || undefined;
 
-  const { config } = useConfigFromContract(configHashParam);
+  const { config } = useConfigFromContract(configHashParam, isTutorial);
 
   const history = useHistory();
   const terminalHandle = useRef<TerminalHandle>();
@@ -87,8 +85,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const [contractAddress, setContractAddress] = useState<EthAddress | undefined>(
     isAddress(contractParam) ? address(match.params.contract) : undefined
   );
-  const tutorial = contractParam == 'tutorial';
-  const [configHash, setConfigHash] = useState<string>('');
+  const [configHash, setConfigHash] = useState('');
   const [step, setStep] = useState(TerminalPromptStep.ACCOUNT_SET);
   const [creationManager, setCreationManager] = useState<ArenaCreationManager>();
 
@@ -99,12 +96,16 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromAccountSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      if (!createInstance && !tutorial) {
+      if (!createInstance && !isTutorial) {
         setStep(TerminalPromptStep.CONTRACT_SET);
       } else {
         if (!config) return console.warn(`No config found for this contract`);
         const playerAddress = ethConnection.getAddress();
-        if (!playerAddress) throw new Error('not logged in');
+        if (!playerAddress) {
+          console.log(`NOT LOGGED IN`);
+          history.push(`/portal/login`);
+          return;
+        }
         terminal.current?.print('Creating new arena instance... ');
         try {
           const newCreationManager = await ArenaCreationManager.create(
@@ -115,7 +116,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
           if (owner == playerAddress) {
             setFromCreate(true);
-            history.push({ pathname: `${lobby}`, state: { contract: lobby } });
+            history.push({ pathname: `/play/${lobby}`, state: { contract: lobby } });
             setContractAddress(lobby);
           }
           setCreationManager(newCreationManager);
@@ -278,7 +279,13 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
       try {
         const playerAddress = ethConnection.getAddress();
-        if (!playerAddress || !contractAddress) throw new Error('not logged in');
+        console.log(`'[PLAYER ADDRESS]`, playerAddress);
+        if (!contractAddress) throw new Error('not logged in');
+        if (!playerAddress) {
+          console.log(`NOT LOGGED IN`);
+          history.push(`/portal/login`);
+          return;
+        }
 
         const whitelist = await ethConnection.loadContract<DarkForest>(
           contractAddress,
@@ -303,10 +310,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.FETCHING_ETH_DATA);
       } catch (e) {
         console.error(`error connecting to whitelist: ${e}`);
-        terminal.current?.println(
-          'ERROR: Could not connect to whitelist contract. Please refresh and try again in a few minutes.',
-          TerminalTextStyle.Red
-        );
+        terminal.current?.println(`ERROR: ${e}`, TerminalTextStyle.Red);
         setStep(TerminalPromptStep.TERMINATED);
       }
     },
@@ -473,6 +477,11 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
       const address = ethConnection.getAddress();
       if (!address) throw new Error('not logged in');
+      if (!address) {
+        console.log(`NOT LOGGED IN`);
+        history.push(`/portal/login`);
+        return;
+      }
 
       terminal.current?.print('Enter your email address. ', TerminalTextStyle.Text);
       terminal.current?.println("We'll use this email address to notify you if you win a prize.");
@@ -798,18 +807,6 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     },
     [step, ethConnection, config]
   );
-
-  async function fetchConfig(): Promise<LobbyInitializers> {
-    if (tutorial) return stockConfig.tutorial;
-    if (!contractAddress) throw new Error('No contract address!');
-    try {
-      const newConfig = await loadConfigFromAddress(contractAddress);
-      return newConfig.config;
-    } catch (e) {
-      console.error('failed to load config', e);
-      throw new Error(e);
-    }
-  }
 
   useEffect(() => {
     const uiEmitter = UIEmitter.getInstance();

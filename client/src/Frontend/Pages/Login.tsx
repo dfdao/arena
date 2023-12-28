@@ -1,44 +1,22 @@
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
-import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
+import { EthAddress } from '@darkforest_eth/types';
 import { Wallet, utils } from 'ethers';
-import React, { useEffect, useRef, useState } from 'react';
-import { Redirect, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
-import {
-  Account,
-  addAccount,
-  getAccounts,
-  getActive,
-  logOut,
-  setActive,
-} from '../../Backend/Network/AccountManager';
-import { getEthConnection, isProdNetwork } from '../../Backend/Network/Blockchain';
-import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
-import { loadAllPlayerData } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
-import { getAllDiscords, sendDrip } from '../../Backend/Network/UtilityServerAPI';
-import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
+import React, { useCallback, useRef, useState } from 'react';
+import { Account, addAccount, getAccounts, setActive } from '../../Backend/Network/AccountManager';
+import { isProdNetwork } from '../../Backend/Network/Blockchain';
+import { sendDrip } from '../../Backend/Network/UtilityServerAPI';
+import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
-import {
-  EthConnectionProvider,
-  LoadingStatus,
-  SeasonDataProvider,
-  SeasonPlayerProvider,
-  TwitterProvider,
-} from '../Utils/AppHooks';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
-import { PortalMainView } from '../Views/Portal/PortalMainView';
-import { TerminalHandle } from '../Views/Terminal';
-import { GameLandingPage } from './Game/GameLandingPage';
+import { Terminal, TerminalHandle } from '../Views/Terminal';
+import { useHistory } from 'react-router-dom';
+import { LoadingStatus, useEthConnection } from '@Utils/AppHooks';
 import LoadingPage from './LoadingPage';
-import { CreateLobby } from './Lobby/CreateLobby';
-import { NotFoundPage } from './NotFoundPage';
-import { Login } from './Login';
 
-const defaultAddress = address(CONTRACT_ADDRESS);
-class EntryPageTerminal {
+export class EntryPageTerminal {
   private ethConnection: EthConnection;
   private terminal: TerminalHandle;
   private accountSet: (account: Account, tutorial: boolean) => void;
@@ -285,6 +263,14 @@ class EntryPageTerminal {
       console.log(`Maybe dripping...`, account.address);
 
       const success = await sendDrip(this.ethConnection, account.address, this.terminal);
+      console.log(
+        `Is Prod network?`,
+        isProdNetwork,
+        `Success`,
+        success,
+        `Existing account`,
+        existingAccount
+      );
 
       if (success && !isProdNetwork) {
         await this.setAccount(account, false);
@@ -321,123 +307,56 @@ class EntryPageTerminal {
         this.terminal?.println('');
         await this.chooseAccount();
       }
-
-      // this.terminal?.println('Creation failed. Try again with an account that has XDAI tokens.');
-      // await new Promise((r) => setTimeout(r, 2000));
-      // this.terminal?.newline();
-      // await this.chooseAccount();
     }
   }
 }
 
-export function EntryPage() {
-  const terminal = useRef<TerminalHandle>();
+export function Login() {
   const history = useHistory();
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
-  const [controller, setController] = useState<EntryPageTerminal | undefined>();
+  const [controller] = useState<EntryPageTerminal | undefined>();
+  const connection = useEthConnection();
 
-  const [twitters, setTwitters] = useState<AddressTwitterMap>({});
-  const twitterContext = { twitters, setTwitters };
+  const controllerHandler = useCallback(
+    (terminalRef) => {
+      if (!controller && connection) {
+        const newController = new EntryPageTerminal(
+          connection,
+          terminalRef,
+          async (account: Account, tutorial: boolean) => {
+            if (tutorial) {
+              history.push(`/play/tutorial`);
+            }
+            await connection.setAccount(account.privateKey);
 
-  const [connection, setConnection] = useState<EthConnection | undefined>();
-  const [seasonPlayers, setPlayers] = useState<CleanConfigPlayer[]>([]);
-  const seasonPlayerContext = { allPlayers: seasonPlayers, setPlayers };
-
-  const [seasonData, setSeasonData] = useState<GrandPrixMetadata[] | undefined>();
-
-  /* get all twitters on page load */
-
-  useEffect(() => {
-    getAllDiscords().then((t) => setTwitters(t));
-  }, []);
-
-  /* get all season data on page load */
-  useEffect(() => {
-    if (connection) {
-      loadRegistry(connection)
-        .then((t) => {
-          setSeasonData(t);
-        })
-        .catch((e) => {
-          console.log(`load registry error`, e);
-          setSeasonData([]);
-        });
-    }
-  }, [connection]);
-
-  useEffect(() => {
-    if (seasonData) {
-      loadAllPlayerData(seasonData).then((t) => setPlayers(t));
-    }
-  }, [seasonData]);
-
-  /* set connection on page load */
-  useEffect(() => {
-    async function getConnection() {
-      try {
-        const connection = await getEthConnection();
-        setConnection(connection);
-        setLoadingStatus('complete');
-      } catch (e) {
-        alert('error connecting to blockchain');
-        console.log(e);
+            setLoadingStatus('complete');
+          }
+        );
+        newController.checkCompatibility();
       }
-    }
-    getConnection();
-  }, []);
+    },
+    [connection, controller]
+  );
 
-  /* once connection is set, get active player from local storage and set account */
-  useEffect(() => {
-    async function setPlayer(ethConnection: EthConnection) {
-      const active = getActive();
-      try {
-        if (!!active) {
-          await sendDrip(ethConnection, active.address, terminal.current);
-          await ethConnection.setAccount(active.privateKey);
-          console.log(`[CONNECTING TO ACCOUNT]`, active.address);
-          setLoadingStatus('complete');
-        } else {
-          setLoadingStatus('creating');
-        }
-      } catch (e) {
-        // alert('Unable to connect to active account. Please login into another.');
-        console.error('Unable to connect to active account. Please login into another.');
-        logOut();
-      }
-    }
-    if (connection) {
-      setPlayer(connection);
-    }
-  }, [connection]);
+  console.log(`LOading status`, loadingStatus, `connection`, !!connection);
 
-  if (!connection || !twitters || !seasonData || loadingStatus == 'loading') {
+  if (!connection) {
     return <LoadingPage />;
-  } else
+  } else if (loadingStatus == 'loading') {
     return (
-      <EthConnectionProvider value={connection}>
-        <TwitterProvider value={twitterContext}>
-          <SeasonDataProvider value={seasonData}>
-            <SeasonPlayerProvider value={seasonPlayerContext}>
-              <Router>
-                <Switch>
-                  <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
-                  <Route path='/play/:contract' component={GameLandingPage} />
-                  <Redirect path='/portal/tutorial' to={`/play/`} push={false} exact={true} />
-                  <Route path='/portal/login' component={Login} />
-                  <Route path='/portal' component={PortalMainView} />
-                  <Redirect
-                    path='/arena'
-                    to={`/arena/${defaultAddress}`}
-                    push={true}
-                    exact={true}
-                  />
-                  <Route path='/arena/:contract' component={CreateLobby} />
-                  <Route path='*' component={NotFoundPage} />
-                </Switch>
-              </Router>
-            </SeasonPlayerProvider>
-          </SeasonDataProvider>
-        </TwitterProvider>
-      </EthConnectionProvider>
+      <Wrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
+        <TerminalWrapper initRender={InitRenderState.NONE} terminalEnabled={false}>
+          <Terminal ref={controllerHandler} promptCharacter={'$'} />
+        </TerminalWrapper>
+
+        {/* this div is here so the styling matches gamelandingpage styling*/}
+        <div></div>
+      </Wrapper>
     );
+  } else if (loadingStatus == 'complete') {
+    history.goBack();
+    return <h1>Redirecting...</h1>;
+  } else {
+    return <h1>Stuck</h1>;
+  }
 }

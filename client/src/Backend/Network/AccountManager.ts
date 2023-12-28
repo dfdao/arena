@@ -62,7 +62,6 @@ function loadActive(): Account | undefined {
 
   if (
     timeSetStr == null ||
-    timeSet == NaN ||
     activeAccount == null ||
     timeSetStr == '' ||
     activeAccount == '' ||

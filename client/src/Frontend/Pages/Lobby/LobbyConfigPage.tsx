@@ -15,6 +15,7 @@ import { LobbyMapEditor } from './LobbyMapEditor';
 import _ from 'lodash';
 import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
 import { Toast } from '../../Components/Toast';
+import { useEthConnection } from '@Utils/AppHooks';
 
 type Status = 'waitingForCreate' | 'creating' | 'created' | 'errored' | undefined;
 
@@ -35,8 +36,10 @@ export function LobbyConfigPage({
   const [status, setStatus] = useState<Status>(undefined);
   const [words, setWords] = useState<string>('');
   const [error, setError] = useState<string | undefined>(undefined);
+  const connection = useEthConnection();
+  const isLoggedIn = !!connection.getAddress();
 
-  const createDisabled = status === 'creating' || status === 'created';
+  const createDisabled = status === 'creating' || status === 'created' || !isLoggedIn;
   const creating =
     status === 'creating' || (status === 'created' && !arenaCreationManager.arenaCreated);
   const created = status === 'created' && arenaCreationManager.arenaCreated;

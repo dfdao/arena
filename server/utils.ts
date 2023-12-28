@@ -42,7 +42,8 @@ export const getNetwork = (): Network => {
 export const pKey =
   NETWORK.toString() == 'localhost' ? process.env.DEV_PRIVATE_KEY : process.env.PROD_PRIVATE_KEY;
 
-export const targetChannelId = '909812397680767006';
+export const verifyChannelId = '909812397680767006';
+export const captchaChannelId = '1186048720471605278';
 export const DB_PATH = './data/data.json';
 
 const defaultDB: DBSchema = {
