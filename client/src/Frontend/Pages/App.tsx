@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { Theme } from '../Components/Theme';
 import { LandingPageBackground } from '../Renderers/LandingPageCanvas';
@@ -24,6 +24,7 @@ function App() {
       <Theme color='dark' scale='medium'>
         <Router>
           <Switch>
+            <Redirect path='/' to={`/portal`} push={true} exact={true} />
             <Route path='/' exact component={LandingPage} />
             <Route path='/planet/:locationId' component={SharePlanet} />
             <Route path='/events' component={EventsPage} />

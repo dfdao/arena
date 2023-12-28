@@ -53,7 +53,7 @@ export const PortalHeader = () => {
         tabs={[
           {
             label: 'Play',
-            to: '/portal/home',
+            to: '/portal',
           },
           {
             label: 'History',

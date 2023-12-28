@@ -95,7 +95,7 @@ export const LobbyMapSelectPage: React.FC<{
   }
   return (
     <Container>
-      <Topbar>
+      {/* <Topbar>
         <p
           style={{ fontWeight: 'bold', fontSize: '1.5em', cursor: 'pointer' }}
           onClick={() => history.push('/portal/home')}
@@ -103,11 +103,11 @@ export const LobbyMapSelectPage: React.FC<{
           Home
         </p>
         <Account />
-      </Topbar>
+      </Topbar> */}
 
       <Header>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <Logo />
+          {/* <Logo /> */}
           <Title>Create a new Arena Match</Title>
         </div>
       </Header>

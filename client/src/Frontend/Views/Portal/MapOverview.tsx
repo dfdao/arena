@@ -116,7 +116,10 @@ export const MapOverview: React.FC<{
           </div>
           <Title>{mapName ?? 'Grand Prix Round'}</Title>
           <MapActions>
-            <Link target='_blank' to={`/play/${lobbyAddress}?create=true`}>
+            <Link
+              target='_blank'
+              to={`/play/${lobbyAddress}?create=true&configHash=${round.configHash}`}
+            >
               <LobbyButton disabled={status.toString() != 'started'} primary>
                 Play round
               </LobbyButton>

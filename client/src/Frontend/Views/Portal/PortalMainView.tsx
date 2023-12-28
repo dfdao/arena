@@ -20,7 +20,7 @@ export function PortalMainView() {
         <PortalHeader />
         <Switch>
           <Redirect path='/portal/map' to={`/portal/map/${competitiveConfig}`} exact={true} />
-          <Route path={'/portal/home'} exact={true} component={PortalHomeView} />
+          <Route path={'/portal'} exact={true} component={PortalHomeView} />
           <Route path={'/portal/map/:configHash'} component={MapInfoView} />
           <Route path={'/portal/account/:account'} component={AccountInfoView} />
           <Route path={'/portal/history/:account'} component={PortalHistoryView} />

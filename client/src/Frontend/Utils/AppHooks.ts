@@ -43,6 +43,7 @@ import { createDummyLiveMatches } from '../Views/Portal/PortalUtils';
 import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { loadDiamondContract } from '@Backend/Network/Blockchain';
+import { getAllTwitters } from '@Backend/Network/UtilityServerAPI';
 
 export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
   createDefinedContext<EthConnection>();
@@ -516,3 +517,5 @@ export const useDisableScroll = () => {
 
   return [blockScroll, allowScroll];
 };
+
+export type LoadingStatus = 'loading' | 'creating' | 'complete';

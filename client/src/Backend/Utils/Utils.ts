@@ -6,6 +6,7 @@ import {
   ArtifactType,
   Biome,
   EthAddress,
+  LeaderboardEntry,
   LocatablePlanet,
   LocationId,
   Planet,
@@ -18,6 +19,7 @@ import { BigInteger } from 'big-integer';
 import { BigNumber, ethers, utils } from 'ethers';
 import { roundEndTimestamp, roundStartTimestamp } from '../../Frontend/Utils/constants';
 import { StatIdx } from '../../_types/global/GlobalTypes';
+import { DarkForest } from '@darkforest_eth/contracts/typechain';
 
 export const ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -223,3 +225,5 @@ export function getDeterministicArtifact(planet: LocatablePlanet) {
 
   return { type: artifactType, rarity };
 }
+
+export type ArenaPlayer = Awaited<ReturnType<DarkForest['getArenaPlayer']>>;

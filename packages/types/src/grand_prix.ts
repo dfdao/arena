@@ -78,11 +78,12 @@ export interface GrandPrixResult {
 }
 
 export interface GrandPrixMetadata {
-  seasonId: number;
-  configHash: string;
   startTime: number;
   endTime: number;
-  parentAddress: EthAddress;
+  configHash: string;
+  seasonId: number;
+  diamondAddress: string;
+  deleted: boolean;
 }
 
 export interface RegistryResponse {

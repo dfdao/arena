@@ -168,14 +168,16 @@ const SEASON_GRAND_PRIXS: GrandPrixMetadata[] = [
     configHash: DEV_CONFIG_HASH_1,
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
-    parentAddress: address(constants.AddressZero),
+    diamondAddress: address(constants.AddressZero),
+    deleted: false,
   },
   {
     seasonId: 1,
     configHash: DEV_CONFIG_HASH_2,
     startTime: TEMP_START_TIME,
     endTime: TEMP_END_TIME,
-    parentAddress: address(constants.AddressZero),
+    diamondAddress: address(constants.AddressZero),
+    deleted: false,
   },
 ];
 
@@ -184,7 +186,8 @@ const FIRST_GRAND_PRIX: GrandPrixMetadata = {
   configHash: '0xcc06ae3f725ee78b9d8e7f50ce2536c360f8f982e0392a2eb4e2ed7dda4a70b3',
   startTime: 1662768000,
   endTime: 1663372800,
-  parentAddress: address(constants.AddressZero),
+  diamondAddress: address(constants.AddressZero),
+  deleted: false,
 };
 
 const FIRST_CONFIG_HASH_GP1 = '0xcc06ae3f725ee78b9d8e7f50ce2536c360f8f982e0392a2eb4e2ed7dda4a70b3';

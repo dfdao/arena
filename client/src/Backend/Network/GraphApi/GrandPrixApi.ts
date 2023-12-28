@@ -1,12 +1,10 @@
 import { createContract, EthConnection } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
 import {
-  EthAddress,
   GrandPrixMetadata,
   GraphArena,
   Leaderboard,
   LeaderboardEntry,
-  RegistryResponse,
 } from '@darkforest_eth/types';
 import {
   roundEndTimestamp,
@@ -17,12 +15,13 @@ import {
 } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getAllTwitters } from '../UtilityServerAPI';
-import RegistryAbi from '@dfdao/registry/abi/Registry.json';
 // Contract addresses
 import deploymentUrl from '@dfdao/registry/deployment.json';
 import { Contract, ethers, providers, Wallet } from 'ethers';
-import { Registry } from '@dfdao/registry/types';
 import { getNetwork } from '../Blockchain';
+import { DFArenaRegistry } from '@darkforest_eth/contracts/typechain';
+import registryContractAbiUrl from '@darkforest_eth/contracts/abis/DFArenaRegistry.json';
+import { REGISTRY_ADDRESS } from '@darkforest_eth/contracts';
 
 /**
  * Purpose:
@@ -31,7 +30,7 @@ import { getNetwork } from '../Blockchain';
 
 export async function loadArenaLeaderboard(
   config: string = competitiveConfig,
-  isCompetitive: boolean
+  fromContract = false
 ): Promise<Leaderboard> {
   const QUERY = `
 query {
@@ -109,8 +108,8 @@ export async function loadRegistryContract<T extends Contract>(
   provider: providers.JsonRpcProvider,
   signer?: Wallet
 ): Promise<T> {
-  const abi = await fetch(RegistryAbi).then((r) => r.json());
-  return createContract<T>(address, abi.abi, provider, signer);
+  const abi = await fetch(registryContractAbiUrl).then((r) => r.json());
+  return createContract<T>(address, abi, provider, signer);
 }
 
 export async function loadRegistry(ethConnection: EthConnection): Promise<GrandPrixMetadata[]> {
@@ -118,25 +117,26 @@ export async function loadRegistry(ethConnection: EthConnection): Promise<GrandP
     return SEASON_GRAND_PRIXS;
   }
 
-  const deployment = await fetch(deploymentUrl).then((r) => r.json());
-
-  const registry = await ethConnection.loadContract<Registry>(
-    deployment.registry,
+  const registry = await ethConnection.loadContract<DFArenaRegistry>(
+    REGISTRY_ADDRESS,
     loadRegistryContract
   );
+
   const allGrandPrix = await registry.getAllGrandPrix();
   console.log(`allGrandPrix`, allGrandPrix);
   const metadata: GrandPrixMetadata[] = [];
   allGrandPrix.map((gp) => {
-    if (gp.parentAddress != ethers.constants.AddressZero) {
+    if (!gp.deleted) {
       metadata.push({
         configHash: gp.configHash,
         seasonId: gp.seasonId.toNumber(),
-        startTime: Math.floor(gp.startTime.toNumber() / 1000),
-        endTime: Math.floor(gp.endTime.toNumber() / 1000),
-        parentAddress: address(gp.parentAddress),
+        startTime: gp.startTime.toNumber(),
+        endTime: gp.endTime.toNumber(),
+        deleted: gp.deleted,
+        diamondAddress: gp.diamondAddress,
       });
     }
   });
+  console.log(`LOADED GRAND PRIX`, metadata);
   return metadata;
 }

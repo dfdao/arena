@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { logOut } from '../../../Backend/Network/AccountManager';
+import { getActive, logOut } from '../../../Backend/Network/AccountManager';
 import { Copyable } from '../../Components/Copyable';
 import { Discord, Gnosis, Icon, IconType, Twitter } from '../../Components/Icons';
 import { LobbyButton } from '../../Pages/Lobby/LobbyMapEditor';
@@ -16,6 +16,7 @@ import { theme } from './styleUtils';
 import { getNetwork } from '@Backend/Network/Blockchain';
 import { Link } from '@Components/CoreUI';
 import { DarkForestTextInput, TextInput } from '@Components/Input';
+import { Redirect, useHistory } from 'react-router-dom';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -141,18 +142,20 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
 export function Account() {
   const [open, setOpen] = useState<boolean>(false);
   const connection = useEthConnection();
-  const address = connection.getAddress();
+  const active = getActive();
   const balance = connection.getMyBalance();
   const { twitters } = useTwitters();
   const [blockScroll, allowScroll] = useDisableScroll();
+  const history = useHistory();
 
   useEffect(() => {
     if (open) blockScroll();
     else allowScroll();
   }, [open]);
 
-  if (!address) return <></>;
-  const twitter = twitters[address];
+  console.log(`[ACCOUNT]`, active);
+
+  const twitter = active ? twitters[active.address] : '';
 
   const formattedBalance = (+formatEther(balance ?? '0')).toFixed(2);
 
@@ -161,21 +164,28 @@ export function Account() {
       {open && (
         <AccountModal
           setOpen={setOpen}
-          address={address}
+          address={active?.address}
           twitter={twitter}
           balance={formattedBalance}
         />
       )}
       <AccountButton onClick={() => setOpen(true)}>
-        <AvatarSection>
-          <Avatar
-            width={theme.spacing.lg}
-            height={theme.spacing.lg}
-            color={addressToColor(address)}
-          />
-          {twitter || truncateAddress(address)}
-          <ChevronDown />
-        </AvatarSection>
+        {active?.address ? (
+          <AvatarSection>
+            <Avatar
+              width={theme.spacing.lg}
+              height={theme.spacing.lg}
+              color={addressToColor(active.address)}
+            />
+            {twitter || truncateAddress(active.address)}
+            <ChevronDown />
+          </AvatarSection>
+        ) : (
+          <Link to={`/portal/login`} openInThisTab={true}>
+            {' '}
+            Login
+          </Link>
+        )}
       </AccountButton>
     </>
   );

@@ -10,7 +10,7 @@ import {
 import Button from '../../Components/Button';
 import { LoadingSpinner } from '../../Components/LoadingSpinner';
 import {
-  useConfigFromHash,
+  useConfigFromContract,
   useEthConnection,
   useSeasonData,
   useSeasonPlayers,
@@ -29,11 +29,14 @@ import { MapOverview } from './MapOverview';
 import { isPastOrCurrentRound } from './PortalUtils';
 import { getCurrentGrandPrix } from './PortalUtils';
 import { theme } from './styleUtils';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
+import { address } from '@darkforest_eth/serde';
 
 export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const SEASON_GRAND_PRIXS = useSeasonData();
+  console.log({ SEASON_GRAND_PRIXS });
   const grandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
 
   const numPastOrCurrent = SEASON_GRAND_PRIXS.filter((sgp) =>
@@ -44,14 +47,13 @@ export const PortalHomeView: React.FC<{}> = () => {
 
   const { twitters } = useTwitters();
   const { allPlayers, setPlayers } = useSeasonPlayers();
-  const seasonData = useSeasonData();
 
   const leaders = loadGrandPrixLeaderboard(allPlayers, grandPrix.configHash, twitters);
 
   const connection = useEthConnection();
-  const address = connection.getAddress();
-  if (!address) return <></>;
-  const { config, lobbyAddress, error } = useConfigFromHash(grandPrix.configHash);
+  // const signerAddress = connection.getAddress();
+  // if (!signerAddress) return <></>;
+  const { config, error } = useConfigFromContract(grandPrix.configHash);
   const uniqueBadges = loadUniquePlayerBadges(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export const PortalHomeView: React.FC<{}> = () => {
     <Container>
       <div className='row w-100' style={{ gap: theme.spacing.xl }}>
         <div className='col w-100'>
-          <MapOverview round={grandPrix} config={config} lobbyAddress={lobbyAddress} />
+          <MapOverview round={grandPrix} config={config} lobbyAddress={address(CONTRACT_ADDRESS)} />
         </div>
         <div className='col w-100'>
           <LabeledPanel label='Recent Activity'>
@@ -117,7 +119,7 @@ export const PortalHomeView: React.FC<{}> = () => {
                 onClick={async () => {
                   try {
                     setRefreshing(true);
-                    const players = await loadAllPlayerData(seasonData);
+                    const players = await loadAllPlayerData(SEASON_GRAND_PRIXS);
                     const leaders = await loadGrandPrixLeaderboard(
                       allPlayers,
                       grandPrix.configHash,

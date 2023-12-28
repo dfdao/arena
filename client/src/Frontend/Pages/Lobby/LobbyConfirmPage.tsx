@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ArenaCreationManager } from '../../../Backend/GameLogic/ArenaCreationManager';
@@ -170,8 +170,14 @@ export function LobbyConfirmPage({
 
         <Spacer height={24} />
         {!created ? (
-          <Button primary onClick={validateAndCreateLobby}>
-            {creating ? <LoadingSpinner initialText={'Creating...'} /> : 'Create World'}
+          <Button primary disabled={createDisabled} onClick={validateAndCreateLobby}>
+            {createDisabled && !creating ? (
+              'Login to Create World'
+            ) : creating ? (
+              <LoadingSpinner initialText={'Creating...'} />
+            ) : (
+              'Create World'
+            )}
           </Button>
         ) : (
           <>

@@ -104,6 +104,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       } else {
         if (!config) return console.warn(`No config found for this contract`);
         const playerAddress = ethConnection.getAddress();
+        console.log(`[GAME LANDING]`, playerAddress);
         if (!playerAddress) throw new Error('not logged in');
         terminal.current?.print('Creating new arena instance... ');
         try {
@@ -278,7 +279,13 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
       try {
         const playerAddress = ethConnection.getAddress();
-        if (!playerAddress || !contractAddress) throw new Error('not logged in');
+        console.log(`'[PLAYER ADDRESS]`, playerAddress);
+        if (!contractAddress) throw new Error('not logged in');
+        if (!playerAddress) {
+          console.log(`NOT LOGGED IN`);
+          history.push(`/portal/login`);
+          return;
+        }
 
         const whitelist = await ethConnection.loadContract<DarkForest>(
           contractAddress,
@@ -303,10 +310,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
         setStep(TerminalPromptStep.FETCHING_ETH_DATA);
       } catch (e) {
         console.error(`error connecting to whitelist: ${e}`);
-        terminal.current?.println(
-          'ERROR: Could not connect to whitelist contract. Please refresh and try again in a few minutes.',
-          TerminalTextStyle.Red
-        );
+        terminal.current?.println(`ERROR: ${e}`, TerminalTextStyle.Red);
         setStep(TerminalPromptStep.TERMINATED);
       }
     },

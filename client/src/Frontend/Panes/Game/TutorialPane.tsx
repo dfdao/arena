@@ -296,8 +296,10 @@ function TutorialPaneContent({ tutorialState }: { tutorialState: TutorialState }
         . More information will pop up in the <White>upper-right</White> as you discover more about
         the game.
         <br /> <br />
-        If you want to jump straight into a competitive game,{' '}
-        <Link to='/portal/home'>click here</Link> to head to the portal.
+        If you want to jump straight into a competitive game, <Link to='/portal'>
+          click here
+        </Link>{' '}
+        to head to the portal.
         <br /> <br />
         We hope you enjoy Dark Forest!
         <div style={{ gap: '5px' }}>
