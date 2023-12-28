@@ -24,7 +24,7 @@ function App() {
       <Theme color='dark' scale='medium'>
         <Router>
           <Switch>
-            <Redirect path='/' to={`/portal`} push={true} exact={true} />
+            {/* <Redirect path='/' to={`/portal`} push={true} exact={true} /> */}
             <Route path='/' exact component={LandingPage} />
             <Route path='/planet/:locationId' component={SharePlanet} />
             <Route path='/events' component={EventsPage} />
