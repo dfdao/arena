@@ -153,8 +153,6 @@ export function Account() {
     else allowScroll();
   }, [open]);
 
-  console.log(`[ACCOUNT]`, active);
-
   const twitter = active ? twitters[active.address] : '';
 
   const formattedBalance = (+formatEther(balance ?? '0')).toFixed(2);
