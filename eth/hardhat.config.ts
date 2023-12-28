@@ -126,6 +126,7 @@ const gnosis_network = {
   },
   chainId: gnosis.chainId,
   gasLimit: gnosis.gasLimit,
+  gasPrice: 15_000_000_000,
 };
 
 const specular_network = {

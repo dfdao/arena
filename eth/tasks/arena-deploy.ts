@@ -1,13 +1,7 @@
 import { task, types } from 'hardhat/config';
 import type { HardhatRuntimeEnvironment, Libraries } from 'hardhat/types';
-import ts from 'typescript';
 import * as settings from '../settings';
-import {
-  deployContract,
-  deployDiamond,
-  saveDeploy,
-  writeToContractsPackage,
-} from '../utils/deploy';
+import { deployContract, deployDiamond, saveDeploy } from '../utils/deploy';
 import { DiamondChanges } from '../utils/diamond';
 import {
   deployAdminFacet,
@@ -19,7 +13,6 @@ import {
   deployDiamondLoupeFacet,
   deployGetterFacet,
   deployLibraries,
-  deployLobbyFacet,
   deployMoveFacet,
   deployOwnershipFacet,
   deployWhitelistFacet,
@@ -62,6 +55,7 @@ async function deploy(
 
   const requires = hre.ethers.utils.parseEther('0.2');
   const balance = await deployer.getBalance();
+  console.log(`Network`, hre.network);
 
   // Only when deploying to production, give the deployer wallet money,
   // in order for it to be able to deploy the contracts
