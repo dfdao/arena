@@ -14,13 +14,43 @@ import { loadRegistry } from '../../../../Backend/Network/GraphApi/GrandPrixApi'
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { PortalModal } from './PortalModal';
 import { PortalHelpCenter } from '../PortalHelpCenter';
+import { getActive } from '@Backend/Network/AccountManager';
 
 export const PortalHeader = () => {
   const history = useHistory();
   const connection = useEthConnection();
-  const playerAddress = connection.getAddress();
+  const playerAddress = getActive()?.address;
+  console.log(`[NAV] Player address [${playerAddress}]`);
 
-  const { lobbyAddress: tutorialLobbyAddress } = useConfigFromHash(tutorialConfig);
+  const tabs = [
+    {
+      label: 'Play',
+      to: '/portal',
+    },
+    {
+      label: 'History',
+      to: `/portal/history/${playerAddress}`,
+      wildcard: playerAddress,
+      loggedIn: true,
+    },
+    {
+      label: 'Create',
+      to: '/arena',
+      loggedIn: true,
+    },
+    {
+      label: 'Community',
+      to: `/portal/community`,
+    },
+    {
+      label: 'Tutorial',
+      to: '/play/tutorial?tutorial=true',
+      blank: true,
+    },
+  ];
+
+  const finalTabs = tabs.filter((t) => (t.loggedIn ? !!playerAddress : true));
+
   return (
     <Container>
       <TitleContainer>
@@ -33,7 +63,7 @@ export const PortalHeader = () => {
             padding: '8px',
             cursor: 'pointer',
           }}
-          onClick={() => history.push('/portal/home')}
+          onClick={() => history.push('/portal')}
         >
           <Logo width={56} />
         </div>
@@ -49,43 +79,7 @@ export const PortalHeader = () => {
         ) : null}
       </TitleContainer>
 
-      <TabNav
-        tabs={[
-          {
-            label: 'Play',
-            to: '/portal',
-          },
-          {
-            label: 'History',
-            to: `/portal/history/${playerAddress}`,
-            wildcard: playerAddress,
-          },
-          {
-            label: 'Create',
-            to: '/arena',
-          },
-          {
-            label: 'Community',
-            to: `/portal/community`,
-          },
-          {
-            label: 'Learn',
-            dropdown: [
-              {
-                label: 'Tutorial',
-                to: `/play/tutorial`,
-                secondary: 'Play a guided tutorial game.',
-              },
-              {
-                label: 'Strategy Guide',
-                to: 'https://www.notion.so/cha0sg0d/Dark-Forest-Player-Guide-59e123fb6cbb43f785d24be035cf95cb',
-                secondary: 'Learn strategies for playing Dark Forest.',
-              },
-            ],
-            to: '',
-          },
-        ]}
-      />
+      <TabNav tabs={finalTabs} />
       <div
         style={{
           display: 'flex',

@@ -1,17 +1,9 @@
-import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_eth/network';
 import { address } from '@darkforest_eth/serde';
-import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
+import { EthAddress } from '@darkforest_eth/types';
 import { Wallet, utils } from 'ethers';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Account,
-  addAccount,
-  getAccounts,
-  getActive,
-  logOut,
-  setActive,
-} from '../../Backend/Network/AccountManager';
+import React, { useCallback, useRef, useState } from 'react';
+import { Account, addAccount, getAccounts, setActive } from '../../Backend/Network/AccountManager';
 import { isProdNetwork } from '../../Backend/Network/Blockchain';
 import { sendDrip } from '../../Backend/Network/UtilityServerAPI';
 import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
@@ -20,11 +12,9 @@ import { TextPreview } from '../Components/TextPreview';
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
 import { Terminal, TerminalHandle } from '../Views/Terminal';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { LoadingStatus, useEthConnection } from '@Utils/AppHooks';
 import LoadingPage from './LoadingPage';
-import { PortalHomeView } from '../Views/Portal/PortalHomeView';
-import { PortalMainView } from '../Views/Portal/PortalMainView';
 
 export class EntryPageTerminal {
   private ethConnection: EthConnection;
@@ -317,51 +307,18 @@ export class EntryPageTerminal {
         this.terminal?.println('');
         await this.chooseAccount();
       }
-
-      // this.terminal?.println('Creation failed. Try again with an account that has XDAI tokens.');
-      // await new Promise((r) => setTimeout(r, 2000));
-      // this.terminal?.newline();
-      // await this.chooseAccount();
     }
   }
 }
 
 export function Login() {
-  const terminal = useRef<TerminalHandle>();
   const history = useHistory();
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
   const [controller] = useState<EntryPageTerminal | undefined>();
   const connection = useEthConnection();
 
-  /* once connection is set, get active player from local storage and set account */
-  //   useEffect(() => {
-  //     async function setPlayer(ethConnection: EthConnection) {
-  //       const active = getActive();
-  //       try {
-  //         if (!!active) {
-  //           await sendDrip(ethConnection, active.address, terminal.current);
-  //           await ethConnection.setAccount(active.privateKey);
-  //           console.log(`[LOGIN] complete with active [${active.address}`);
-  //           setLoadingStatus('complete');
-  //         } else {
-  //           setLoadingStatus('creating');
-  //         }
-  //       } catch (e) {
-  //         // alert('Unable to connect to active account. Please login into another.');
-  //         console.error('Unable to connect to active account. Please login into another.');
-  //         logOut();
-  //       }
-  //     }
-  //     if (connection) {
-  //       console.log(`Got connection, setting player... `);
-  //       setPlayer(connection);
-  //     }
-  //   }, [connection]);
-
   const controllerHandler = useCallback(
     (terminalRef) => {
-      console.log(`connection`, connection, `controller`, controller);
-
       if (!controller && connection) {
         const newController = new EntryPageTerminal(
           connection,

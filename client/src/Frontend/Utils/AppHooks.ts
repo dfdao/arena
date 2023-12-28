@@ -44,6 +44,7 @@ import { DarkForest } from '@darkforest_eth/contracts/typechain';
 import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 import { loadDiamondContract } from '@Backend/Network/Blockchain';
 import { getAllTwitters } from '@Backend/Network/UtilityServerAPI';
+import { stockConfig } from './StockConfigs';
 
 export const { useDefinedContext: useEthConnection, provider: EthConnectionProvider } =
   createDefinedContext<EthConnection>();
@@ -339,7 +340,7 @@ export function useConfigFromHash(configHash?: string) {
   return { config, lobbyAddress, error };
 }
 
-export function useConfigFromContract(configHash?: string) {
+export function useConfigFromContract(configHash?: string, isTutorial = false) {
   const [config, setConfig] = useState<LobbyInitializers | undefined>(undefined);
   const [error, setError] = useState<boolean>(false);
   const connection = useEthConnection();
@@ -347,11 +348,14 @@ export function useConfigFromContract(configHash?: string) {
   useEffect(() => {
     const getConfig = async () => {
       try {
+        if (isTutorial) {
+          setConfig(stockConfig.tutorial);
+          return;
+        }
         if (!configHash) throw new Error(`No config hash provided`);
         const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
         // Load config and initializers
         const initializers = await df.getArenaInitializersByConfigHash(configHash);
-        console.log(`[RAW INITS]`, initializers);
         setConfig(parseConfigFromContract(initializers));
       } catch (error) {
         console.log(`[ERROR] loading config`, error);
@@ -359,7 +363,7 @@ export function useConfigFromContract(configHash?: string) {
       }
     };
     getConfig();
-  }, [configHash]);
+  }, [configHash, isTutorial]);
 
   return { config, error };
 }

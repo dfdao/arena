@@ -3,7 +3,7 @@ import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_e
 import { address } from '@darkforest_eth/serde';
 import { CleanConfigPlayer, EthAddress, GrandPrixMetadata } from '@darkforest_eth/types';
 import { Wallet, utils } from 'ethers';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Redirect, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import {
   Account,
@@ -18,7 +18,6 @@ import { loadRegistry } from '../../Backend/Network/GraphApi/GrandPrixApi';
 import { loadAllPlayerData } from '../../Backend/Network/GraphApi/SeasonLeaderboardApi';
 import { getAllDiscords, sendDrip } from '../../Backend/Network/UtilityServerAPI';
 import { AddressTwitterMap } from '../../_types/darkforest/api/UtilityServerAPITypes';
-import { InitRenderState, TerminalWrapper, Wrapper } from '../Components/GameLandingPageComponents';
 import { MythicLabelText } from '../Components/Labels/MythicLabel';
 import { TextPreview } from '../Components/TextPreview';
 import {
@@ -31,7 +30,7 @@ import {
 import { Incompatibility, unsupportedFeatures } from '../Utils/BrowserChecks';
 import { TerminalTextStyle } from '../Utils/TerminalTypes';
 import { PortalMainView } from '../Views/Portal/PortalMainView';
-import { Terminal, TerminalHandle } from '../Views/Terminal';
+import { TerminalHandle } from '../Views/Terminal';
 import { GameLandingPage } from './Game/GameLandingPage';
 import LoadingPage from './LoadingPage';
 import { CreateLobby } from './Lobby/CreateLobby';
@@ -425,7 +424,7 @@ export function EntryPage() {
                   <Route path='/play/:contract' component={GameLandingPage} />
                   <Redirect path='/portal/tutorial' to={`/play/`} push={false} exact={true} />
                   <Route path='/portal/login' component={Login} />
-                  <Route path='/portal' exact={true} component={PortalMainView} />
+                  <Route path='/portal' component={PortalMainView} />
                   <Redirect
                     path='/arena'
                     to={`/arena/${defaultAddress}`}

@@ -6,6 +6,8 @@ import { theme } from '../styleUtils';
 export interface TabType {
   label: string;
   to: string;
+  blank?: boolean;
+  loggedIn?: boolean;
   secondary?: string;
   wildcard?: string;
   dropdown?: TabType[];
@@ -16,14 +18,11 @@ export interface TabNavTypes {
 }
 
 const getTabActive = (currentPath: string, tab: TabType) => {
-  if (tab.wildcard) {
-    const splitPath = currentPath.trim().split('/');
-    const pathWithoutWildcard = splitPath.filter((p) => p !== tab.wildcard);
-    const splitTabLoc = tab.to.trim().split('/');
-    const currentPathIsSubsetOfTab = pathWithoutWildcard.every((p) => splitTabLoc.includes(p));
-    return currentPathIsSubsetOfTab;
-  } else {
-    return location.pathname === tab.to;
+  if (currentPath.startsWith('/portal/history') && tab.to.startsWith('/portal/history'))
+    return true;
+  if (currentPath.startsWith('/arena') && tab.to.startsWith('/arena')) return true;
+  else {
+    return currentPath === tab.to;
   }
 };
 
@@ -89,7 +88,7 @@ export const TabNav: React.FC<TabNavTypes> = ({ tabs }) => {
               )}
             </div>
           ) : (
-            <Link key={`${tab.label}-${i}`} to={tab.to}>
+            <Link key={`${tab.label}-${i}`} to={tab.to} target={tab.blank ? '_blank' : ''}>
               <Tab key={tab.label} active={getTabActive(loc.pathname, tab)}>
                 {tab.label}
               </Tab>
