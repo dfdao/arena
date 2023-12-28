@@ -2,7 +2,7 @@ import { EthConnection, ThrottledConcurrentQueue, weiToEth } from '@darkforest_e
 import { address } from '@darkforest_eth/serde';
 import { EthAddress } from '@darkforest_eth/types';
 import { Wallet, utils } from 'ethers';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Account, addAccount, getAccounts, setActive } from '../../Backend/Network/AccountManager';
 import { isProdNetwork } from '../../Backend/Network/Blockchain';
 import { sendDrip } from '../../Backend/Network/UtilityServerAPI';
@@ -313,6 +313,11 @@ export class EntryPageTerminal {
 
 export function Login() {
   const history = useHistory();
+  const params = new URLSearchParams(window.location.search);
+  const returnUrl = params.get('returnUrl');
+  console.log(`[LOGIN] init returnUrl`, returnUrl);
+  if (!returnUrl) return <h1>ERROR: Missing return url</h1>;
+
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('loading');
   const [controller] = useState<EntryPageTerminal | undefined>();
   const connection = useEthConnection();
@@ -338,7 +343,12 @@ export function Login() {
     [connection, controller]
   );
 
-  console.log(`LOading status`, loadingStatus, `connection`, !!connection);
+  useEffect(() => {
+    if (loadingStatus === 'complete') {
+      console.log(`[LOGIN] returning to `, returnUrl);
+      history.push(returnUrl);
+    }
+  }, [loadingStatus]);
 
   if (!connection) {
     return <LoadingPage />;
@@ -353,9 +363,6 @@ export function Login() {
         <div></div>
       </Wrapper>
     );
-  } else if (loadingStatus == 'complete') {
-    history.goBack();
-    return <h1>Redirecting...</h1>;
   } else {
     return <h1>Stuck</h1>;
   }

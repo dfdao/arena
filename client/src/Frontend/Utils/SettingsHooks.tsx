@@ -116,6 +116,7 @@ export function setSetting(
   setting: Setting,
   value: string
 ): void {
+  console.log(`SETTING `, setting, `with value`, value);
   const keyInLocalStorage =
     account && getLocalStorageSettingKey({ contractAddress, account }, setting);
   if (keyInLocalStorage === undefined || account === undefined) {

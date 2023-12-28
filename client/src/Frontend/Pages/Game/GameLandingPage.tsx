@@ -94,18 +94,27 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const isProd = process.env.NODE_ENV === 'production';
 
+  const login = () => {
+    const returnUrl = `/portal/login?returnUrl=${encodeURIComponent(
+      window.location.pathname + window.location.search
+    )}`;
+    console.log(`[RETURN URL]`, returnUrl);
+    history.push(returnUrl);
+  };
   const advanceStateFromAccountSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
+      const playerAddress = ethConnection.getAddress();
+      if (!playerAddress) {
+        console.log(`NOT LOGGED IN`);
+        login();
+        return;
+      }
+
       if (!createInstance && !isTutorial) {
         setStep(TerminalPromptStep.CONTRACT_SET);
       } else {
         if (!config) return console.warn(`No config found for this contract`);
-        const playerAddress = ethConnection.getAddress();
-        if (!playerAddress) {
-          console.log(`NOT LOGGED IN`);
-          history.push(`/portal/login`);
-          return;
-        }
+
         terminal.current?.print('Creating new arena instance... ');
         try {
           const newCreationManager = await ArenaCreationManager.create(
@@ -228,7 +237,12 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       let newGameManager: GameManager;
       try {
         const playerAddress = ethConnection.getAddress();
-        if (!playerAddress || !contractAddress) throw new Error('not logged in');
+        if (!contractAddress) throw new Error('no contract found');
+        if (!playerAddress) {
+          console.log(`NOT LOGGED IN`);
+          login();
+          return;
+        }
 
         newGameManager = await GameManager.create({
           connection: ethConnection,
@@ -280,10 +294,10 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       try {
         const playerAddress = ethConnection.getAddress();
         console.log(`'[PLAYER ADDRESS]`, playerAddress);
-        if (!contractAddress) throw new Error('not logged in');
+        if (!contractAddress) throw new Error('Contract address not found');
         if (!playerAddress) {
           console.log(`NOT LOGGED IN`);
-          history.push(`/portal/login`);
+          login();
           return;
         }
 
@@ -479,7 +493,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       if (!address) throw new Error('not logged in');
       if (!address) {
         console.log(`NOT LOGGED IN`);
-        history.push(`/portal/login`);
+        login();
         return;
       }
 

@@ -173,3 +173,10 @@ export function scoreToTime(score?: number | null) {
 
   return hours + ':' + minutes + ':' + seconds;
 }
+
+export const calcXdai = (gasPriceGwei: number) => {
+  const avgMoveGas = 1_200_000;
+  const gweiToEth = 1_000_000_000;
+  const price = ((gasPriceGwei * avgMoveGas) / gweiToEth).toFixed(3);
+  return price;
+};

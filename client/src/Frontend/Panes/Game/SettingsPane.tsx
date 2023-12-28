@@ -19,6 +19,7 @@ import {
 } from '../../Utils/SettingsHooks';
 import { ModalPane } from '../../Views/Game/ModalPane';
 import { getNetwork } from '@Backend/Network/Blockchain';
+import { calcXdai } from '../../Views/Portal/PortalUtils';
 
 const SCROLL_MIN = 0.0001 * 10000;
 const SCROLL_MAX = 0.01 * 10000;
@@ -208,8 +209,8 @@ export function SettingsPane({
 
         <Section>
           <SectionHeader>Gas Price</SectionHeader>
-          Your gas price setting determines the price you pay for each transaction. For now, gas
-          price has been hard set to 1 wei. This is 100,000,000x cheaper than usual!
+          Your gas price setting determines the price you pay for each transaction. A higher gas
+          price means your transaction will be confirmed faster.
           {/* A higher gas
           price means your transactions will be prioritized by the blockchain, making them confirm
           faster. We recommend using the auto average setting. All auto settings prices are pulled
@@ -220,26 +221,20 @@ export function SettingsPane({
             uiManager={uiManager}
             setting={Setting.GasFeeGwei}
             values={[
-              '1',
-              // '2',
-              // '5',
-              // '10',
-              // '20',
-              // '40',
-              // AutoGasSetting.Slow,
-              // AutoGasSetting.Average,
-              // AutoGasSetting.Fast,
+              AutoGasSetting.Slow,
+              AutoGasSetting.Average,
+              AutoGasSetting.Fast,
+              '10',
+              '20',
+              '40',
             ]}
             labels={[
-              '1 wei (default)',
-              // '2 gwei (faster)',
-              // '5 gwei (turbo)',
-              // '10 gwei (mega turbo)',
-              // '20 gwei (need4speed)',
-              // '40 gwei (gigafast)',
-              // `slow auto (~${gasPrices.slow} gwei)`,
-              // `average auto (~${gasPrices.average} gwei)`,
-              // `fast auto (~${gasPrices.fast} gwei)`,
+              `Slow Auto ${gasPrices.slow} gwei (~$${calcXdai(gasPrices.slow)} / move)`,
+              `Average Auto ${gasPrices.average} gwei (~$${calcXdai(gasPrices.average)} / move)`,
+              `Fast Auto ${gasPrices.fast} gwei (~$${calcXdai(gasPrices.fast)} / move)`,
+              `${15} gwei (~$${calcXdai(15)} / move)`,
+              `${20} gwei (~$${calcXdai(20)} / move)`,
+              `${40} gwei (~$${calcXdai(40)} / move)`,
             ]}
           />
         </Section>

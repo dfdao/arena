@@ -9,7 +9,7 @@ import { AlignCenterHorizontally } from '../../Components/CoreUI';
 import { AccountLabel } from '../../Components/Labels/Labels';
 import { Gold, Red, Sub, Text, White } from '../../Components/Text';
 import { TooltipTrigger } from '../../Panes/Tooltip';
-import { usePlayer, useUIManager } from '../../Utils/AppHooks';
+import { useEthConnection, usePlayer, useUIManager } from '../../Utils/AppHooks';
 import { DFZIndex } from '../../Utils/constants';
 import { useEmitterSubscribe, useEmitterValue } from '../../Utils/EmitterHooks';
 import { ModalToggleButton } from '../ModalIcon';
@@ -21,6 +21,9 @@ import { Play } from './Play';
 import { TargetPlanetVictory } from '../TargetPlanetVictory';
 import { getConfigName } from '@darkforest_eth/procedural';
 import Button from '../../Components/Button';
+import { MultiSelectSetting, useSetting } from '@Utils/SettingsHooks';
+import { AutoGasSetting, Setting } from '@darkforest_eth/types';
+import { calcXdai } from '../Portal/PortalUtils';
 
 const TopBarContainer = styled.div`
   z-index: ${DFZIndex.MenuBar};
@@ -183,6 +186,23 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
   const balance = useEmitterValue(uiManager.getMyBalance$(), uiManager.getMyBalanceBn());
   const minBalance = 0.1;
   const [shownWarning, setShownWarning] = useState(false);
+  const ethConnection = useEthConnection();
+  const gasPrices = useEmitterValue(ethConnection.gasPrices$, ethConnection.getAutoGasPrices());
+
+  const [gasFeeValue] = useSetting(uiManager, Setting.GasFeeGwei);
+  const [gasFee, setGasFee] = useState<number>();
+
+  useEffect(() => {
+    if (gasFeeValue === AutoGasSetting.Slow) {
+      setGasFee(gasPrices.slow);
+    } else if (gasFeeValue === AutoGasSetting.Average) {
+      setGasFee(gasPrices.average);
+    } else if (gasFeeValue === AutoGasSetting.Fast) {
+      setGasFee(gasPrices.fast);
+    } else {
+      setGasFee(Number(gasFeeValue));
+    }
+  }, [gasFeeValue, gasPrices]);
 
   useEffect(() => {
     const balanceInEth = weiToEth(balance);
@@ -219,6 +239,15 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
         >
           <Sub>({weiToEth(balance).toFixed(2)} xDAI)</Sub>
         </TooltipTrigger>
+        {gasFee && (
+          <TooltipTrigger
+            name={TooltipName.Empty}
+            extraContent={<Text>Change your gas settings in ⚙️ Settings (or press h)</Text>}
+          >
+            <Sub>(~${calcXdai(gasFee)} / move)</Sub>
+          </TooltipTrigger>
+        )}
+
         {process.env.DF_TWITTER_URL && (
           <>
             <TooltipTrigger
