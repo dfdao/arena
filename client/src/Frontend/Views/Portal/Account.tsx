@@ -90,7 +90,7 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
         {discordVerification ? (
           // Text left in div
           <div style={{ textAlign: 'left' }}>
-            {'Step 1. Input Discord Handle:'}
+            {'Step 1. Input Discord Username:'}
             <br />
             <br />
             <TextInput
@@ -110,14 +110,22 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
             ></Copyable>
             <br />
             <span>
-              {"Step 3. Paste message in dfdao's"}{' '}
-              <Link to={'https://discord.com/channels/850187588148396052/909812397680767006'}>
-                verify channel
+              {'Step 3.'}{' '}
+              <Link to={'https://discord.com/channels/850187588148396052/1186048720471605278'}>
+                Verify you are human
               </Link>{' '}
             </span>
             <br />
             <br />
-            {'Step 4. Refresh this page!'}
+            <span>
+              {"Step 4. Paste message in dfdao's"}{' '}
+              <Link to={'https://discord.com/channels/850187588148396052/909812397680767006'}>
+                discord
+              </Link>{' '}
+            </span>
+            <br />
+            <br />
+            {'Step 5. Refresh this page!'}
           </div>
         ) : null}
       </AccountContent>
