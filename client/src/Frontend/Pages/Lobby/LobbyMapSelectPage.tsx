@@ -95,19 +95,8 @@ export const LobbyMapSelectPage: React.FC<{
   }
   return (
     <Container>
-      {/* <Topbar>
-        <p
-          style={{ fontWeight: 'bold', fontSize: '1.5em', cursor: 'pointer' }}
-          onClick={() => history.push('/portal/home')}
-        >
-          Home
-        </p>
-        <Account />
-      </Topbar> */}
-
       <Header>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          {/* <Logo /> */}
           <Title>Create a new Arena Match</Title>
         </div>
       </Header>
