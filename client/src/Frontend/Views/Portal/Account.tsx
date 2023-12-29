@@ -22,6 +22,7 @@ import { Link } from '@Components/CoreUI';
 import { DarkForestTextInput, TextInput } from '@Components/Input';
 import { useEmitterValue } from '@Utils/EmitterHooks';
 import { useSetting } from '@Utils/SettingsHooks';
+import { useHistory } from 'react-router-dom';
 
 interface AccountModalProps {
   address: EthAddress | undefined;
@@ -155,6 +156,7 @@ export function Account() {
   const balance = connection.getMyBalance();
   const { twitters } = useTwitters();
   const [blockScroll, allowScroll] = useDisableScroll();
+  const history = useHistory();
 
   useEffect(() => {
     if (open) blockScroll();
@@ -187,10 +189,12 @@ export function Account() {
             <ChevronDown />
           </AvatarSection>
         ) : (
-          <Link to={`/portal/login?returnUrl=${window.location.pathname}`} openInThisTab={true}>
+          <Button
+            onClick={() => history.push(`/portal/login?returnUrl=${window.location.pathname}`)}
+          >
             {' '}
             Login
-          </Link>
+          </Button>
         )}
       </AccountButton>
     </>

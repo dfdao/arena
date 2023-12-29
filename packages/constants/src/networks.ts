@@ -48,7 +48,7 @@ export const gnosis: Network = {
   faucetDrip: 0.25,
   graphNetwork: 'xdai',
   graphUrl:
-    'https://api.goldsky.com/api/public/project_clq5tpgj80nq601t124dp7u6i/subgraphs/arena-test/0.0.1/gn',
+    'https://api.goldsky.com/api/public/project_clq5tpgj80nq601t124dp7u6i/subgraphs/arena-test/0.0.3/gn',
   blockExplorer: 'https://gnosisscan.io',
   gasLimit: 15_000_000, // It's actually 30_000_000 but we're setting it to 15_000_000 to be safe
 };

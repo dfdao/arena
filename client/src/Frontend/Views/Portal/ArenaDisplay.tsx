@@ -9,26 +9,12 @@ import { Minimap } from '../../Components/Minimap';
 import { TextPreview } from '../../Components/TextPreview';
 import { generateMinimapConfig } from '../../Panes/Lobby/MinimapUtils';
 import { LobbyInitializers } from '../../Panes/Lobby/Reducer';
-
-export interface ArenaData {
-  configHash: string;
-  startTime: number;
-  config: LobbyInitializers;
-  count: number;
-}
-
-function convertGraphArena(arena: GraphArena): ArenaData {
-  return {
-    configHash: arena.configHash,
-    startTime: arena.startTime,
-    count: 1,
-    config: convertGraphConfig(arena).config,
-  };
-}
+import { useConfigFromContract } from '@Utils/AppHooks';
 
 const mapSize = '125px';
 
-function ArenaCard({ arena }: { arena: ArenaData }) {
+function ArenaCard({ arena }: { arena: GraphArena }) {
+  const { config, error } = useConfigFromContract(arena.configHash);
   const lastPlayed = new Date(arena.startTime * 1000);
   const formattedDate = `${lastPlayed.getMonth() + 1}/${
     lastPlayed.getDate() + 1
@@ -47,14 +33,17 @@ function ArenaCard({ arena }: { arena: ArenaData }) {
         gap: '5px',
       }}
     >
-      <Minimap
-        style={{ height: mapSize, width: mapSize }}
-        minimapConfig={generateMinimapConfig(arena.config, 10)}
-      />
+      {config && (
+        <Minimap
+          style={{ height: mapSize, width: mapSize }}
+          minimapConfig={generateMinimapConfig(config, 10)}
+        />
+      )}
+
       <DetailsContainer>
         <div style={{ fontSize: '1.5em' }}>{getConfigName(arena.configHash)}</div>
         <TextPreview text={arena.configHash} unFocusedWidth={'100px'} focusedWidth='150px' />
-        <span>Games: {arena.count}</span>
+        {/* <span>Games: {arena.count}</span> */}
         <span>Last played: {formattedDate}</span>
       </DetailsContainer>
     </Link>
@@ -63,19 +52,11 @@ function ArenaCard({ arena }: { arena: ArenaData }) {
 
 export function ArenaDisplay({ arenas }: { arenas: { arena: GraphArena }[] | undefined }) {
   if (!arenas) return <></>;
-  const uniqueArenas: ArenaData[] = [];
-  for (const arena of arenas) {
-    const found = uniqueArenas.find((a) => a.configHash == arena.arena.configHash);
-    if (found) {
-      found.count++;
-      if (found.startTime < arena.arena.startTime) found.startTime = arena.arena.startTime;
-    } else if (!!arena.arena.config) uniqueArenas.push(convertGraphArena(arena.arena));
-  }
-  uniqueArenas.sort((a, b) => b.count - a.count);
+  const finalArenas = arenas.map((a) => a.arena);
 
   return (
     <MapInfoContainer>
-      {uniqueArenas.map((arena) => (
+      {finalArenas.map((arena) => (
         <ArenaCard arena={arena} key={`arena-${arena.startTime}-${arena.configHash}`} />
       ))}
     </MapInfoContainer>

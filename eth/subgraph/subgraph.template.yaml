@@ -37,7 +37,6 @@ templates:
       language: wasm/assemblyscript
       entities:
         - Arena
-        - ArenaConfig
         - ArenaPlayer
         - ArenaPlanet
         - ConfigPlayer

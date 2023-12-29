@@ -223,7 +223,7 @@ export function loadSeasonLeaderboard(
       address: player,
       games: cleanConfigPlayers,
       score: score + badgeScore,
-      totalDuration: totalDuration - badgeScore,
+      totalDuration: totalDuration,
       badges,
     };
     leaderboardProps.entries.push(entry);

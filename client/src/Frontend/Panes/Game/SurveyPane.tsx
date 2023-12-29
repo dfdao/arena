@@ -73,7 +73,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
         <Link
           openInThisTab={true}
           style={{ width: '100%' }}
-          to={`/play/${lobbyAddress}?create=true`}
+          to={`/play/${lobbyAddress}?create=true&configHash=${config}`}
         >
           <Btn size='stretch'>Race again</Btn>
         </Link>
@@ -99,34 +99,10 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
           </Row>
         )}
         {arenaStats}
-        <div style={{ textAlign: 'center' }}>
-          Help us improve Grand Prix by{' '}
-          <Link openInThisTab={false} to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
-            {' '}
-            giving feedback on this survey
-          </Link>
-          {' 😊'}
-        </div>{' '}
       </div>
     );
   } else {
-    return (
-      //TODO: Provide data about run
-      <div>
-        {/* <Row>
-        <White>Match Statistics</White>
-      </Row>
-      <Row>
-        Time: <Green>{formatDuration(time * 1000)}</Green>
-      </Row>
-   */}
-        {/* {arenaStats} */}
-        <div style={{ textAlign: 'center' }}>
-          <p>Help us improve Dark Forest Arena by </p>
-          <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}> giving feedback on this survey 😊</Link>
-        </div>{' '}
-      </div>
-    );
+    return <></>;
   }
 }
 

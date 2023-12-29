@@ -16,8 +16,8 @@ export async function getAutoGasPrices(): Promise<GasPrices> {
     });
 
     const prices = (await res.json()) as GasPrices;
-    console.log('gas prices', prices);
     cleanGasPrices(prices);
+    console.log('gas prices', prices);
     return prices;
   } catch (e) {
     return DEFAULT_GAS_PRICES;
@@ -40,7 +40,7 @@ function cleanGasPrices(gasPrices: GasPrices): void {
     gasPrices.slow = DEFAULT_GAS_PRICES.slow;
   }
 
-  gasPrices.fast = Math.max(1, Math.min(MAX_AUTO_GAS_PRICE_GWEI, gasPrices.fast));
+  gasPrices.fast = Math.max(1, Math.min(MAX_AUTO_GAS_PRICE_GWEI, gasPrices.fast * 2));
   gasPrices.average = Math.max(1, Math.min(MAX_AUTO_GAS_PRICE_GWEI, gasPrices.average));
   gasPrices.slow = Math.max(1, Math.min(MAX_AUTO_GAS_PRICE_GWEI, gasPrices.slow));
 }

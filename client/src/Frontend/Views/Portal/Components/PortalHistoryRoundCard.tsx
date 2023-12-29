@@ -8,9 +8,11 @@ import { LoadingSpinner } from '../../../Components/LoadingSpinner';
 import { Minimap } from '../../../Components/Minimap';
 import { LobbyButton } from '../../../Pages/Lobby/LobbyMapEditor';
 import { generateMinimapConfig, MinimapConfig } from '../../../Panes/Lobby/MinimapUtils';
-import { useConfigFromHash } from '../../../Utils/AppHooks';
+import { useConfigFromContract, useConfigFromHash } from '../../../Utils/AppHooks';
 import { formatDuration } from '../../../Utils/TimeUtils';
 import { theme } from '../styleUtils';
+import { address } from '@darkforest_eth/serde';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
 
 /**
  * Derive Season Leaderboard from AllPlayerData
@@ -26,7 +28,8 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
   index,
 }) => {
   const [minimapConfig, setMinimapConfig] = useState<MinimapConfig | undefined>();
-  const { config, lobbyAddress } = useConfigFromHash(round.configHash);
+  const { config } = useConfigFromContract(round.configHash);
+  const lobbyAddress = address(CONTRACT_ADDRESS);
 
   const onMapChange = useMemo(() => {
     return debounce((config: MinimapConfig) => round.configHash && setMinimapConfig(config), 500);
@@ -82,10 +85,6 @@ export const PortalHistoryRoundCard: React.FC<{ round: GrandPrixHistory; index: 
         <DetailRow>
           <DetailLabel>Rank</DetailLabel>
           <DetailValue>{round.score == 0 ? '-' : round.rank + ` of ` + round.players}</DetailValue>
-        </DetailRow>
-        <DetailRow>
-          <DetailLabel>Badges</DetailLabel>
-          <DetailValue>{round.badges.length}</DetailValue>
         </DetailRow>
         <Link
           style={{ minWidth: '250px' }}

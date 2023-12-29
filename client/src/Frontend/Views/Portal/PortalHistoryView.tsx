@@ -52,7 +52,9 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
     () => rounds.reduce((prev, curr) => curr.score + prev, 0),
     [rounds]
   );
-  const seasonScore = seasonScorePreBadge - calcBadgeTypeScore(grandPrixBadges.map((b) => b.type));
+
+  const seasonScore = seasonScorePreBadge;
+
   const mapComponents = useMemo(
     () =>
       rounds.map((round: GrandPrixHistory, idx: number) => (
@@ -61,29 +63,16 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
     [rounds]
   );
 
-  const badgeElements = useMemo(() => {
-    if (grandPrixBadges.length == 0) return <Subtitle>Race to earn badges!</Subtitle>;
-
-    const countedBadges: { count: number; badge: BadgeType }[] = [];
-    grandPrixBadges.forEach((cb) => {
-      const found = countedBadges.find((b) => b.badge == cb.type);
-      if (!found) return countedBadges.push({ count: 1, badge: cb.type });
-      return found.count++;
-    });
-    return countedBadges.map((badge, i) => (
-      <BadgeDetailsRow key={i} type={badge.badge} count={badge.count} />
-    ));
-  }, [grandPrixBadges]);
-
   const leftDisplay = current == 0 ? 'none' : 'flex';
   const rightDisplay = current == seasonHistories.length - 1 ? 'none' : 'flex';
   return (
     <Container>
       <HeaderContainer>
         <div className='col'>
-          <Title>Season {current + 2}</Title>
+          <Title>Eternal Grand Prix</Title>
           <Subtitle>
-            {rounds.length} {rounds.length == 1 ? 'round' : 'rounds'} in this season so far
+            {rounds.length} {rounds.length == 1 ? 'round' : 'rounds'}{' '}
+            {rounds.length == 1 ? 'has' : 'have'} been played
           </Subtitle>
         </div>
       </HeaderContainer>
@@ -122,9 +111,6 @@ export function PortalHistoryView({ match }: RouteComponentProps<{ account: stri
           </div>
         </div>
       </PlayerInfoContainer>
-
-      <Label>Season badges</Label>
-      <BodyContainer>{badgeElements}</BodyContainer>
 
       <Label>Season rounds</Label>
       <BodyContainer>{mapComponents}</BodyContainer>
