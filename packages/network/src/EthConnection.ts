@@ -470,6 +470,10 @@ export class EthConnection {
 
 export async function createEthConnection(rpcUrl: string): Promise<EthConnection> {
   const provider = await makeProvider(rpcUrl);
-  const blockNumber = await provider.getBlockNumber();
+  // Time to get the block number
+  const startTime = Date.now();
+  const blockNumber = await callWithRetry(provider.getBlockNumber.bind(provider), []);
+  const endTime = Date.now();
+  console.log(`[ETH CONNECTION]: Took ${endTime - startTime} ms to get block number`);
   return new EthConnection(provider, blockNumber);
 }

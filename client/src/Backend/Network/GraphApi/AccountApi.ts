@@ -1,5 +1,4 @@
 import { EthAddress, RawAccount } from '@darkforest_eth/types';
-import { CONFIG_CONSTANTS } from '../../../Frontend/Utils/constants';
 import { getGraphQLData } from '../GraphApi';
 import { getNetwork } from '../Blockchain';
 
@@ -15,11 +14,11 @@ query {
         configHash,
         gameOver,
         startTime,
-        ${CONFIG_CONSTANTS}
       }
     }
   }
 }
 `;
-  return (await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000')).data.player;
+  const data = await getGraphQLData(query, getNetwork().graphUrl || 'localhost:8000');
+  return data.data.player;
 }

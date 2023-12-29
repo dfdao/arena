@@ -284,7 +284,7 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
           <Cell key='star'></Cell>,
           <Cell key='rank'></Cell>,
           <Cell key='name'></Cell>,
-          <Cell key='twitter'></Cell>,
+          // <Cell key='twitter'></Cell>,
           // <Cell key='gnosis'></Cell>,
           // <Cell key='score'>Score</Cell>,
           <Cell key='time'>Time</Cell>,
@@ -312,23 +312,23 @@ function ArenaLeaderboardTable({ rows }: { rows: Row[] }) {
             // const color = getRankColor([i, row.score]);
             return <Cell>{compPlayerToEntry(row.address, row.twitter)}</Cell>;
           },
-          (row: Row, i) => {
-            // twitter
-            // const color = getRankColor([i, row.score]);
-            return (
-              <Cell>
-                {row.twitter && (
-                  <a
-                    style={{ display: 'flex', alignItems: 'center' }}
-                    target='_blank'
-                    href={`https://twitter.com/${row.twitter}`}
-                  >
-                    <Twitter width='24px' height='24px' />
-                  </a>
-                )}
-              </Cell>
-            );
-          },
+          // (row: Row, i) => {
+          //   // twitter
+          //   // const color = getRankColor([i, row.score]);
+          //   return (
+          //     <Cell>
+          //       {row.twitter && (
+          //         <a
+          //           style={{ display: 'flex', alignItems: 'center' }}
+          //           target='_blank'
+          //           href={`https://twitter.com/${row.twitter}`}
+          //         >
+          //           <Twitter width='24px' height='24px' />
+          //         </a>
+          //       )}
+          //     </Cell>
+          //   );
+          // },
           // (row: Row, i) => {
           //   // gnosis
           //   // const color = getRankColor([i, row.score]);

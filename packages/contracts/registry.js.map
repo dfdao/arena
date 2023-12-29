@@ -1,0 +1,1 @@
+{"version":3,"file":"registry.js","sourceRoot":"","sources":["registry.ts"],"names":[],"mappings":";;;AAAA;;GAEG;AACU,QAAA,gBAAgB,GAAG,4CAA4C,CAAC","sourcesContent":["/**\n * The address for the Faucet contract. Useful for lobbies.\n */\nexport const REGISTRY_ADDRESS = '0x1A28A0e5a94c1C4276538828C0FcD4604e4312dc';\n"]}

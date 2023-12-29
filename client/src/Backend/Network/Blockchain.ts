@@ -50,6 +50,7 @@ export const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toStr
 
 export function getEthConnection(): Promise<EthConnection> {
   const network = getNetwork();
+  console.log(`LOADED NETWORK`, network);
 
   let url: string;
   if (isProdNetwork) {

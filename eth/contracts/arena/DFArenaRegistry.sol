@@ -121,6 +121,7 @@ contract DFArenaRegistry {
         bool noOverlap = true;
         for (uint256 i = 0; i < grandPrixHashes.length; i++) {
             if (
+                configHashToMetadata[grandPrixHashes[i]].deleted == false &&
                 configHashToMetadata[grandPrixHashes[i]].startTime < _endTime &&
                 configHashToMetadata[grandPrixHashes[i]].endTime > _startTime
             ) {

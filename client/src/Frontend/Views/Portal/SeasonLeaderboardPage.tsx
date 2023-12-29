@@ -65,7 +65,7 @@ export const Entry: React.FC<{
                 <Link to={`/portal/history/${entry.address}`}>
                   <button>View player</button>
                 </Link>
-                <span>{entry.badges} badges this season</span>
+                {/* <span>{entry.badges} badges this season</span> */}
               </div>
             </div>
           </ExpandedGames>

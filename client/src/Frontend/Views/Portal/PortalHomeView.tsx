@@ -36,25 +36,17 @@ export const PortalHomeView: React.FC<{}> = () => {
   const [leaderboard, setLeaderboard] = useState<Leaderboard | undefined>();
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const SEASON_GRAND_PRIXS = useSeasonData();
-  console.log({ SEASON_GRAND_PRIXS });
   const grandPrix = getCurrentGrandPrix(SEASON_GRAND_PRIXS);
-
-  const numPastOrCurrent = SEASON_GRAND_PRIXS.filter((sgp) =>
-    isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
-  ).length;
 
   if (!grandPrix) return <div>No active round</div>;
 
   const { twitters } = useTwitters();
   const { allPlayers, setPlayers } = useSeasonPlayers();
-
+  console.log(`[ALL PLAYERS]`, allPlayers);
   const leaders = loadGrandPrixLeaderboard(allPlayers, grandPrix.configHash, twitters);
+  console.log(`[LEADERS]`, leaders);
 
-  const connection = useEthConnection();
-  // const signerAddress = connection.getAddress();
-  // if (!signerAddress) return <></>;
   const { config, error } = useConfigFromContract(grandPrix.configHash);
-  const uniqueBadges = loadUniquePlayerBadges(allPlayers, grandPrix.seasonId, SEASON_GRAND_PRIXS);
 
   useEffect(() => {
     setLeaderboard(leaders);
@@ -163,12 +155,7 @@ export const PortalHomeView: React.FC<{}> = () => {
                   }
                 })
                 .map((entry, index) => (
-                  <SeasonLeaderboardEntryComponent
-                    key={index}
-                    entry={entry}
-                    index={index}
-                    uniqueBadges={uniqueBadges}
-                  />
+                  <SeasonLeaderboardEntryComponent key={index} entry={entry} index={index} />
                 ))}
             </div>
           </LabeledPanel>

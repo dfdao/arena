@@ -11,17 +11,7 @@ import {
   PlayerReady,
   TargetCaptured,
 } from '../generated/DarkForest/DarkForest';
-import {
-  Arena,
-  ArenaConfig,
-  ArenaPlanet,
-  ArenaPlayer,
-  ArenaTeam,
-  Badge,
-  ConfigPlayer,
-  ConfigTeam,
-  Player,
-} from '../generated/schema';
+import { Arena, ArenaPlayer, Badge, ConfigPlayer, ConfigTeam, Player } from '../generated/schema';
 import { hexStringToPaddedUnprefixed } from './helpers/converters';
 import { Bytes, dataSource, log, BigInt } from '@graphprotocol/graph-ts';
 import {
@@ -30,7 +20,6 @@ import {
   configPlayerId,
   configTeamId,
   loadArena,
-  loadArenaConfig,
   loadArenaConstants,
   loadArenaPlanet,
   loadArenaPlayer,
@@ -42,7 +31,6 @@ import {
   loadWinners,
 } from './helpers/utils';
 import { DarkForest as DFDiamond } from '../generated/templates';
-import { buildConfig } from './helpers/utils';
 import { updateElo } from './helpers/elo';
 import { DEFAULT_ELO, NO_TEAM } from './helpers/constants';
 import { updateBadge } from './helpers/badges';
@@ -147,10 +135,6 @@ export function handleArenaInitialized(event: ArenaInitialized): void {
   const arenaConstantsResult = loadArenaConstants();
   arena.configHash = arenaConstantsResult.CONFIG_HASH;
 
-  const graphConstants = loadGraphConstants();
-  const config = buildConfig(arena.id, graphConstants);
-  config.save();
-  arena.config = config.id;
   arena.save();
 }
 
@@ -177,51 +161,8 @@ export function handlePlayerInitialized(event: PlayerInitialized): void {
   const arena = loadArena(dataSource.address().toHexString());
 
   // if TEAMS_ENABLED, create or load the ArenaTeam & ConfigTeam
-  const config = loadArenaConfig(arena.id);
   const teamNum = info.team.toI32();
   const teamId = arenaId(teamNum.toString());
-  let arenaTeam = ArenaTeam.load(teamId);
-  if (config.TEAMS_ENABLED && teamNum != NO_TEAM) {
-    if (!arenaTeam) {
-      arenaTeam = new ArenaTeam(teamId);
-      arenaTeam.arena = arena.id;
-      arenaTeam.teamId = teamNum;
-      arenaTeam.players = new Array<string>();
-      arenaTeam.playerAddresses = new Array<string>();
-    }
-    player.team = arenaTeam.id;
-
-    // Add ArenaPlayer to the team
-    const teamPlayers = arenaTeam.players.map<string>((x) => x);
-    teamPlayers.push(arenaId(playerAddress));
-    arenaTeam.players = teamPlayers;
-
-    // Add playerAddresses to team
-    const teamAddresses = arenaTeam.playerAddresses.map<string>((x) => x);
-    teamAddresses.push(playerAddress);
-    arenaTeam.playerAddresses = teamAddresses;
-
-    arenaTeam.save();
-
-    // Create or load ConfigTeam
-    const id = configTeamId(arenaTeam.playerAddresses, arena.configHash.toHexString());
-    let configTeam = ConfigTeam.load(id);
-    if (!configTeam) {
-      configTeam = new ConfigTeam(id);
-      configTeam.elo = DEFAULT_ELO;
-      configTeam.gamesFinished = 0;
-      configTeam.gamesStarted = 0;
-      configTeam.wins = 0;
-      configTeam.losses = 0;
-      configTeam.configHash = arena.configHash;
-      arenaTeam.players = new Array<string>();
-    }
-    configTeam.gamesStarted = configTeam.gamesStarted + 1;
-
-    // Add playerAddresses to ConfigTeam
-    configTeam.players = arenaTeam.playerAddresses;
-    configTeam.save();
-  }
 
   // Aggregate Entity
   let aggregatePlayer = Player.load(playerAddress);
@@ -356,36 +297,6 @@ export function handleGameover(event: Gameover): void {
   }
 
   p1.save();
-
-  // TODO: Add teams here for more general logic
-  const config = loadArenaConfig(arena.id);
-
-  if (config.RANKED) {
-    // Can only add ELO for teams if ranked = true and num teams = 2.
-    if (config.TEAMS_ENABLED && config.NUM_TEAMS.equals(BigInt.fromI32(2))) {
-      // Get ArenaTeams
-      let arenaTeams: ArenaTeam[] = [];
-      for (var teamId = 1; config.NUM_TEAMS.ge(BigInt.fromI32(teamId)); teamId++) {
-        const arenaTeam = ArenaTeam.load(arenaId(teamId.toString()));
-        // Guarantee each team has at least one player.
-        if (arenaTeam && arenaTeam.players.length > 0) arenaTeams.push(arenaTeam);
-      }
-      // Must have two players each with one team.
-      if (arenaTeams.length == 2) {
-        const t1Addresses = arenaTeams[0].playerAddresses;
-        const t2Addresses = arenaTeams[1].playerAddresses;
-        // Winning player must be on one of the teams
-        if (t1Addresses.includes(winnerAddress) || t2Addresses.includes(winnerAddress)) {
-          log.info('updating team elo', []);
-          updateTeamElo(arena.configHash.toHexString(), t1Addresses, t2Addresses, winnerAddress);
-        }
-      }
-    } else if (!config.TEAMS_ENABLED && arena.players.length == 2) {
-      const aP1 = loadArenaPlayer(arena.players[0]);
-      const aP2 = loadArenaPlayer(arena.players[1]);
-      updatePlayerElo(arena.configHash.toHexString(), aP1.address, aP2.address, winnerAddress);
-    }
-  }
 }
 
 /**

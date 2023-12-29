@@ -10,6 +10,8 @@ import { useArenaLeaderboard, useEloLeaderboard, useUIManager } from '../../Util
 import { bronzeTime, goldTime, silverTime } from '../../Utils/constants';
 import { formatDuration } from '../../Utils/TimeUtils';
 import { ModalPane } from '../../Views/Game/ModalPane';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
+import { address } from '@darkforest_eth/serde';
 
 function getPlace(leaderboard: Leaderboard, time: number) {
   const entries = leaderboard.entries;
@@ -56,7 +58,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
   const time = uiManager.getGameDuration();
   // const isCompetitive = uiManager.isCompetitive();
   const config = uiManager.contractConstants.CONFIG_HASH;
-  const lobbyAddress = uiManager.getContractAddress();
+  const lobbyAddress = address(CONTRACT_ADDRESS);
   const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
   const winners = uiManager.getWinners();
   const losers = uiManager
@@ -73,7 +75,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
         <Link
           openInThisTab={true}
           style={{ width: '100%' }}
-          to={`/play/${lobbyAddress}?create=true`}
+          to={`/play/${lobbyAddress}?create=true&configHash=${config}`}
         >
           <Btn size='stretch'>Race again</Btn>
         </Link>
@@ -99,34 +101,10 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
           </Row>
         )}
         {arenaStats}
-        <div style={{ textAlign: 'center' }}>
-          Help us improve Grand Prix by{' '}
-          <Link openInThisTab={false} to={'https://forms.gle/coFn68RvPrEKaXcKA'}>
-            {' '}
-            giving feedback on this survey
-          </Link>
-          {' 😊'}
-        </div>{' '}
       </div>
     );
   } else {
-    return (
-      //TODO: Provide data about run
-      <div>
-        {/* <Row>
-        <White>Match Statistics</White>
-      </Row>
-      <Row>
-        Time: <Green>{formatDuration(time * 1000)}</Green>
-      </Row>
-   */}
-        {/* {arenaStats} */}
-        <div style={{ textAlign: 'center' }}>
-          <p>Help us improve Dark Forest Arena by </p>
-          <Link to={'https://forms.gle/coFn68RvPrEKaXcKA'}> giving feedback on this survey 😊</Link>
-        </div>{' '}
-      </div>
-    );
+    return <></>;
   }
 }
 

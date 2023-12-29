@@ -30,13 +30,12 @@ function getRankColor(gamesPlayed: number, totalGames: number): string {
 
 export const SeasonLeaderboardEntryComponent: React.FC<{
   entry: SeasonLeaderboardEntry;
-  uniqueBadges: { [player: string]: ConfigBadge[] };
+  uniqueBadges?: { [player: string]: ConfigBadge[] };
   index: number;
-}> = ({ entry, uniqueBadges, index }) => {
+}> = ({ entry, index }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const SEASON_GRAND_PRIXS = useSeasonData();
   const { twitters } = useTwitters();
-  const hasTwitter = twitters[entry.address];
   const numPastOrCurrent = SEASON_GRAND_PRIXS.filter((sgp) =>
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;
@@ -95,50 +94,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                           gap: theme.spacing.md,
                           flex: '1',
                         }}
-                      >
-                        {uniqueBadges[entry.address]
-                          .filter((cb) => cb.configHash == game.configHash)
-                          .sort((a, b) => {
-                            if (a.type == BadgeType.Wallbreaker) {
-                              return -1;
-                            } else if (b.type == BadgeType.Wallbreaker) {
-                              return 1;
-                            } else {
-                              return 0;
-                            }
-                          })
-                          .map((badge, i) => {
-                            if (badge.type == BadgeType.Wallbreaker) {
-                              return (
-                                <PortalTooltipTrigger
-                                  key={i}
-                                  name={TooltipName.Empty}
-                                  extraContent={`Wallbreaker`}
-                                >
-                                  {goldStar(i)}
-                                </PortalTooltipTrigger>
-                              );
-                            } else {
-                              return (
-                                <PortalTooltipTrigger
-                                  key={i}
-                                  name={TooltipName.Empty}
-                                  extraContent={`-${BADGE_BONUSES[badge.type].bonus} seconds!`}
-                                >
-                                  <span
-                                    style={{
-                                      color: BADGE_BONUSES[badge.type].color,
-                                      fontSize: '0.6rem',
-                                    }}
-                                    key={i}
-                                  >
-                                    {`[${splitPascalCase(badge.type.toString())}]`}
-                                  </span>
-                                </PortalTooltipTrigger>
-                              );
-                            }
-                          })}
-                      </div>
+                      ></div>
                     </div>
                     <span>{formatDuration(game.duration * 1000)}</span>
                   </div>
@@ -156,7 +112,7 @@ export const SeasonLeaderboardEntryComponent: React.FC<{
                 <Link to={`/portal/history/${entry.address}`}>
                   <MinimalButton>View player</MinimalButton>
                 </Link>
-                <span>{entry.badges} badges this season</span>
+                {/* <span>{entry.badges} badges this season</span> */}
               </div>
             </div>
           </ExpandedGames>

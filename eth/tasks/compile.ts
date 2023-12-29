@@ -80,6 +80,10 @@ function copyAbiNoPlanetTypeWeights(abi: any): any {
   console.log('abi length', abi.length);
   for (var h = 0; h < abi.length; h++) {
     var abiItem = abi[h];
+    if (abiItem.name == 'getArenaInitializersByConfigHash') {
+      // Remove this value ?
+      abi.splice(h, 1);
+    }
     if (abiItem.name == 'getInitializers') {
       // Position of gameConstants in getAllConstantsABI
       var gameConstantsComponents = abiItem.outputs[0].components[0].components;

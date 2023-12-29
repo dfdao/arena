@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.5
 description: Dark Forest, the world's first decentralized real-time strategy game. Built on Ethereum with zkSNARKs
 repository: https://github.com/darkforest-eth/eth
 schema:
@@ -13,7 +13,7 @@ dataSources:
       startBlock: #{{{START_BLOCK}}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Lobby
@@ -33,11 +33,10 @@ templates:
       abi: DarkForest
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Arena
-        - ArenaConfig
         - ArenaPlayer
         - ArenaPlanet
         - ConfigPlayer

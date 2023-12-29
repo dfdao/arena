@@ -111,11 +111,12 @@ export async function loadAllPlayerData(
   if (!EGP) return [];
   // Query size is number of unique players on each Grand Prix in a season. (6 GPs * 100 players = 100 results).
   // If > 1000, graph won't return.
+  // TODO handle problem with > 1000 players
   const QUERY = `
 query
   {
     configPlayers(
-      first: 1000
+      first: 1000 
     ) {
       id
       address
@@ -223,7 +224,7 @@ export function loadSeasonLeaderboard(
       address: player,
       games: cleanConfigPlayers,
       score: score + badgeScore,
-      totalDuration: totalDuration - badgeScore,
+      totalDuration: totalDuration,
       badges,
     };
     leaderboardProps.entries.push(entry);
@@ -295,75 +296,6 @@ export interface BestTime {
   endTime: number;
   gameOver: boolean;
 }
-// Return list of config players with configHashPrev merged into configHashCurr.
-function mergeGrandPrix(
-  configPlayers: ConfigPlayer[],
-  configHashPrev: string,
-  configHashCurr: string
-) {
-  const notInGP = configPlayers.filter(
-    (cp) => cp.configHash != configHashPrev && cp.configHash != configHashCurr
-  );
-  const playedInGP = configPlayers.filter(
-    (cp) => cp.configHash == configHashPrev || cp.configHash == configHashCurr
-  );
-  const seasonPlayers = groupByConfigPlayers(playedInGP);
-  const mergedPlayers: ConfigPlayer[] = [];
-  for (const [player, configPlayers] of Object.entries(seasonPlayers)) {
-    // concat player
-    if (configPlayers.length > 2 || configPlayers.length == 0)
-      throw new Error('invalid amount of configPlayers');
-
-    const playedInPrev = configPlayers.find((cp) => cp.configHash == configHashPrev);
-    const playedInCurr = configPlayers.find((cp) => cp.configHash == configHashCurr);
-
-    if (!playedInPrev && !playedInCurr) throw new Error('prev and curr cannot both be undefined');
-    const prevBestTime = playedInPrev?.bestTime;
-    const currBestTime = playedInCurr?.bestTime;
-
-    let bestTime: BestTime | undefined;
-    if (prevBestTime && !currBestTime) {
-      bestTime = prevBestTime;
-    } else if (!prevBestTime && currBestTime) {
-      bestTime = currBestTime;
-    } else if (prevBestTime && currBestTime) {
-      bestTime = prevBestTime.duration < currBestTime.duration ? prevBestTime : currBestTime;
-    } else {
-      bestTime = undefined;
-    }
-
-    function mergeBadges(player1Badges: BadgeSet | undefined, player2Badges: BadgeSet | undefined) {
-      let newBadgeSet: BadgeSet = {
-        startYourEngine:
-          Boolean(player1Badges?.startYourEngine) || Boolean(player2Badges?.startYourEngine),
-        nice: Boolean(player1Badges?.nice) || Boolean(player2Badges?.nice),
-        ouch: Boolean(player1Badges?.ouch) || Boolean(player2Badges?.ouch),
-        based: Boolean(player1Badges?.based) || Boolean(player2Badges?.based),
-        wallBreaker: false,
-      };
-
-      return newBadgeSet;
-    }
-
-    const newConfigPlayer: ConfigPlayer = {
-      id: `${configPlayers[0].address}-${configHashCurr}`,
-      configHash: configHashCurr,
-      address: configPlayers[0].address,
-      bestTime,
-      gamesStarted:
-        (playedInPrev ? playedInPrev.gamesStarted : 0) +
-        (playedInCurr ? playedInCurr.gamesStarted : 0),
-      gamesFinished:
-        (playedInPrev ? playedInPrev.gamesFinished : 0) +
-        (playedInCurr ? playedInCurr.gamesFinished : 0),
-      badge: mergeBadges(playedInPrev?.badge, playedInCurr?.badge),
-    };
-    // push
-    mergedPlayers.push(newConfigPlayer);
-  }
-
-  return notInGP.concat(mergedPlayers);
-}
 
 // Returns true if a given match has occurred after the Grand Prix start time.
 // OR true if match is not a grand Prix match.
@@ -380,11 +312,12 @@ export function validGrandPrixMatch(
 }
 
 // Add wallbreaker badge to ConfigPlayers
-async function buildCleanConfigPlayer(
+function buildCleanConfigPlayer(
   configPlayers: ConfigPlayer[],
   SEASON_GRAND_PRIXS: GrandPrixMetadata[]
-): Promise<CleanConfigPlayer[]> {
-  const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
+): CleanConfigPlayer[] {
+  console.log(`configPlayers`, configPlayers);
+  // const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
   const configPlayersStage1 = configPlayers.filter(
     (cp) =>
       validGrandPrixMatch(cp.configHash, cp.bestTime?.startTime, SEASON_GRAND_PRIXS) &&
@@ -396,20 +329,20 @@ async function buildCleanConfigPlayer(
   );
 
   // Merge just for Grand Prix Week 1
-  const configPlayersStage2 = mergeGrandPrix(
-    configPlayersStage1,
-    FIRST_CONFIG_HASH_GP1,
-    SECOND_CONFIG_HASH_GP1
-  );
+  // const configPlayersStage2 = mergeGrandPrix(
+  //   configPlayersStage1,
+  //   FIRST_CONFIG_HASH_GP1,
+  //   SECOND_CONFIG_HASH_GP1
+  // );
 
-  return configPlayersStage2.map((cfp) => {
-    const isWallBreaker =
-      wallBreakers.length > 0 &&
-      wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash)
-        .length > 0;
-    if (isWallBreaker && cfp.badge) {
-      cfp.badge.wallBreaker = true;
-    }
+  return configPlayersStage1.map((cfp) => {
+    // const isWallBreaker =
+    //   wallBreakers.length > 0 &&
+    //   wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash)
+    //     .length > 0;
+    // if (isWallBreaker && cfp.badge) {
+    //   cfp.badge.wallBreaker = true;
+    // }
     const duration = cfp.bestTime ? cfp.bestTime.duration : HOUR_IN_SECONDS;
     const cleanConfig: CleanConfigPlayer = {
       id: cfp.id,
