@@ -30,13 +30,12 @@ function getRankColor(gamesPlayed: number, totalGames: number): string {
 
 export const SeasonLeaderboardEntryComponent: React.FC<{
   entry: SeasonLeaderboardEntry;
-  uniqueBadges: { [player: string]: ConfigBadge[] };
+  uniqueBadges?: { [player: string]: ConfigBadge[] };
   index: number;
-}> = ({ entry, uniqueBadges, index }) => {
+}> = ({ entry, index }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const SEASON_GRAND_PRIXS = useSeasonData();
   const { twitters } = useTwitters();
-  const hasTwitter = twitters[entry.address];
   const numPastOrCurrent = SEASON_GRAND_PRIXS.filter((sgp) =>
     isPastOrCurrentRound(sgp.configHash, SEASON_GRAND_PRIXS)
   ).length;

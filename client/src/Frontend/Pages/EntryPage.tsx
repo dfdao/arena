@@ -48,6 +48,21 @@ export function EntryPage() {
     getAllDiscords().then((t) => setTwitters(t));
   }, []);
 
+  /* set connection on page load */
+  useEffect(() => {
+    async function getConnection() {
+      try {
+        const connection = await getEthConnection();
+        setConnection(connection);
+        setLoadingStatus('complete');
+      } catch (e) {
+        alert('error connecting to blockchain');
+        console.log(e);
+      }
+    }
+    getConnection();
+  }, []);
+
   /* get all season data on page load */
   useEffect(() => {
     if (connection) {
@@ -67,21 +82,6 @@ export function EntryPage() {
       loadAllPlayerData(seasonData).then((t) => setPlayers(t));
     }
   }, [seasonData]);
-
-  /* set connection on page load */
-  useEffect(() => {
-    async function getConnection() {
-      try {
-        const connection = await getEthConnection();
-        setConnection(connection);
-        setLoadingStatus('complete');
-      } catch (e) {
-        alert('error connecting to blockchain');
-        console.log(e);
-      }
-    }
-    getConnection();
-  }, []);
 
   /* once connection is set, get active player from local storage and set account */
   useEffect(() => {
@@ -106,6 +106,14 @@ export function EntryPage() {
       setPlayer(connection);
     }
   }, [connection]);
+
+  useEffect(() => {
+    console.log(
+      `STATUS: Connection: ${!!connection ? '✅' : '❌'}. Twitters: ${
+        !!twitters ? '✅' : '❌'
+      }. Season Data: ${!!seasonData ? '✅' : '❌'}. Loading Status: ${loadingStatus}`
+    );
+  }, [connection, twitters, seasonData, loadingStatus]);
 
   if (!connection || !twitters || !seasonData || loadingStatus == 'loading') {
     return <LoadingPage />;

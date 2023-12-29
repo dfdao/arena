@@ -98,7 +98,7 @@ export class ArenaCreationManager {
       ]);
 
       console.log(`[PARSED]`, initInterface.parseTransaction({ data: initFunctionCall }));
-      console.log('creating lobby at', this.contract.getContractAddress());
+      console.log('creating lobby from diamond', this.contract.getContractAddress());
       updateStatus?.(`Creating Arena ...`);
       const createTxIntent: UnconfirmedCreateLobby = {
         methodName: 'createLobby',

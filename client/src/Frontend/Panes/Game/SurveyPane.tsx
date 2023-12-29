@@ -10,6 +10,8 @@ import { useArenaLeaderboard, useEloLeaderboard, useUIManager } from '../../Util
 import { bronzeTime, goldTime, silverTime } from '../../Utils/constants';
 import { formatDuration } from '../../Utils/TimeUtils';
 import { ModalPane } from '../../Views/Game/ModalPane';
+import { CONTRACT_ADDRESS } from '@darkforest_eth/contracts';
+import { address } from '@darkforest_eth/serde';
 
 function getPlace(leaderboard: Leaderboard, time: number) {
   const entries = leaderboard.entries;
@@ -56,7 +58,7 @@ function SurveyPaneContent({ numSpawnPlanets }: { numSpawnPlanets: number }) {
   const time = uiManager.getGameDuration();
   // const isCompetitive = uiManager.isCompetitive();
   const config = uiManager.contractConstants.CONFIG_HASH;
-  const lobbyAddress = uiManager.getContractAddress();
+  const lobbyAddress = address(CONTRACT_ADDRESS);
   const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
   const winners = uiManager.getWinners();
   const losers = uiManager
