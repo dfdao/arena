@@ -88,5 +88,31 @@ async function addGrandPrix(args: { configHash: string }, hre: HardhatRuntimeEnv
   }
 }
 
+task(`registry:removeGrandPrix`, `mark a grand prix as deleted from registry`)
+  .addParam('configHash', 'map config hash', undefined)
+  .setAction(removeGrandPrix);
+
+async function removeGrandPrix(args: { configHash: string }, hre: HardhatRuntimeEnvironment) {
+  try {
+    await hre.run('utils:assertChainId');
+
+    if (!hre.contracts.REGISTRY_ADDRESS) throw new Error('Registry address not found');
+
+    const contract = await hre.ethers.getContractAt(
+      'DFArenaRegistry',
+      hre.contracts.REGISTRY_ADDRESS
+    );
+
+    console.log(`[REGISTRY] removing grand prix...`);
+    const tx = await contract.removeGrandPrix(args.configHash);
+
+    await tx.wait();
+    const prixs = await contract.getAllGrandPrix();
+    console.log(`removed grand prix`, prixs);
+  } catch (error) {
+    console.log('Add admin failed', error);
+  }
+}
+
 // Remove Grand Prix
 // task(`registry:removeGrandPrix`, `remove a grand prix from the registry`);
