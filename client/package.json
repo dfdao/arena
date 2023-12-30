@@ -74,7 +74,8 @@
     "clean": "del-cli dist node_modules declarations contracts tsconfig.ref.tsbuildinfo",
     "docs": "typedoc && yarn format",
     "deploy": "netlify build && netlify deploy",
-    "deploy:prod": "netlify build && netlify deploy --prod"
+    "deploy:prod": "netlify build && netlify deploy --prod",
+    "start:build": "webpack serve --mode production --node-env production --config webpack.config.js"
   },
   "browserslist": {
     "production": [
