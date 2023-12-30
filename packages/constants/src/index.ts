@@ -128,6 +128,9 @@ export const MAX_BIOME = Biome.CORRUPTED;
  */
 export const GAS_PRICE_API = 'https://gnosis.blockscout.com/api/v1/gas-price-oracle' as const;
 
+export const GNOSIS_SCAN_API =
+  'https://ggnosis.blockscan.com/gasapi.ashx?apikey=key&method=gasoracle';
+
 /**
  * In case we cannot load gas prices from xDai, these are the default auto gas prices.
  */
