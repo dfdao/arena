@@ -52,7 +52,7 @@ const exploreChunk = (
             spaceTypeKey,
             biomebaseKey,
             perlinLengthScale,
-            perlinMirrorY,
+            perlinMirrorX,
             perlinMirrorY
           )(chunkFootprint, planetRarity, planetLevelThresholds);
   } else {

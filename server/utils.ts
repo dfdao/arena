@@ -29,7 +29,7 @@ export const isProdNetwork = NETWORK.toString() !== 'localhost' && NETWORK.toStr
 
 export const BURNER_DRIP = 0.25;
 export const VERIFY_DRIP = 0.5;
-export const CAPTCHA_VERIFIED_ROLE = 'verified';
+export const CAPTCHA_VERIFIED_ROLE = '1186048721436299284';
 
 export const getNetwork = (): Network => {
   if (isProdNetwork) {

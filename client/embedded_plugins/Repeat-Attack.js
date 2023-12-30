@@ -54,7 +54,7 @@ const KEY_TOGGLE_INCOMING_FIRING = '.';
 const KEY_TOGGLE_INCOMING_FIRING_DISPLAY = '>'; // '>' displays better than '.'
 
 // Other controls
-let SILVER_SEND_PERCENT = 99; // Sends this proportion of silver from the source planet
+let SILVER_SEND_PERCENT = 95; // Sends this proportion of silver from the source planet
 
 // Note - `let` was sometimes used by original author in this plugin to sidestep any weird execution env problems
 // ----------------------------------------
@@ -192,6 +192,10 @@ class Repeater {
   }
   removeAllAttacks() {
     this.attacks = [];
+    this.saveAttacks();
+  }
+  pauseAllAttacks() {
+    this.attacks.forEach((a) => (a.active = false));
     this.saveAttacks();
   }
   getFiringStatus(item) {
@@ -556,6 +560,15 @@ function AttackList({ repeater }) {
         }}
       >
         Clear All
+      </button>
+      <button
+        style=${{ float: 'right', marginLeft: 10 }}
+        onClick=${() => {
+          repeater.pauseAllAttacks();
+          setAttacks([...repeater.attacks]);
+        }}
+      >
+        Pause All
       </button>
       <button style=${{ float: 'right' }} onClick=${() => setAttacks([...repeater.attacks])}>
         Refresh

@@ -73,7 +73,7 @@ class UpgradeManager {
         upgradeAllPlanets([...patternInput.value]);
         this.upgradePlanetsInterval = window.setInterval(
           () => upgradeAllPlanets([...patternInput.value]),
-          1e3 * 30
+          1e3 * 15
         );
       } else {
         window.clearInterval(this.upgradePlanetsInterval);

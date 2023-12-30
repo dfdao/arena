@@ -138,6 +138,7 @@ export class ArenaCreationManager {
       this.created = true;
       this.arenaAddress = lobby;
       this.configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
+      console.log(`[ARENA MANAGER] config hash`, this.configHash);
 
       return { owner, lobby, startTx };
     } catch (e) {
