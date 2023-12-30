@@ -18,10 +18,15 @@ export const verify = async (interaction: CommandInteraction) => {
     replyText += `❓ Verifying...`;
     await interaction.editReply(replyText);
     const roles = interaction.member?.roles as GuildMemberRoleManager;
-    const userRoles = roles.cache.map((role) => role.name); // Map roles to their names.
+    const verifiedName = interaction.guild?.roles.cache.find(
+      (role) => role.id === CAPTCHA_VERIFIED_ROLE
+    )?.name;
+    const userRoles = roles.cache.map((role) => role.id); // Map roles to their id.
     if (!userRoles?.includes(CAPTCHA_VERIFIED_ROLE)) {
       throw new Error(
-        `Missing verified role. Must verify in <#${captchaChannelId}> before linking.`
+        `Missing ${
+          verifiedName || 'verified'
+        } role. Must verify in <#${captchaChannelId}> before linking.`
       );
     }
     const message = interaction.options.get('message')?.value as string;
