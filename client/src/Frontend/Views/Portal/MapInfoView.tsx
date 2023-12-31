@@ -94,22 +94,18 @@ function MapOverview({ configHash, config }: { configHash: string; config: Lobby
 
 export function MapInfoView({ match }: RouteComponentProps<{ configHash: string }>) {
   const configHash = match.params.configHash;
-  const { config, error } = useConfigFromHash(configHash);
-  const { config: configFromContract } = useConfigFromContract(configHash);
-  const finalConfig = configFromContract || config;
+  const { config: configFromContract, loading, error } = useConfigFromContract(configHash);
+  const finalConfig = configFromContract;
 
   return (
     <MapInfoContainer>
-      {!finalConfig ? (
-        <div>Map Not Found</div>
-      ) : (
-        finalConfig &&
-        configHash && (
-          <>
-            <MapOverview configHash={configHash} config={finalConfig} />
-            <MapDetails configHash={configHash} config={finalConfig} />
-          </>
-        )
+      {error && <div>Failed to load map</div>}
+      {loading && <LoadingSpinner initialText='Loading...' />}
+      {finalConfig && configHash && (
+        <>
+          <MapOverview configHash={configHash} config={finalConfig} />
+          <MapDetails configHash={configHash} config={finalConfig} />
+        </>
       )}
     </MapInfoContainer>
   );

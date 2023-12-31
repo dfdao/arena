@@ -132,12 +132,6 @@ query
         gameOver
       }
       configHash
-      badge {
-        based
-        ouch
-        startYourEngine
-        nice
-      }
     }
   }
 `;
@@ -321,28 +315,10 @@ function buildCleanConfigPlayer(
   const configPlayersStage1 = configPlayers.filter(
     (cp) =>
       validGrandPrixMatch(cp.configHash, cp.bestTime?.startTime, SEASON_GRAND_PRIXS) &&
-      cp.gamesFinished > 0 &&
-      // Filter just for Grand Prix Week 1
-      (cp.configHash == FIRST_CONFIG_HASH_GP1
-        ? cp.bestTime!.startTime < FIRST_CONFIG_FINAL_VALID_START
-        : true)
+      cp.gamesFinished > 0
   );
 
-  // Merge just for Grand Prix Week 1
-  // const configPlayersStage2 = mergeGrandPrix(
-  //   configPlayersStage1,
-  //   FIRST_CONFIG_HASH_GP1,
-  //   SECOND_CONFIG_HASH_GP1
-  // );
-
   return configPlayersStage1.map((cfp) => {
-    // const isWallBreaker =
-    //   wallBreakers.length > 0 &&
-    //   wallBreakers.filter((e) => e.player === cfp.address && e.configHash === cfp.configHash)
-    //     .length > 0;
-    // if (isWallBreaker && cfp.badge) {
-    //   cfp.badge.wallBreaker = true;
-    // }
     const duration = cfp.bestTime ? cfp.bestTime.duration : HOUR_IN_SECONDS;
     const cleanConfig: CleanConfigPlayer = {
       id: cfp.id,

@@ -1,10 +1,4 @@
-import { EthAddress, TooltipName } from '@darkforest_eth/types';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { getRank, Rank } from '../../Backend/Utils/Rank';
-import dfstyles from '../Styles/dfstyles';
-import { useUIManager } from '../Utils/AppHooks';
-import { formatDuration } from '../Utils/TimeUtils';
 
 const newYearsUnix = 1704067200;
 
