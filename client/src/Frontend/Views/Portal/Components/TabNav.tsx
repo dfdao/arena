@@ -121,7 +121,6 @@ const Tab = styled.div<{ active: boolean }>`
   align-items: center;
   justify-content: center;
   color: ${(props) => (props.active ? theme.colors.fgPrimary : theme.colors.fgMuted)};
-  font-size: 0.8rem;
   letter-spacing: 0.06em;
   background: ${(props) => (props.active ? theme.colors.bg2 : 'transparent')};
   font-family: ${theme.fonts.mono};
