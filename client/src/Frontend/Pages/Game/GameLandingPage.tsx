@@ -115,8 +115,8 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       } else {
         if (!config) return console.warn(`No config found for this contract`);
 
-        terminal.current?.print('Creating new arena instance... ');
-        terminal.current?.print('(this may take up to 30s)');
+        terminal.current?.println('Creating new arena instance... ');
+        terminal.current?.println('(this may take up to 30s)');
         try {
           const newCreationManager = await ArenaCreationManager.create(
             ethConnection,
