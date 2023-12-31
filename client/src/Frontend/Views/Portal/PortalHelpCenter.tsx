@@ -7,6 +7,7 @@ import { PortalModal } from './Components/PortalModal';
 import { theme } from './styleUtils';
 import { CloseButton } from './Account';
 import { Icon } from '../../Components/Icons';
+import { Link } from '@Components/CoreUI';
 
 export const PortalHelpCenter = () => {
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -41,33 +42,31 @@ export const PortalHelpCenter = () => {
               <Icon type={IconType.X} />
             </CloseButton>
             <div>
-              <p>Welcome to Dark Forest Arena Grand Prix!</p>
+              <p style={{ fontWeight: 300, color: '#ffffff' }}>Welcome to Dark Forest Arena</p>
+              <h2>Speed Runs</h2>
               <p>
-                <span style={{ fontWeight: 300, color: '#ffffff' }}>Grand Prix: </span> Seasons is a
-                formal competition based on the Dark Forest speedruns we introduced in June. During
-                a season, players compete to get the fastest cumulative time across a new race every
-                week.
+                Every two weeks, a new map drops. Players compete to get the fastest time getting
+                from a spawn to a target planet.
               </p>
+              <h2>Custom Maps</h2>
               <p>
-                Here is an overview of the Grand Prix Portal, which you can use to compete and view
-                data about competitions.
+                You can login and use the{' '}
+                <span style={{ fontWeight: 300, color: '#ffffff' }}> Create</span> tab to make your
+                own Dark Forest maps. If you make a fun speedrun, send it our way!
               </p>
-              <h2>Home Page</h2>
-              <p>
-                Here you can jump into a new round, watch other live players, and view your ranking
-                on the current round and the entire season.
-              </p>
-              <h2>History Page</h2>
-              <p>Use this page to replay old Grand Prix rounds and view your Badges.</p>
-              <h2>Create Page</h2>
-              <p>Get creative and fully customize your own Dark Forest Arena experience.</p>
-              <h2>Community</h2>
-              <p>Explore and play unofficial, community-made maps.</p>
-              <h2>Learn</h2>
-              <p>
-                Pick up the basics with our tutorial or master the intricacies of Dark Forest with
-                our strategy guide.
-              </p>
+              <h2>Troubleshooting</h2>
+              <p>Message the dfdao team in Discord for any unresolved problems</p>
+              <Link
+                to={'https://discord.gg/7DMzRb9a3K'}
+                style={{
+                  fontSize: '1.5em',
+                  textDecoration: 'none', // Optional, for styling
+                  textAlign: 'center', // Center the text,
+                  zIndex: 2,
+                }}
+              >
+                Discord
+              </Link>
             </div>
           </Content>
         </PortalModal>
