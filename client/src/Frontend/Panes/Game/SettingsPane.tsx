@@ -224,6 +224,7 @@ export function SettingsPane({
               AutoGasSetting.Slow,
               AutoGasSetting.Average,
               AutoGasSetting.Fast,
+              AutoGasSetting.DoubleFast,
               '10',
               '20',
               '40',
@@ -232,6 +233,9 @@ export function SettingsPane({
               `Slow Auto ${gasPrices.slow} gwei (~$${calcXdai(gasPrices.slow)} / move)`,
               `Average Auto ${gasPrices.average} gwei (~$${calcXdai(gasPrices.average)} / move)`,
               `Fast Auto ${gasPrices.fast} gwei (~$${calcXdai(gasPrices.fast)} / move)`,
+              `Double Fast Auto ${gasPrices.doubleFast} gwei (~$${calcXdai(
+                gasPrices.doubleFast
+              )} / move)`,
               `${15} gwei (~$${calcXdai(15)} / move)`,
               `${20} gwei (~$${calcXdai(20)} / move)`,
               `${40} gwei (~$${calcXdai(40)} / move)`,

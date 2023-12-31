@@ -127,7 +127,7 @@ export function EntryPage() {
                 <Switch>
                   <Redirect path='/play' to={`/play/${defaultAddress}`} push={true} exact={true} />
                   <Route path='/play/:contract' component={GameLandingPage} />
-                  <Redirect path='/portal/tutorial' to={`/play/`} push={false} exact={true} />
+                  {/* <Redirect path='/portal/tutorial' to={`/play/`} push={false} exact={true} /> */}
                   <Route path='/portal/login' component={Login} />
                   <Route path='/portal' component={PortalMainView} />
                   <Redirect

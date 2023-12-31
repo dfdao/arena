@@ -35,6 +35,9 @@ const Container = styled.div`
   padding: ${theme.spacing.xl};
   border-radius: ${theme.borderRadius};
   background: ${theme.colors.bg1};
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Header = styled.span`

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
 import { IconType } from '@darkforest_eth/ui';
 
 import { useDisableScroll } from '../../Utils/AppHooks';
@@ -8,30 +7,7 @@ import { PortalModal } from './Components/PortalModal';
 import { theme } from './styleUtils';
 import { CloseButton } from './Account';
 import { Icon } from '../../Components/Icons';
-
-const HelpContent = `
-Welcome to Dark Forest Arena Grand Prix! 
-
-Grand Prix: Seasons is a formal competition based on the Dark Forest speedruns we introduced in June. During a season, players compete to get the fastest cumulative time across a new race every week.
-
-Here is an overview of the Grand Prix Portal, which you can use to compete and view data about competitions.
-
-## Home Page
-Here you can jump into a new round, watch other live players, and view your ranking on the current round and the entire season.
-
-## History Page
-
-Use this page to replay old Grand Prix rounds and view your Badges.
-
-## Create Page
-Get creative and fully customize your own Dark Forest Arena experience.
-
-## Community
-Explore and play unofficial, community-made maps.
-
-## Learn
-Pick up the basics with our tutorial or master the intricacies of Dark Forest with our strategy guide.
-`;
+import { Link } from '@Components/CoreUI';
 
 export const PortalHelpCenter = () => {
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -49,7 +25,12 @@ export const PortalHelpCenter = () => {
           <Content>
             <Header>
               <span
-                style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '1.2rem' }}
+                style={{
+                  color: '#FFFFFF',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  fontSize: '1.2rem',
+                }}
               >
                 Help Center
               </span>
@@ -60,7 +41,33 @@ export const PortalHelpCenter = () => {
             >
               <Icon type={IconType.X} />
             </CloseButton>
-            <ReactMarkdown children={HelpContent} />
+            <div>
+              <p style={{ fontWeight: 300, color: '#ffffff' }}>Welcome to Dark Forest Arena</p>
+              <h2>Speed Runs</h2>
+              <p>
+                Every two weeks, a new map drops. Players compete to get the fastest time getting
+                from a spawn to a target planet.
+              </p>
+              <h2>Custom Maps</h2>
+              <p>
+                You can login and use the{' '}
+                <span style={{ fontWeight: 300, color: '#ffffff' }}> Create</span> tab to make your
+                own Dark Forest maps. If you make a fun speedrun, send it our way!
+              </p>
+              <h2>Troubleshooting</h2>
+              <p>Message the dfdao team in Discord for any unresolved problems</p>
+              <Link
+                to={'https://discord.gg/7DMzRb9a3K'}
+                style={{
+                  fontSize: '1.5em',
+                  textDecoration: 'none', // Optional, for styling
+                  textAlign: 'center', // Center the text,
+                  zIndex: 2,
+                }}
+              >
+                Discord
+              </Link>
+            </div>
           </Content>
         </PortalModal>
       )}
@@ -76,13 +83,13 @@ const Btn = styled.button`
   color: ${theme.colors.fgMuted};
   border-radius: ${theme.borderRadius};
   padding: ${theme.spacing.md};
-  border: 1px solid ${theme.colors.bg3};
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   &:hover {
     background: ${theme.colors.bg3};
     color: ${theme.colors.fgPrimary};
   }
+  height: 30px;
 `;
 
 const QuestionMark = () => (
@@ -101,17 +108,18 @@ const Content = styled.div`
   color: ${theme.colors.fgMuted2};
   line-height: 1.5;
   h2 {
-		margin-bottom: ${theme.spacing.md}
-		font-size: 1.1rem;
-		color: ${theme.colors.fgPrimary};
+    margin-bottom: ${theme.spacing.md};
+    font-size: 1rem;
+    text-decoration: underline;
+    color: ${theme.colors.fgPrimary};
   }
-	p {
-		margin-bottom: ${theme.spacing.lg};
-	}
+  p {
+    margin-bottom: ${theme.spacing.lg};
+  }
 `;
 
 const Header = styled.div`
   width: 100%;
   text-align: left;
-  margin-bottom: ${theme.spacing.lg};
+  margin-bottom: 24px;
 `;

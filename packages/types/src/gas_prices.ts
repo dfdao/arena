@@ -6,6 +6,7 @@ import type { AutoGasSetting } from './setting';
 export interface GasPrices {
   average: number;
   fast: number;
+  doubleFast: number;
   slow: number;
 }
 

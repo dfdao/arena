@@ -110,6 +110,10 @@ export class ArenaCreationManager {
         // The createLobby function costs somewhere around 12mil gas
         gasLimit: getNetwork().gasLimit,
       });
+      await tx.submittedPromise;
+      if (tx.state === 'Fail') {
+        throw new Error(`Arena creation failed`);
+      }
 
       const lobbyReceipt = await tx.confirmedPromise;
       console.log(`created arena with ${lobbyReceipt.gasUsed} gas`);
@@ -130,6 +134,10 @@ export class ArenaCreationManager {
         // The createLobby function costs somewhere around 12mil gas
         gasLimit: getNetwork().gasLimit,
       });
+      await startTx.submittedPromise;
+      if (startTx.state === 'Fail') {
+        throw new Error(`Arena intialization failed`);
+      }
 
       const startRct = await startTx.confirmedPromise;
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
@@ -142,9 +150,9 @@ export class ArenaCreationManager {
 
       return { owner, lobby, startTx };
     } catch (e) {
-      console.log(e);
+      console.log(`[ARENA CREATION ERROR]`, e);
       updateStatus?.(`❌ Arena creation failed`);
-      throw new Error('lobby creation transaction failed.');
+      throw new Error('Arena creation failed. Check console for details');
     }
   }
 
@@ -234,6 +242,10 @@ export class ArenaCreationManager {
       gasLimit: getNetwork().gasLimit,
     });
     updateStatus?.(`Creating ${planets?.length} planets... `);
+    await tx.submittedPromise;
+    if (tx.state === 'Fail') {
+      throw new Error(`Planet creation failed`);
+    }
 
     const createRct = await tx.confirmedPromise;
     console.log(`created ${planets?.length} planets with ${createRct.gasUsed} gas`);

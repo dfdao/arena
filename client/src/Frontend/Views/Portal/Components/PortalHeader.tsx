@@ -106,7 +106,7 @@ export const PortalHeader = () => {
           }}
         >
           <RefreshIcon />
-          <span>{refreshing ? 'Refreshing...' : 'Refresh Scores'}</span>
+          <span>{refreshing ? 'Refreshing...' : 'Refresh Data'}</span>
         </RefreshBtn>
         <Account />
       </div>
@@ -120,7 +120,7 @@ const Container = styled.header`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: ${theme.spacing.lg};
+  padding: ${theme.spacing.lg} 3rem;
 `;
 
 const TitleContainer = styled.div`
@@ -144,6 +144,8 @@ const RefreshBtn = styled.button`
     background-color: ${theme.colors.bg3};
     color: ${theme.colors.fgPrimary};
   }
+  color: #dddde9;
+  height: 30px;
 `;
 
 const RefreshIcon = () => (

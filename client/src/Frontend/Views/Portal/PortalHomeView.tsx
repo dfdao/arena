@@ -73,7 +73,9 @@ export const PortalHomeView: React.FC<{}> = () => {
             <div
               style={{
                 overflowY: 'auto',
-                maxHeight: '500px',
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: 1,
               }}
             >
               <GPFeed configHash={grandPrix.configHash} />

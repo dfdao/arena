@@ -2080,6 +2080,7 @@ class GameManager extends EventEmitter {
         // console.log(`all manually created spawn planets: ${spawnPlanets}`);
         const potentialHomeIds = spawnPlanets.filter((planetId) => {
           const planet = this.getGameObjects().getPlanetWithId(planetId);
+          console.log(`[PLANET]`, planet);
           if (!planet) {
             // console.log('not a planet');
             return false;

@@ -121,17 +121,17 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
             ></Copyable>
             <br />
             <span>
-              {'Step 3.'}{' '}
+              {'Step 3.'} {'Verify you are human'}{' '}
               <Link to={'https://discord.com/channels/850187588148396052/1186048720471605278'}>
-                Verify you are human
+                in discord
               </Link>{' '}
             </span>
             <br />
             <br />
             <span>
-              {"Step 4. Paste message in dfdao's"}{' '}
+              {'Step 4. Paste message in the'}{' '}
               <Link to={'https://discord.com/channels/850187588148396052/909812397680767006'}>
-                discord
+                connect channel
               </Link>{' '}
             </span>
             <br />
@@ -234,7 +234,6 @@ const AccountContent = styled.div`
 const AccountButton = styled.button`
   outline: none;
   font-family: ${theme.fonts.mono};
-  padding: ${theme.spacing.sm};
   position: relative;
   display: flex;
   align-items: center;

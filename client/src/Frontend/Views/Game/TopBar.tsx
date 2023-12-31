@@ -199,6 +199,8 @@ export function TopBar({ twitterVerifyHook }: { twitterVerifyHook: Hook<boolean>
       setGasFee(gasPrices.average);
     } else if (gasFeeValue === AutoGasSetting.Fast) {
       setGasFee(gasPrices.fast);
+    } else if (gasFeeValue === AutoGasSetting.DoubleFast) {
+      setGasFee(gasPrices.doubleFast);
     } else {
       setGasFee(Number(gasFeeValue));
     }
