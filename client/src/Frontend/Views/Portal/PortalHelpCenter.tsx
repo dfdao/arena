@@ -76,13 +76,13 @@ const Btn = styled.button`
   color: ${theme.colors.fgMuted};
   border-radius: ${theme.borderRadius};
   padding: ${theme.spacing.md};
-  border: 1px solid ${theme.colors.bg3};
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   &:hover {
     background: ${theme.colors.bg3};
     color: ${theme.colors.fgPrimary};
   }
+  height: 30px;
 `;
 
 const QuestionMark = () => (

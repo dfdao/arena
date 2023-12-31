@@ -234,7 +234,6 @@ const AccountContent = styled.div`
 const AccountButton = styled.button`
   outline: none;
   font-family: ${theme.fonts.mono};
-  padding: ${theme.spacing.sm};
   position: relative;
   display: flex;
   align-items: center;
