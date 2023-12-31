@@ -14,6 +14,7 @@ export const AutoGasSetting = {
   Slow: 'Slow' as AutoGasSetting,
   Average: 'Average' as AutoGasSetting,
   Fast: 'Fast' as AutoGasSetting,
+  DoubleFast: 'DoubleFast' as AutoGasSetting,
 };
 
 export type Setting = Abstract<string, 'Setting'>;

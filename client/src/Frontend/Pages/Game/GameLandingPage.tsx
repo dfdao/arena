@@ -68,7 +68,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
   const params = new URLSearchParams(location.search);
   const useZkWhitelist = params.has('zkWhitelist');
   const createInstance = params.has('create');
-  const isTutorial = params.has('tutorial');
+  const isTutorial = params.has('tutorial') || contractParam === 'tutorial';
   const configHashParam = params.get('configHash') || undefined;
 
   const { config } = useConfigFromContract(configHashParam, isTutorial);
@@ -181,52 +181,57 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
 
   const advanceStateFromContractSet = useCallback(
     async (terminal: React.MutableRefObject<TerminalHandle | undefined>) => {
-      if (!configHash) {
-        if (!contractAddress) throw new Error('no eth connection');
-        const diamond = await ethConnection.loadContract<DarkForest>(
-          contractAddress,
-          loadDiamondContract
-        );
-        const configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
-        console.log('loaded config hash', configHash);
-        setConfigHash(configHash);
+      try {
+        if (!configHash) {
+          if (!contractAddress) throw new Error('no contract address');
+          const diamond = await ethConnection.loadContract<DarkForest>(
+            contractAddress,
+            loadDiamondContract
+          );
+          const configHash = (await diamond.getArenaConstants()).CONFIG_HASH;
+          console.log('loaded config hash', configHash);
+          setConfigHash(configHash);
 
-        if (configHash === tutorialConfig || fromCreate) {
-          setStep(TerminalPromptStep.PLAYING);
-          return;
+          if (configHash === tutorialConfig || fromCreate) {
+            setStep(TerminalPromptStep.PLAYING);
+            return;
+          }
         }
-      }
 
-      terminal.current?.println(``);
-      terminal.current?.println(
-        fromCreate
-          ? `Would you like to play with this account?`
-          : `Would you like to play or spectate this game?`,
-        TerminalTextStyle.Sub
-      );
+        terminal.current?.println(``);
+        terminal.current?.println(
+          fromCreate
+            ? `Would you like to play with this account?`
+            : `Would you like to play or spectate this game?`,
+          TerminalTextStyle.Sub
+        );
 
-      terminal.current?.print('(a) ', TerminalTextStyle.Sub);
-      terminal.current?.println(`Play.`);
-      if (!fromCreate) {
-        terminal.current?.print('(s) ', TerminalTextStyle.Sub);
-        terminal.current?.println(`Spectate.`);
-      }
-      terminal.current?.print(`(d) `, TerminalTextStyle.Sub);
-      terminal.current?.println(`Change account.`);
+        terminal.current?.print('(a) ', TerminalTextStyle.Sub);
+        terminal.current?.println(`Play.`);
+        if (!fromCreate) {
+          terminal.current?.print('(s) ', TerminalTextStyle.Sub);
+          terminal.current?.println(`Spectate.`);
+        }
+        terminal.current?.print(`(d) `, TerminalTextStyle.Sub);
+        terminal.current?.println(`Change account.`);
 
-      terminal.current?.println(``);
-      terminal.current?.println(`Select an option:`, TerminalTextStyle.Text);
+        terminal.current?.println(``);
+        terminal.current?.println(`Select an option:`, TerminalTextStyle.Text);
 
-      const userInput = await terminal.current?.getInput();
-      if (userInput === 'a') {
-        setStep(TerminalPromptStep.PLAYING);
-      } else if (userInput === 's') {
-        setStep(TerminalPromptStep.SPECTATING);
-      } else if (userInput === 'd') {
-        logOut();
-      } else {
-        terminal.current?.println('Unrecognized input. Please try again.');
-        await advanceStateFromContractSet(terminal);
+        const userInput = await terminal.current?.getInput();
+        if (userInput === 'a') {
+          setStep(TerminalPromptStep.PLAYING);
+        } else if (userInput === 's') {
+          setStep(TerminalPromptStep.SPECTATING);
+        } else if (userInput === 'd') {
+          logOut();
+        } else {
+          terminal.current?.println('Unrecognized input. Please try again.');
+          await advanceStateFromContractSet(terminal);
+        }
+      } catch (error) {
+        terminal.current?.print(`${error}`, TerminalTextStyle.Red);
+        console.log(`[CONTRACT SET ERROR]`, error);
       }
     },
     [configHash, contractAddress]
@@ -409,7 +414,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           setStep(TerminalPromptStep.ASKING_PLAYER_EMAIL);
         }
       } else {
-        if (!contractAddress) throw new Error('no eth connection');
+        if (!contractAddress) throw new Error('no contract address');
         const contractsAPI = await makeContractsAPI({ connection: ethConnection, contractAddress });
 
         const keyBigInt = bigIntFromKey(key);
@@ -522,7 +527,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       let newGameManager: GameManager;
 
       try {
-        if (!contractAddress) throw new Error('no eth connection');
+        if (!contractAddress) throw new Error('no contract address');
 
         newGameManager = await GameManager.create({
           connection: ethConnection,

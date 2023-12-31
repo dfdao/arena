@@ -204,6 +204,7 @@ export async function sendDrip(
   }
   const currBalance = weiToEth(await connection.loadBalance(address));
   terminal?.println('Requesting funds from faucet...', TerminalTextStyle.Blue);
+  terminal?.println('(This may take upwards of 30 seconds)', TerminalTextStyle.White);
 
   const success = await requestFaucet(address);
   if (!success && !isProdNetwork) return true;

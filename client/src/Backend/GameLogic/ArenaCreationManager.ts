@@ -134,6 +134,10 @@ export class ArenaCreationManager {
         // The createLobby function costs somewhere around 12mil gas
         gasLimit: getNetwork().gasLimit,
       });
+      await startTx.submittedPromise;
+      if (startTx.state === 'Fail') {
+        throw new Error(`Arena intialization failed`);
+      }
 
       const startRct = await startTx.confirmedPromise;
       console.log(`initialized arena with ${startRct.gasUsed} gas`);
