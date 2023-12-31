@@ -133,7 +133,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
           setStep(TerminalPromptStep.ARENA_CREATED);
         } catch (e) {
           console.error(e);
-          terminal.current?.println('FAILED', TerminalTextStyle.Red);
+          terminal.current?.println(`${e}`, TerminalTextStyle.Red);
           terminal.current?.println('');
           terminal.current?.println('Press ENTER to try again.');
           await terminal.current?.getInput();
@@ -159,7 +159,7 @@ export function GameLandingPage({ match, location }: RouteComponentProps<{ contr
       } catch (e) {
         console.error(e);
 
-        terminal.current?.println('FAILED', TerminalTextStyle.Red);
+        terminal.current?.println(`${e}`, TerminalTextStyle.Red);
         terminal.current?.println('');
         terminal.current?.println('Press ENTER to try again.');
         await terminal.current?.getInput();
