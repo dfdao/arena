@@ -121,9 +121,10 @@ const AccountModal: React.FC<AccountModalProps> = ({ address, twitter, balance, 
             ></Copyable>
             <br />
             <span>
-              {'Step 3.'}{' '}
+              {'Step 3.'}
+              {'Verify you are human'}{' '}
               <Link to={'https://discord.com/channels/850187588148396052/1186048720471605278'}>
-                Verify you are human
+                in discord
               </Link>{' '}
             </span>
             <br />

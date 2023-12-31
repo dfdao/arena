@@ -121,7 +121,7 @@ export const MapOverview: React.FC<{
               to={`/play/${lobbyAddress}?create=true&configHash=${round.configHash}`}
             >
               <LobbyButton disabled={status.toString() != 'started'} primary>
-                Play round
+                Play
               </LobbyButton>
             </Link>
             {countdown ? (
@@ -129,8 +129,8 @@ export const MapOverview: React.FC<{
                 {status == 'ended'
                   ? 'Round over!'
                   : status == 'not started'
-                  ? `Active round starts in ${formatDuration(countdown)} `
-                  : `Active round ends in ${formatDuration(countdown)} `}
+                  ? `Epoch starts in ${formatDuration(countdown)} `
+                  : `Epoch ends in ${formatDuration(countdown)} `}
               </RoundCountdown>
             ) : (
               <div style={{ height: '21px', width: '240px' }}>
