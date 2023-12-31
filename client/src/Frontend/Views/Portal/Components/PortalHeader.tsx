@@ -106,7 +106,7 @@ export const PortalHeader = () => {
           }}
         >
           <RefreshIcon />
-          <span>{refreshing ? 'Refreshing...' : 'Refresh Scores'}</span>
+          <span>{refreshing ? 'Refreshing...' : 'Refresh Data'}</span>
         </RefreshBtn>
         <Account />
       </div>
