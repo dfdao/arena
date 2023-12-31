@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import ReactMarkdown from 'react-markdown';
 import { IconType } from '@darkforest_eth/ui';
 
 import { useDisableScroll } from '../../Utils/AppHooks';
@@ -8,30 +7,6 @@ import { PortalModal } from './Components/PortalModal';
 import { theme } from './styleUtils';
 import { CloseButton } from './Account';
 import { Icon } from '../../Components/Icons';
-
-const HelpContent = `
-Welcome to Dark Forest Arena Grand Prix! 
-
-Grand Prix: Seasons is a formal competition based on the Dark Forest speedruns we introduced in June. During a season, players compete to get the fastest cumulative time across a new race every week.
-
-Here is an overview of the Grand Prix Portal, which you can use to compete and view data about competitions.
-
-## Home Page
-Here you can jump into a new round, watch other live players, and view your ranking on the current round and the entire season.
-
-## History Page
-
-Use this page to replay old Grand Prix rounds and view your Badges.
-
-## Create Page
-Get creative and fully customize your own Dark Forest Arena experience.
-
-## Community
-Explore and play unofficial, community-made maps.
-
-## Learn
-Pick up the basics with our tutorial or master the intricacies of Dark Forest with our strategy guide.
-`;
 
 export const PortalHelpCenter = () => {
   const [openHelp, setOpenHelp] = useState<boolean>(false);
@@ -49,7 +24,12 @@ export const PortalHelpCenter = () => {
           <Content>
             <Header>
               <span
-                style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '1.2rem' }}
+                style={{
+                  color: '#FFFFFF',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                  fontSize: '1.2rem',
+                }}
               >
                 Help Center
               </span>
@@ -60,7 +40,35 @@ export const PortalHelpCenter = () => {
             >
               <Icon type={IconType.X} />
             </CloseButton>
-            <ReactMarkdown children={HelpContent} />
+            <div>
+              <p>Welcome to Dark Forest Arena Grand Prix!</p>
+              <p>
+                <span style={{ fontWeight: 300, color: '#ffffff' }}>Grand Prix: </span> Seasons is a
+                formal competition based on the Dark Forest speedruns we introduced in June. During
+                a season, players compete to get the fastest cumulative time across a new race every
+                week.
+              </p>
+              <p>
+                Here is an overview of the Grand Prix Portal, which you can use to compete and view
+                data about competitions.
+              </p>
+              <h2>Home Page</h2>
+              <p>
+                Here you can jump into a new round, watch other live players, and view your ranking
+                on the current round and the entire season.
+              </p>
+              <h2>History Page</h2>
+              <p>Use this page to replay old Grand Prix rounds and view your Badges.</p>
+              <h2>Create Page</h2>
+              <p>Get creative and fully customize your own Dark Forest Arena experience.</p>
+              <h2>Community</h2>
+              <p>Explore and play unofficial, community-made maps.</p>
+              <h2>Learn</h2>
+              <p>
+                Pick up the basics with our tutorial or master the intricacies of Dark Forest with
+                our strategy guide.
+              </p>
+            </div>
           </Content>
         </PortalModal>
       )}
@@ -101,17 +109,18 @@ const Content = styled.div`
   color: ${theme.colors.fgMuted2};
   line-height: 1.5;
   h2 {
-		margin-bottom: ${theme.spacing.md}
-		font-size: 1.1rem;
-		color: ${theme.colors.fgPrimary};
+    margin-bottom: ${theme.spacing.md};
+    font-size: 1rem;
+    text-decoration: underline;
+    color: ${theme.colors.fgPrimary};
   }
-	p {
-		margin-bottom: ${theme.spacing.lg};
-	}
+  p {
+    margin-bottom: ${theme.spacing.lg};
+  }
 `;
 
 const Header = styled.div`
   width: 100%;
   text-align: left;
-  margin-bottom: ${theme.spacing.lg};
+  margin-bottom: 24px;
 `;
