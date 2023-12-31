@@ -343,6 +343,7 @@ export function useConfigFromHash(configHash?: string) {
 export function useConfigFromContract(configHash?: string, isTutorial = false) {
   const [config, setConfig] = useState<LobbyInitializers | undefined>(undefined);
   const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const connection = useEthConnection();
 
   useEffect(() => {
@@ -353,10 +354,12 @@ export function useConfigFromContract(configHash?: string, isTutorial = false) {
           return;
         }
         if (!configHash) throw new Error(`No config hash provided`);
+        setLoading(true);
         const df = await connection.loadContract<DarkForest>(CONTRACT_ADDRESS, loadDiamondContract);
         // Load config and initializers
         const initializers = await df.getArenaInitializersByConfigHash(configHash);
         setConfig(parseConfigFromContract(initializers));
+        setLoading(false);
       } catch (error) {
         console.log(`[ERROR] loading config`, error);
         setError(true);
@@ -365,7 +368,7 @@ export function useConfigFromContract(configHash?: string, isTutorial = false) {
     getConfig();
   }, [configHash, isTutorial]);
 
-  return { config, error };
+  return { config, error, loading };
 }
 
 export function useLiveMatches(

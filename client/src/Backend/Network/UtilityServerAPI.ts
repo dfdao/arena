@@ -203,10 +203,10 @@ export async function sendDrip(
     return console.log(`[FAUCET] ${address} has already received its initial funds.`);
   }
   const currBalance = weiToEth(await connection.loadBalance(address));
+  terminal?.println('Requesting funds from faucet...', TerminalTextStyle.Blue);
 
   const success = await requestFaucet(address);
   if (!success && !isProdNetwork) return true;
-  terminal?.println('Requesting funds from faucet...', TerminalTextStyle.Blue);
   if (!success) {
     if (terminal)
       terminal.println(

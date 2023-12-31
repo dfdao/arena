@@ -19,15 +19,9 @@ import { address } from '@darkforest_eth/serde';
 
 const errorMessage = 'Error Loading Leaderboard';
 
-export function ArenaLeaderboardWithData({ config }: { config: string }) {
-  const { arenaLeaderboard, arenaError } = useArenaLeaderboard(false, config);
-  return <ArenaLeaderboardDisplay leaderboard={arenaLeaderboard} error={arenaError} />;
-}
-
 export function ArenaLeaderboardDisplay({
   leaderboard,
   error,
-  multiplayer,
 }: {
   leaderboard: Leaderboard | undefined;
   error: Error | undefined;
@@ -91,7 +85,6 @@ export function compPlayerToEntry(
     <Link
       to={`/portal/history/${playerAddress}`}
       style={{ color: color, textDecoration: 'underline', fontWeight: 'bolder' }}
-      target='_blank'
     >
       {playerTwitter ? (
         `@${playerTwitter}`

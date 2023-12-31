@@ -1,6 +1,6 @@
 import { Link } from '@Components/CoreUI';
 import { Countdown } from '../Countdown';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 // @ts-expect-error types
 import StarfieldAnimation from 'react-starfield-animation';
 import styled, { keyframes } from 'styled-components';

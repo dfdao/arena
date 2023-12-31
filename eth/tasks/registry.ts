@@ -72,9 +72,11 @@ async function addGrandPrix(args: { configHash: string }, hre: HardhatRuntimeEnv
     );
 
     console.log(`[REGISTRY] adding grand prix...`);
+    const twoWeeksInSeconds = 1209600;
+    const newYearsGMTSeconds = 1704067200;
     const tx = await contract.addGrandPrix(
-      Math.floor(Date.now() / 1000),
-      Math.floor(Date.now() / 1000) + 172800, // two days in seconds 172800
+      newYearsGMTSeconds,
+      newYearsGMTSeconds + twoWeeksInSeconds,
       args.configHash,
       CONTRACT_ADDRESS,
       1

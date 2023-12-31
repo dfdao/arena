@@ -276,6 +276,7 @@ export class EntryPageTerminal {
         await this.setAccount(account, false);
         return;
       } else if (success && existingAccount) {
+        await this.loadBalances([account.address]);
         // Ask user to hit enter to continue
         this.terminal?.newline();
         this.terminal.println(`Press ENTER to continue`, TerminalTextStyle.Mythic);
