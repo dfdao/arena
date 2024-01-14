@@ -138,6 +138,7 @@ export const DEFAULT_GAS_PRICES: GasPrices = {
   slow: 1,
   average: 3,
   fast: 10,
+  doubleFast: 20,
 } as const;
 
 /**
