@@ -276,10 +276,14 @@ export class ArenaCreationManager {
       const tx = await this.contract.submitTransaction(txIntent, {
         gasLimit: getNetwork().gasLimit,
       });
+      await tx.submittedPromise;
+      if (tx.state === 'Fail') {
+        throw new Error(`Planet creation failed`);
+      }
       return tx.confirmedPromise;
     });
 
-    const res = await Promise.all(createPlanetTxs);
+    await Promise.all(createPlanetTxs);
     console.log(
       `successfully created planets`,
       createPlanetTxs.map((i) => i)

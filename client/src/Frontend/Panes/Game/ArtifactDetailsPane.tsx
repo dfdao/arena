@@ -347,9 +347,11 @@ export function ArtifactDetailsPane({
 function ArtifactDescription({
   artifact,
   collapsable,
+  contractConstants,
 }: {
   artifact: Artifact;
   collapsable?: boolean;
+  contractConstants?: ContractConstants;
 }) {
   let content;
 
@@ -403,7 +405,8 @@ function ArtifactDescription({
     case ArtifactType.PhotoidCannon:
       content = (
         <Text>
-          Ahh, the Photoid Canon. Activate it, wait four hours. Because this one is{' '}
+          Ahh, the Photoid Canon. Activate it, wait{' '}
+          <White>{contractConstants?.PHOTOID_ACTIVATION_DELAY} seconds</White> Because this one is{' '}
           <White>{rarityName}</White>, the next move you send will be able to go{' '}
           <White>{photoidRanges[artifact.rarity]}</White>x further and{' '}
           <White>{photoidSpeeds[artifact.rarity]}</White>x faster. During the 4 hour waiting period,

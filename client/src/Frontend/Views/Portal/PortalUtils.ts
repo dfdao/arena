@@ -162,7 +162,7 @@ export function getCurrentGrandPrix(
 }
 
 export function scoreToTime(score?: number | null) {
-  if (score === null || score === undefined) {
+  if (score === null || score === undefined || score == 7200) {
     return 'n/a';
   }
   score = Math.floor(score);

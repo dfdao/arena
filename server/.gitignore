@@ -2,3 +2,4 @@ dist/
 config.json
 discords.json
 data/
+internalTxs.json

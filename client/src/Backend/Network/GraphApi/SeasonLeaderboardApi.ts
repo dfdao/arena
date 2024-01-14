@@ -312,13 +312,13 @@ function buildCleanConfigPlayer(
 ): CleanConfigPlayer[] {
   console.log(`configPlayers`, configPlayers);
   // const wallBreakers = await loadWallbreakers(SEASON_GRAND_PRIXS);
-  const configPlayersStage1 = configPlayers.filter(
-    (cp) =>
-      validGrandPrixMatch(cp.configHash, cp.bestTime?.startTime, SEASON_GRAND_PRIXS) &&
-      cp.gamesFinished > 0
-  );
+  // const configPlayersStage1 = configPlayers.filter(
+  //   (cp) =>
+  //     validGrandPrixMatch(cp.configHash, cp.bestTime?.startTime, SEASON_GRAND_PRIXS) &&
+  //     cp.gamesFinished > 0
+  // );
 
-  return configPlayersStage1.map((cfp) => {
+  return configPlayers.map((cfp) => {
     const duration = cfp.bestTime ? cfp.bestTime.duration : HOUR_IN_SECONDS;
     const cleanConfig: CleanConfigPlayer = {
       id: cfp.id,
