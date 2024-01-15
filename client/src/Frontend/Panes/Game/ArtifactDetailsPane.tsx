@@ -257,7 +257,9 @@ export function ArtifactDetailsBody({
       )}
 
       <StyledArtifactDetailsBody>
-        {!isSpaceShip(artifact.artifactType) && <ArtifactDescription artifact={artifact} />}
+        {!isSpaceShip(artifact.artifactType) && (
+          <ArtifactDescription artifact={artifact} contractConstants={contractConstants} />
+        )}
         <Spacer height={8} />
 
         <div className='row'>
