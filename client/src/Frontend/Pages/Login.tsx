@@ -198,6 +198,9 @@ export class EntryPageTerminal {
 
   private async setAccount(account: Account, tutorial: boolean) {
     try {
+      if (!getAccounts().find((acc) => acc.address == account.address))
+        addAccount(account.privateKey);
+
       if (this.balancesEth[account.address] < 0.1) {
         this.terminal?.println(
           `Your balance is low. You can get more XDAI here:`,
