@@ -22,7 +22,7 @@ const stockMaps: map[] = [
     description: "Try this week's competitive event!",
   },
   {
-    title: '(4P) Battle for the Center',
+    title: '(FFA) Battle for the Center',
     initializers: stockConfig.fourPlayerBattle,
     description: 'Win the planet in the center!',
   },
