@@ -664,7 +664,7 @@ const twentyPlayerFFA: LobbyInitializers = {
       y: 0,
       level: 3,
       planetType: 0,
-      isTargetPlanet: true,
+      isTargetPlanet: false,
       isSpawnPlanet: true,
       blockedPlanetLocs: [],
     },
